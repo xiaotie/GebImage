@@ -1,5 +1,5 @@
 /*************************************************************************
- *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com
+ *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
 using System;

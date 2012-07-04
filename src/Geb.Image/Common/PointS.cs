@@ -4,17 +4,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Drawing.Imaging;
 
 namespace Geb.Image
 {
-    using TPixel = System.Byte;
-    using TValue = System.Int32;
-
-    public partial class ImageChannelU8 : ImageChannel<Byte>
+    [StructLayout(LayoutKind.Explicit)]
+    public struct PointS
     {
-        #region include "ImageChannel_Template.cs"
-        #endregion
+        [FieldOffset(0)]
+        public Int16 X;
+        [FieldOffset(2)]
+        public Int16 Y;
     }
 }
-
