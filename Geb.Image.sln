@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image", "src\Geb.Image\Geb.Image.csproj", "{F86CF18F-70F4-4491-9C1C-9F390A09E978}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9CDB160D-540B-448D-8FC5-8D7A6E449591}"
+	ProjectSection(SolutionItems) = preProject
+		license.txt = license.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
