@@ -93,7 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\ClassHelper.cs" />
-    <Compile Include="Common\PointS.cs" />
     <Compile Include="Common\Struts.cs" />
     <Compile Include="UnmanagedImage\Channel\ImageChannel.cs" />
     <Compile Include="UnmanagedImage\Channel\ImageChannel32.cs" />
@@ -118,6 +117,8 @@
     <Compile Include="UnmanagedImage\Image_Paramid_Argb_Templete.cs" />
     <Compile Include="UnmanagedImage\UnmanagedImageConverter.cs" />
     <Compile Include="UnmanagedImage\ImageLab24.cs" />
+    <Compile Include="UnmanagedImage\Utils\ImageHelper.cs" />
+    <Compile Include="UnmanagedImage\Utils\PixelHelper.cs" />
     <Compile Include="Utils\AffineTransform.cs" />
     <Compile Include="Utils\ImageSamplingAlgorithm.cs" />
     <Compile Include="UnmanagedImage\ImageArgb32ClassHelper.cs" />
@@ -164,6 +165,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UnmanagedImage\PixelTypes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

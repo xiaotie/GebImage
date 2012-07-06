@@ -26,6 +26,8 @@ namespace Geb.Image
         private IColorConverter m_converter;
         private unsafe Byte* m_start;
 
+        public ROI ROI { get; private set; }
+
         public unsafe UnmanagedImage(Int32 width, Int32 height)
         {
             if (width <= 0) throw new ArgumentOutOfRangeException("width");

@@ -57,21 +57,6 @@ namespace Geb.Image
         }
     }
 
-    public struct Argb32Ptr
-    {
-        public unsafe Argb32* Ptr;
-
-        public unsafe Argb32Ptr(Argb32* val)
-        {
-            Ptr = val;
-        }
-
-        public unsafe void Increase()
-        {
-            Ptr++;
-        }
-    }
-
     public struct Argb32Converter : IColorConverter
     {
         public unsafe void Copy(Rgb24* from, void* to, int length)
@@ -90,7 +75,7 @@ namespace Geb.Image
         }
     }
 
-    public partial class ImageArgb32 : UnmanagedImage<Argb32>, IEnumerable<Argb32Ptr>
+    public partial class ImageArgb32 : UnmanagedImage<Argb32>
     {
         public unsafe ImageArgb32(Int32 width, Int32 height)
             : base(width, height)
@@ -276,56 +261,6 @@ namespace Geb.Image
                 }
                 srcLine += srcWidth;
                 dstLine += dstWidth;
-            }
-        }
-
-        public IEnumerator<Argb32Ptr> GetEnumerator()
-        {
-            return new Argb32Enumerataor(this);
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public class Argb32Enumerataor : IEnumerator<Argb32Ptr>
-        {
-            public unsafe Argb32* _start;
-            public unsafe Argb32* _end;
-            public Argb32Ptr _current;
-            public unsafe Argb32** _pCurrent;
-
-            public unsafe Argb32Enumerataor(UnmanagedImage<Argb32> img)
-            {
-                _start = (Argb32*)img.StartIntPtr;
-                _end = _start + img.Length;
-                this._current = new Argb32Ptr(_start);
-            }
-
-            public Argb32Ptr Current
-            {
-                get { return _current; }
-            }
-
-            public void Dispose()
-            {
-            }
-
-            object System.Collections.IEnumerator.Current
-            {
-                get { return _current; }
-            }
-
-            public unsafe bool MoveNext()
-            {
-                //_current.Increase();
-                return _current.Ptr++ < _end;
-            }
-
-            public unsafe void Reset()
-            {
-                _current.Ptr = _start;
             }
         }
     }

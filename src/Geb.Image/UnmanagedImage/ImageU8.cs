@@ -51,7 +51,7 @@ namespace Geb.Image
             return img;
         }
 
-        public unsafe void Invert()
+        public unsafe ImageU8 Invert()
         {
             Byte* p = this.Start;
             Byte* end = p + this.Length;
@@ -60,6 +60,26 @@ namespace Geb.Image
                 *p = (Byte)(255 - *p);
                 p++;
             }
+            return this;
+        }
+
+        public unsafe ImageArgb32 ToImageArgb32()
+        {
+            ImageArgb32 img = new ImageArgb32(this.Width, this.Height);
+            Argb32* p = img.Start;
+            Byte* to = Start;
+            Argb32* end = p + Length;
+            while (p != end)
+            {
+                p->Alpha = 255;
+                p->Red = *to;
+                p->Green = *to;
+                p->Blue = *to;
+
+                p++;
+                to++;
+            }
+            return img;
         }
 
         /// <summary>

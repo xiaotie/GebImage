@@ -28,7 +28,7 @@ namespace Geb.Image
             int R = (int)((1 - (MyC * (1 - MyK) + MyK)) * 255);
             int G = (int)((1 - (MyM * (1 - MyK) + MyK)) * 255);
             int B = (int)((1 - (MyY * (1 - MyK) + MyK)) * 255);
-
+            
             if (R < 0) R = 0;
             if (G < 0) G = 0;
             if (B < 0) B = 0;
