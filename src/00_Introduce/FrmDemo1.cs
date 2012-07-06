@@ -14,6 +14,8 @@ namespace Introduce
 
     public partial class FrmDemo1 : Form
     {
+        int val;
+
         public FrmDemo1()
         {
             InitializeComponent();
@@ -27,7 +29,7 @@ namespace Introduce
                         .ToGrayscaleImage().ShowDialog("灰度图像")
                         .ApplyOtsuThreshold().ShowDialog("二值化图像")
                         .ToImageArgb32()
-                        .ForEach((Argb32* p)=>{if(p->Red == 255) *p = Argb32.RED;})
+                        .ForEach((Argb32* p) => { if (p->Red == 255) *p = Argb32.RED; })
                         .ShowDialog("染色");
                 });
         }
