@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\ClassHelper.cs" />
+    <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\Struts.cs" />
     <Compile Include="UnmanagedImage\Channel\ImageChannel.cs" />
     <Compile Include="UnmanagedImage\Channel\ImageChannel32.cs" />
