@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\ClassHelper.cs" />
+    <Compile Include="Common\Config.cs" />
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\Struts.cs" />
     <Compile Include="UnmanagedImage\Channel\ImageChannel.cs" />
@@ -118,7 +119,6 @@
     <Compile Include="UnmanagedImage\Image_Paramid_Argb_Templete.cs" />
     <Compile Include="UnmanagedImage\UnmanagedImageConverter.cs" />
     <Compile Include="UnmanagedImage\ImageLab24.cs" />
-    <Compile Include="UnmanagedImage\Utils\ImageHelper.cs" />
     <Compile Include="UnmanagedImage\Utils\PixelHelper.cs" />
     <Compile Include="Utils\AffineTransform.cs" />
     <Compile Include="Utils\ImageSamplingAlgorithm.cs" />

@@ -10,6 +10,9 @@ using System.Text;
 
 namespace Geb.Image
 {
+    using Geb.Utils;
+    using Geb.Utils.WinForm;
+
     public static class ClassHelper
     {
 
@@ -29,6 +32,22 @@ namespace Geb.Image
         #endregion
 
         #region Bitmap 的扩展方法
+
+        /// <summary>
+        /// 弹出模态窗口，显示Bitmap图像。安静模式下不弹出窗口，直接返回。
+        /// </summary>
+        /// <param name="bmp">Bitmap图像</param>
+        /// <param name="title">模态窗口的标题</param>
+        /// <returns>当前Bitmap图像</returns>
+        public static Bitmap ShowDialog(this Bitmap bmp, String title = null)
+        {
+            if (Config.SilentMode == false)  // 非安静模式下，弹出窗体
+            {
+                ImageBox.ShowDialog(bmp, title);
+            }
+
+            return bmp;
+        }
 
         /// <summary>
         /// 复制 Bitmap
@@ -120,6 +139,27 @@ namespace Geb.Image
             return img;
         }
         
+        #endregion
+
+        #region IImage的扩展方法
+
+        /// <summary>
+        /// 弹出模态窗口，显示图像。安静模式下不弹出窗口，直接返回。
+        /// </summary>
+        /// <typeparam name="T">IImage类型</typeparam>
+        /// <param name="img">图像</param>
+        /// <param name="title">弹出模式窗体的标题</param>
+        /// <returns>当前图像</returns>
+        public static T ShowDialog<T>(this T img, String title = null)
+            where T : IImage
+        {
+            if (Config.SilentMode == false) // 非安静模式不弹出窗体
+            {
+                img.ToBitmap().ShowDialog(title);
+            }
+            return img;
+        }
+
         #endregion
 
         public static int Area(this Rectangle rec)
