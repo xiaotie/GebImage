@@ -10,6 +10,7 @@ using System.Text;
 namespace Geb.Image
 {
     using TPixel = Grad;
+    using TImage = Geb.Image.ImageGrad;
 
     public static partial class ImageGradClassHelper
     {

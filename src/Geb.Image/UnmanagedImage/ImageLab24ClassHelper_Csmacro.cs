@@ -256,7 +256,7 @@ namespace Geb.Image
             return Start + row * this.Width;
         }
 
-        public unsafe void Fill(TPixel pixel)
+        public unsafe TImage Fill(TPixel pixel)
         {
             TPixel* p = this.Start;
             TPixel* end = p + this.Length;
@@ -265,9 +265,10 @@ namespace Geb.Image
                 *p = pixel;
                 p++;
             }
+            return this;
         }
 
-        public unsafe void Replace(TPixel pixel, TPixel replaced)
+        public unsafe TImage Replace(TPixel pixel, TPixel replaced)
         {
             TPixel* p = this.Start;
             TPixel* end = p + this.Length;
@@ -279,11 +280,12 @@ namespace Geb.Image
                 }
                 p++;
             }
+            return this;
         }
 
-        public unsafe void Copy(UnmanagedImage<TPixel> src, System.Drawing.Point start, System.Drawing.Rectangle region, System.Drawing.Point destAnchor)
+        public unsafe TImage CopyFrom(UnmanagedImage<TPixel> src, System.Drawing.Point start, System.Drawing.Rectangle region, System.Drawing.Point destAnchor)
         {
-            if (start.X >= src.Width || start.Y >= src.Height) return;
+            if (start.X >= src.Width || start.Y >= src.Height) return this;
             int startSrcX = Math.Max(0, start.X);
             int startSrcY = Math.Max(0, start.Y);
             int endSrcX = Math.Min(start.X + region.Width, src.Width);
@@ -302,7 +304,7 @@ namespace Geb.Image
             int endDstY = Math.Min(destAnchor.Y + region.Height, this.Height);
             int copyWidth = Math.Min(endSrcX - startSrcX, endDstX - startDstX);
             int copyHeight = Math.Min(endSrcY - startSrcY, endDstY - startDstY);
-            if (copyWidth <= 0 || copyHeight <= 0) return;
+            if (copyWidth <= 0 || copyHeight <= 0) return this;
 
             int srcWidth = src.Width;
             int dstWidth = this.Width;
@@ -324,16 +326,17 @@ namespace Geb.Image
                 srcLine += srcWidth;
                 dstLine += dstWidth;
             }
+            return this;
         }
 
-        public void FloodFill(System.Drawing.Point location, TPixel anchorColor, TPixel replecedColor)
+        public TImage FloodFill(System.Drawing.Point location, TPixel anchorColor, TPixel replecedColor)
         {
             int width = this.Width;
             int height = this.Height;
-            if (location.X < 0 || location.X >= width || location.Y < 0 || location.Y >= height) return;
+            if (location.X < 0 || location.X >= width || location.Y < 0 || location.Y >= height) return this;
 
-            if (anchorColor == replecedColor) return;
-            if (this[location.Y, location.X] != anchorColor) return;
+            if (anchorColor == replecedColor) return this;
+            if (this[location.Y, location.X] != anchorColor) return this;
 
             Stack<System.Drawing.Point> points = new Stack<System.Drawing.Point>();
             points.Push(location);
@@ -369,12 +372,13 @@ namespace Geb.Image
                     points.Push(new System.Drawing.Point(p.X, p.Y + 1));
                 }
             }
+            return this;
         }
 
         /// <summary>
         /// 使用众值滤波
         /// </summary>
-        public unsafe void ApplyModeFilter(int size)
+        public unsafe TImage ApplyModeFilter(int size)
         {
             if (size <= 1) throw new ArgumentOutOfRangeException("size 必须大于1.");
             else if (size > 127) throw new ArgumentOutOfRangeException("size 最大为127.");
@@ -453,6 +457,8 @@ namespace Geb.Image
             }
 
             mask.Dispose();
+
+            return this;
         }
 
         

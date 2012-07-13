@@ -11,6 +11,7 @@ namespace Geb.Image
     using TPixel = Rgb24;
     using TCache = System.Int32;
     using TKernel = System.Int32;
+    using TImage = Geb.Image.ImageRgb24;
 
     public static partial class ImageRgb24ClassHelper
     {

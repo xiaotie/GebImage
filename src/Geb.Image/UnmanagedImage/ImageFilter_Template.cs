@@ -31,7 +31,7 @@ namespace Geb.Image.Hidden
             TImage maskImage = new TImage(Width + extend * 2, Height + extend * 2);
             maskImage.Fill(0);//这里效率不高。原本只需要填充四周扩大的部分即可
 
-            maskImage.Copy(this, new System.Drawing.Point(0, 0), new System.Drawing.Rectangle(0, 0, this.Width, this.Height), new System.Drawing.Point(extend, extend));
+            maskImage.CopyFrom(this, new System.Drawing.Point(0, 0), new System.Drawing.Rectangle(0, 0, this.Width, this.Height), new System.Drawing.Point(extend, extend));
 
             int width = this.Width;
             int height = this.Height;

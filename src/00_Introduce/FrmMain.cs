@@ -144,7 +144,10 @@ namespace Introduce
                 sw.Stop();
                 long ms0 = sw.ElapsedMilliseconds;
 
+                ImageRgb24 imgBig = new ImageRgb24(3000, 4000);
+
                 sw.Restart();
+
                 for (int i = 0; i < 100; i++)
                 {
                     Argb32* pStart = img.Start;
