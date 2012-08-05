@@ -376,6 +376,14 @@ namespace Geb.Image
             }
         }
 
+        public void DrawRect(RectF rect, Rgb24 color, int radius)
+        {
+            DrawLine(new PointF(rect.X, rect.Y), new PointF(rect.X + rect.Width, rect.Y), color, radius);
+            DrawLine(new PointF(rect.X, rect.Y), new PointF(rect.X, rect.Y + rect.Height), color, radius);
+            DrawLine(new PointF(rect.X + rect.Width, rect.Y), new PointF(rect.X + rect.Width, rect.Y + rect.Height), color, radius);
+            DrawLine(new PointF(rect.X, rect.Y + rect.Height), new PointF(rect.X + rect.Width, rect.Y + rect.Height), color, radius);
+        }
+
         public void DrawLine(PointF start, PointF end, Rgb24 color, int radius)
         {
             float deltaX = end.X - start.X;

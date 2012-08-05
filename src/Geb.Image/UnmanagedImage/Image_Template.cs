@@ -53,11 +53,23 @@ namespace Geb.Image.Hidden
         {
             get
             {
-                return this[location.Y, location.X];
+                return Start[location.Y * this.Width + location.X];
             }
             set
             {
-                this[location.Y, location.X] = value;
+                Start[location.Y * this.Width + location.X] = value;
+            }
+        }
+
+        public unsafe TPixel this[PointS location]
+        {
+            get
+            {
+                return Start[location.Y * this.Width + location.X];
+            }
+            set
+            {
+                Start[location.Y * this.Width + location.X] = value;
             }
         }
 
@@ -65,6 +77,24 @@ namespace Geb.Image.Hidden
         {
             if (row < 0 || row >= this.Height) throw new ArgumentOutOfRangeException("row");
             return Start + row * this.Width;
+        }
+
+        public unsafe TImage CloneFrom(UnmanagedImage<TPixel> src)
+        {
+            if (src == null) throw new ArgumentNullException("src");
+            if (src.ByteCount != this.ByteCount) throw new NotSupportedException("与src图像的像素数量不一致，无法复制.");
+
+            TPixel* start = Start;
+            TPixel* end = start + Length;
+            TPixel* from = (TPixel*)(src.StartIntPtr);
+
+            while (start != end)
+            {
+                *start = *from;
+                ++start;
+                ++from;
+            }
+            return this;
         }
 
         public unsafe TImage Fill(TPixel pixel)

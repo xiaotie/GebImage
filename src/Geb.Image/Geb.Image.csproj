@@ -95,7 +95,7 @@
     <Compile Include="Common\ClassHelper.cs" />
     <Compile Include="Common\Config.cs" />
     <Compile Include="Common\Enums.cs" />
-    <Compile Include="Common\Struts.cs" />
+    <Compile Include="Common\Structs.cs" />
     <Compile Include="UnmanagedImage\Channel\ImageChannel.cs" />
     <Compile Include="UnmanagedImage\Channel\ImageChannel32.cs" />
     <Compile Include="UnmanagedImage\Channel\ImageChannel32ClassHelper.cs" />

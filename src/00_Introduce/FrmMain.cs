@@ -285,5 +285,51 @@ namespace Introduce
         {
             Process.Start("http://www.geblab.com");
         }
+
+        private unsafe void btnDemo8_Click(object sender, EventArgs e)
+        {
+            Argb32* p = stackalloc Argb32[10];
+            uint val = (uint)p;
+            val = val % 4;
+            Console.WriteLine(val);
+            MessageBox.Show(val.ToString());
+            Argb32* heap = (Argb32*)System.Runtime.InteropServices.Marshal.AllocHGlobal(40);
+
+            ImageArgb32 img2 = new ImageArgb32(3000, 3000);
+            Console.Write(img2);
+            Stopwatch sw = new Stopwatch();
+            using (ImageArgb32 img = new ImageArgb32(10000, 5000))
+            {
+                sw.Start();
+                int width = img.Width;
+                int height = img.Height;
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        p[0] = img[y, x];
+                        //heap[0] = img[y, x];
+                    }
+                }
+
+                sw.Stop();
+                long ms0 = sw.ElapsedMilliseconds;
+
+                sw.Restart();
+
+                for (int y = 0; y < img.Height; y++)
+                {
+                    for (int x = 0; x < img.Width; x++)
+                    {
+                    }
+                }
+
+                sw.Stop();
+                Console.Write(p[0]);
+                Console.Write(heap[0]);
+                long ms1 = sw.ElapsedMilliseconds;
+                MessageBox.Show(String.Format("Itor:{0} ms / Normal: {1} ms", ms0, ms1));
+            }
+        }
     }
 }

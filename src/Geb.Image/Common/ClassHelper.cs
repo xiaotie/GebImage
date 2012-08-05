@@ -245,15 +245,5 @@ namespace Geb.Image
             double radius = Math.Sqrt(p.X * p.X + p.Y * p.Y);
             return new PolarPointD(radius, angle);
         }
-
-        public static Struts ToPolarPoint(this Point p)
-        {
-            double angle = Math.Atan2(p.Y, p.X) * (180 / Math.PI);
-            if (angle < 0) angle = 360 + angle;
-            double radius = Math.Sqrt(p.X * p.X + p.Y * p.Y);
-            return new Struts((int)radius, (int)angle);
-        }
-
-
     }
 }

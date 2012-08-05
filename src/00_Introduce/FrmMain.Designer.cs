@@ -36,6 +36,7 @@
             this.btnTest6 = new System.Windows.Forms.Button();
             this.btnDemo7 = new System.Windows.Forms.Button();
             this.lk = new System.Windows.Forms.LinkLabel();
+            this.btnDemo8 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnDemo1
@@ -119,11 +120,22 @@
             this.lk.Text = "By 集异璧实验室(www.geblab.com)";
             this.lk.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lk_LinkClicked);
             // 
+            // btnDemo8
+            // 
+            this.btnDemo8.Location = new System.Drawing.Point(239, 380);
+            this.btnDemo8.Name = "btnDemo8";
+            this.btnDemo8.Size = new System.Drawing.Size(180, 41);
+            this.btnDemo8.TabIndex = 10;
+            this.btnDemo8.Text = "演示8: Width";
+            this.btnDemo8.UseVisualStyleBackColor = true;
+            this.btnDemo8.Click += new System.EventHandler(this.btnDemo8_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(671, 447);
+            this.Controls.Add(this.btnDemo8);
             this.Controls.Add(this.lk);
             this.Controls.Add(this.btnDemo7);
             this.Controls.Add(this.btnTest6);
@@ -151,6 +163,7 @@
         private System.Windows.Forms.Button btnTest6;
         private System.Windows.Forms.Button btnDemo7;
         private System.Windows.Forms.LinkLabel lk;
+        private System.Windows.Forms.Button btnDemo8;
     }
 }
 

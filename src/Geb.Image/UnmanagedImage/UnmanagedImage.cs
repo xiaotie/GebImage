@@ -14,18 +14,42 @@ namespace Geb.Image
     public abstract class UnmanagedImage<T> : IDisposable, IImage
         where T : struct
     {
+        /// <summary>
+        /// 图像所占字节数。
+        /// </summary>
         public Int32 ByteCount { get; private set; }
+
+        /// <summary>
+        /// 图像的像素数量
+        /// </summary>
         public Int32 Length { get; private set; }
+
+        /// <summary>
+        /// 每像素的尺寸（字节数）
+        /// </summary>
         public Int32 SizeOfType { get; private set; }
 
+        /// <summary>
+        /// 图像宽（像素）
+        /// </summary>
         public Int32 Width { get; private set; }
+
+        /// <summary>
+        /// 图像的高（像素）
+        /// </summary>
         public Int32 Height { get; private set; }
 
+        /// <summary>
+        /// 图像的起始指针。
+        /// </summary>
         public IntPtr StartIntPtr { get; private set; }
 
         private IColorConverter m_converter;
-        private unsafe Byte* m_start;
+        private unsafe Byte* _start;
 
+        /// <summary>
+        /// 感兴趣区域。目前尚无用途。
+        /// </summary>
         public ROI ROI { get; private set; }
 
         public unsafe UnmanagedImage(Int32 width, Int32 height)
@@ -44,7 +68,7 @@ namespace Geb.Image
             ByteCount = SizeOfType * Length;
             m_converter = this.CreateByteConverter();
             StartIntPtr = Marshal.AllocHGlobal(ByteCount);
-            m_start = (Byte*)StartIntPtr;
+            _start = (Byte*)StartIntPtr;
         }
 
         public unsafe UnmanagedImage(String path)
@@ -63,23 +87,7 @@ namespace Geb.Image
             this.CreateFromBitmap(map);
         }
 
-        public unsafe void CloneFrom(UnmanagedImage<T> src)
-        {
-            if(src == null) throw new ArgumentNullException("src");
-            if(src.ByteCount != this.ByteCount) throw new NotSupportedException("与src图像的像素数量不一致，无法复制.");
-
-            Byte* start = m_start;
-            Byte* end = m_start + ByteCount;
-
-            Byte* from = src.m_start;
-
-            while (start != end)
-            {
-                *start = *from;
-                ++start;
-                ++from;
-            }
-        }
+        
 
         public void Dispose()
         {
