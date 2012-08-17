@@ -37,16 +37,14 @@ namespace Geb.Image
         } 
     }
 
-    public class RectD
+    public struct RectD
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Width { get; set; }
-        public double Height { get; set; }
+        public double X;
+        public double Y;
+        public double Width;
+        public double Height;
 
-        public RectD() { }
-
-        public RectD(double x, double y, double w, double h)
+        public RectD(double x = 0, double y = 0, double w = 0, double h = 0)
         {
             X = x;
             Y = y;
@@ -60,16 +58,14 @@ namespace Geb.Image
         }
     }
 
-    public class RectF
+    public struct RectF
     {
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Width { get; set; }
-        public float Height { get; set; }
+        public float X;
+        public float Y;
+        public float Width;
+        public float Height;
 
-        public RectF() { }
-
-        public RectF(float x, float y, float w, float h)
+        public RectF(float x = 0, float y = 0, float w = 0, float h = 0)
         {
             X = x;
             Y = y;

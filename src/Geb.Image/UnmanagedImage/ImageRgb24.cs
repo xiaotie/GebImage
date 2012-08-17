@@ -429,7 +429,15 @@ namespace Geb.Image
                     xStart = tmp;
                 }
 
-                for (float x = xStart; x <= xEnd; x++)
+                float step = 1;
+                float grad = Math.Abs(deltaY / deltaX);
+                if (grad > 1)
+                {
+                    step = 1 / grad;
+                }
+
+
+                for (float x = xStart; x <= xEnd; x += step)
                 {
                     float deltaXX = start.X - x;
                     float deltaYY = deltaY * (deltaXX / deltaX);
