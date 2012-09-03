@@ -44,6 +44,11 @@ namespace Geb.Image
         /// </summary>
         public IntPtr StartIntPtr { get; private set; }
 
+        public Size<Int32> ImageSize
+        {
+            get { return new Size<Int32>(Width, Height); }
+        }
+
         private IColorConverter m_converter;
         private unsafe Byte* _start;
 

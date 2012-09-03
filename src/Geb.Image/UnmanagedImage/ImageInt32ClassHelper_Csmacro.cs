@@ -9,6 +9,7 @@ using System.Text;
 namespace Geb.Image
 {
     using TPixel = System.Int32;
+    using TChannelTemp = System.Int32;
     using TCache = System.Int32;
     using TKernel = System.Int32;
     using TImage = Geb.Image.ImageInt32;
@@ -568,7 +569,7 @@ namespace Geb.Image
                 {
                     for (int w = 0; w < width; w++)
                     {
-                        int val = 0;
+                        TChannelTemp val = 0;
                         for (int kw = 0; kw < kernelWidth; kw++)
                         {
                             for (int kh = 0; kh < kernelHeight; kh++)
@@ -587,7 +588,7 @@ namespace Geb.Image
                 {
                     for (int w = 0; w < width; w++)
                     {
-                        int val = 0;
+                        TChannelTemp val = 0;
                         for (int kw = 0; kw < kernelWidth; kw++)
                         {
                             for (int kh = 0; kh < kernelHeight; kh++)

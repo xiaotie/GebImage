@@ -1,5 +1,5 @@
 /*************************************************************************
- *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
+ *  Copyright (c) 2012 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
 using System;
@@ -8,13 +8,13 @@ using System.Text;
 
 namespace Geb.Image
 {
-    using TPixel = System.Byte;
-    using TChannelTemp = System.Int32;
-    using TCache = System.Int32;
-    using TKernel = System.Int32;
-    using TImage = Geb.Image.ImageU8;
+    using TPixel = System.Single;
+    using TChannelTemp = System.Single;
+    using TCache = System.Single;
+    using TKernel = System.Single;
+    using TImage = Geb.Image.ImageFloat;
 
-    public static partial class ImageU8ClassHelper
+    public static partial class ImageFloatClassHelper
     {
         
 
@@ -162,7 +162,7 @@ namespace Geb.Image
         
     }
 
-    public partial class ImageU8
+    public partial class ImageFloat
     {
         
 

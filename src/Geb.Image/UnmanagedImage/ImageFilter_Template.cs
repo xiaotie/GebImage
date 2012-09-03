@@ -3,6 +3,7 @@
  ************************************************************************/
 
 using TPixel = System.Byte;
+using TChannelTemp = System.Int32;
 using TImage = Geb.Image.ImageU8;
 
 using System;
@@ -141,7 +142,7 @@ namespace Geb.Image.Hidden
                 {
                     for (int w = 0; w < width; w++)
                     {
-                        int val = 0;
+                        TChannelTemp val = 0;
                         for (int kw = 0; kw < kernelWidth; kw++)
                         {
                             for (int kh = 0; kh < kernelHeight; kh++)
@@ -160,7 +161,7 @@ namespace Geb.Image.Hidden
                 {
                     for (int w = 0; w < width; w++)
                     {
-                        int val = 0;
+                        TChannelTemp val = 0;
                         for (int kw = 0; kw < kernelWidth; kw++)
                         {
                             for (int kh = 0; kh < kernelHeight; kh++)

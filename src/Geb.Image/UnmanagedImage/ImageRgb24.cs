@@ -448,6 +448,11 @@ namespace Geb.Image
             }
         }
 
+        public void Draw(float x, float y, Rgb24 color, int radius)
+        {
+            SetColor(x, y, color, radius, Width - 1, Height-1);
+        }
+
         private void SetColor(float x, float y, Rgb24 color, int radius, int ww, int hh)
         {
             int xStart = (int)( x - radius -1);

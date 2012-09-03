@@ -8,6 +8,9 @@ using System.Text;
 
 namespace Geb.Image
 {
+    /// <summary>
+    /// 仿射变换类
+    /// </summary>
     public class AffineTransform
     {
         public double a;

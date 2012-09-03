@@ -108,6 +108,9 @@
     <Compile Include="UnmanagedImage\Channel\ImageChannelU8ClassHelper_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Channel\ImageChannel_Template.cs" />
     <Compile Include="UnmanagedImage\ImageCmyk.cs" />
+    <Compile Include="UnmanagedImage\ImageFloat.cs" />
+    <Compile Include="UnmanagedImage\ImageFloatClassHelper.cs" />
+    <Compile Include="UnmanagedImage\ImageFloatClassHelper_Csmacro.cs" />
     <Compile Include="UnmanagedImage\ImageGrad.cs" />
     <Compile Include="UnmanagedImage\ImageGradClassHelper.cs" />
     <Compile Include="UnmanagedImage\ImageGradClassHelper_Csmacro.cs" />
@@ -149,6 +152,7 @@
     <Compile Include="UnmanagedImage\TPixel_Template.cs" />
     <Compile Include="UnmanagedImage\UnmanagedImage.cs" />
     <Compile Include="Utils\Interpolate.cs" />
+    <Compile Include="Utils\ProjectionTransform.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

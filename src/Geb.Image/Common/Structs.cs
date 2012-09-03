@@ -37,6 +37,18 @@ namespace Geb.Image
         } 
     }
 
+    public struct Size<T> where T : struct
+    {
+        public T Width;
+        public T Height;
+
+        public Size(T width, T height)
+        {
+            Width = width;
+            Height = height;
+        }
+    }
+
     public struct RectD
     {
         public double X;
