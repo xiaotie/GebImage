@@ -37,7 +37,7 @@ namespace Geb.Image
 
         protected override IColorConverter CreateByteConverter()
         {
-            throw new NotImplementedException();
+            return new FloatConverter();
         }
 
         public override IImage Clone()

@@ -49,6 +49,38 @@ namespace Geb.Image
         }
     }
 
+    public struct Rect
+    {
+        public Int32 X;
+        public Int32 Y;
+        public Int32 Width;
+        public Int32 Height;
+
+        public Rect(Int32 x = 0, Int32 y = 0, Int32 w = 0, Int32 h = 0)
+        {
+            X = x;
+            Y = y;
+            Width = w;
+            Height = h;
+        }
+    }
+
+    public struct RectS
+    {
+        public Int16 X;
+        public Int16 Y;
+        public Int16 Width;
+        public Int16 Height;
+
+        public RectS(Int16 x = 0, Int16 y = 0, Int16 w = 0, Int16 h = 0)
+        {
+            X = x;
+            Y = y;
+            Width = w;
+            Height = h;
+        }
+    }
+
     public struct RectD
     {
         public double X;

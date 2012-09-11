@@ -286,6 +286,53 @@ namespace Geb.Image
             return this;
         }
 
+        /// <summary>
+        /// 对图像进行转置，行变成列，列变成行。转置结果直接存在当前的图像中。
+        /// </summary>
+        /// <returns></returns>
+        public unsafe TImage ApplyTranspose()
+        {
+            TImage img = new TImage(Width, Height);
+            img.CloneFrom(this);
+            this.Width = img.Height;
+            this.Height = img.Width;
+            img.TransposeTo(this);
+            img.Dispose();
+            return this;
+        }
+
+        /// <summary>
+        /// 将当前图像转置到另一幅图像中。也就是说，imgDst[i,j] = this[j,i]
+        /// </summary>
+        /// <param name="imgDst">转置标的图像，图像宽是本图像的高，图像的高是本图像的宽</param>
+        /// <returns>转置标的图像</returns>
+        public unsafe TImage TransposeTo(TImage imgDst)
+        {
+            if (this.Width != imgDst.Height || this.Height != imgDst.Width)
+            {
+                throw new ArgumentException("两幅图像的尺寸不匹配，无法进行转置操作.");
+            }
+
+            int width = this.Width;
+            int height = this.Height;
+
+            TPixel* src = this.Start;
+            TPixel* dst = imgDst.Start;
+
+            for (int y = 0; y < height; y++)
+            {
+                TPixel* srcLine = src + y * width;
+                TPixel* dstLine = dst + y;
+                for (int x = 0; x < width; x++)
+                {
+                    *dstLine = srcLine[x];
+                    dstLine += height;
+                }
+            }
+
+            return imgDst;
+        }
+
         public unsafe TImage Fill(TPixel pixel)
         {
             TPixel* p = this.Start;

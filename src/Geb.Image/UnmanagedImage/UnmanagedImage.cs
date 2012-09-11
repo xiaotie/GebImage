@@ -32,12 +32,12 @@ namespace Geb.Image
         /// <summary>
         /// 图像宽（像素）
         /// </summary>
-        public Int32 Width { get; private set; }
+        public Int32 Width { get; protected set; }
 
         /// <summary>
         /// 图像的高（像素）
         /// </summary>
-        public Int32 Height { get; private set; }
+        public Int32 Height { get; protected set; }
 
         /// <summary>
         /// 图像的起始指针。
