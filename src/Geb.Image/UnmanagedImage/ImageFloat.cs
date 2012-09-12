@@ -65,6 +65,16 @@ namespace Geb.Image
             return img;
         }
 
+        public unsafe float[] ToArray()
+        {
+            float[] array = new float[this.Length];
+            for (int i = 0; i < Length; i++)
+            {
+                array[i] = this[i];
+            }
+            return array;
+        }
+
         protected override PixelFormat GetOutputBitmapPixelFormat()
         {
             return PixelFormat.Format8bppIndexed;
