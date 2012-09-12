@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace Geb.Image
@@ -490,6 +491,104 @@ namespace Geb.Image
             mask.Dispose();
 
             return this;
+        }
+
+        public void DrawRect(RectF rect, TPixel color, int radius)
+        {
+            DrawLine(new PointF(rect.X, rect.Y), new PointF(rect.X + rect.Width, rect.Y), color, radius);
+            DrawLine(new PointF(rect.X, rect.Y), new PointF(rect.X, rect.Y + rect.Height), color, radius);
+            DrawLine(new PointF(rect.X + rect.Width, rect.Y), new PointF(rect.X + rect.Width, rect.Y + rect.Height), color, radius);
+            DrawLine(new PointF(rect.X, rect.Y + rect.Height), new PointF(rect.X + rect.Width, rect.Y + rect.Height), color, radius);
+        }
+
+        public void DrawLine(PointF start, PointF end, TPixel color, int radius)
+        {
+            float deltaX = end.X - start.X;
+            float deltaY = end.Y - start.Y;
+            int ww = this.Width - 1;
+            int hh = this.Height - 1;
+
+            if (deltaX == 0)
+            {
+                if (deltaY == 0)
+                {
+                    SetColor(start.X, start.Y, color, radius, ww, hh);
+                    return;
+                };
+
+                float yStart = start.Y;
+                float yEnd = end.Y;
+                float x = start.X;
+
+                if (yEnd < yStart)
+                {
+                    float tmp = yEnd;
+                    yEnd = yStart;
+                    yStart = tmp;
+                }
+
+                yStart = Math.Max(0, yStart);
+                yEnd = Math.Min(ww, yEnd);
+
+                for (float y = yStart; y <= yEnd; y++)
+                {
+                    SetColor(x, y, color, radius, ww, hh);
+                }
+            }
+            else
+            {
+                float xStart = start.X;
+                float xEnd = end.X;
+                if (xEnd < xStart)
+                {
+                    float tmp = xEnd;
+                    xEnd = xStart;
+                    xStart = tmp;
+                }
+
+                float step = 1;
+                float grad = Math.Abs(deltaY / deltaX);
+                if (grad > 1)
+                {
+                    step = 1 / grad;
+                }
+
+
+                for (float x = xStart; x <= xEnd; x += step)
+                {
+                    float deltaXX = start.X - x;
+                    float deltaYY = deltaY * (deltaXX / deltaX);
+                    float y = start.Y - deltaYY;
+
+                    SetColor(x, y, color, radius, ww, hh);
+                }
+            }
+        }
+
+        public void Draw(float x, float y, TPixel color, int radius)
+        {
+            SetColor(x, y, color, radius, Width - 1, Height - 1);
+        }
+
+        private void SetColor(float x, float y, TPixel color, int radius, int ww, int hh)
+        {
+            int xStart = (int)(x - radius - 1);
+            int xEnd = (int)(x + radius + 1);
+            int yStart = (int)(y - radius - 1);
+            int yEnd = (int)(y + radius + 1);
+
+            int maxDistanceSquare = radius * radius;
+            for (int yy = yStart; yy < yEnd; yy++)
+            {
+                for (int xx = xStart; xx < xEnd; xx++)
+                {
+                    if (xx < 0 || yy < 0 || xx > ww || yy > hh) continue;
+                    float deltaX = xx - x;
+                    float deltaY = yy - y;
+                    if (deltaX * deltaX + deltaY * deltaY <= maxDistanceSquare)
+                        this[yy, xx] = color;
+                }
+            }
         }
 
         

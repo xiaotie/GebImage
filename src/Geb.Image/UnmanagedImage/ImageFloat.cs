@@ -47,6 +47,24 @@ namespace Geb.Image
             return img;
         }
 
+        public unsafe ImageU8 ToImageU8(int coeff = 255)
+        {
+            ImageU8 img = new ImageU8(this.Width, this.Height);
+            float* p = this.Start;
+            float* pEnd = p + this.Length;
+            byte* dst = img.Start;
+            float val = 0;
+            while (p < pEnd)
+            {
+                val = *p * coeff;
+                val = Math.Min(255,Math.Max(val, 0));
+                *dst = (Byte)val;
+                p++;
+                dst++;
+            }
+            return img;
+        }
+
         protected override PixelFormat GetOutputBitmapPixelFormat()
         {
             return PixelFormat.Format8bppIndexed;
