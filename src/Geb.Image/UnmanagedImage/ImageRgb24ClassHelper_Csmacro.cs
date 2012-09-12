@@ -507,9 +507,9 @@ namespace Geb.Image
             int ww = this.Width - 1;
             int hh = this.Height - 1;
 
-            if (deltaX == 0)
+            if (Math.Abs(deltaX) < 0.0001)
             {
-                if (deltaY == 0)
+                if (Math.Abs(deltaY) < 0.0001)
                 {
                     SetColor(start.X, start.Y, color, radius, ww, hh);
                     return;
@@ -527,7 +527,7 @@ namespace Geb.Image
                 }
 
                 yStart = Math.Max(0, yStart);
-                yEnd = Math.Min(ww, yEnd);
+                yEnd = Math.Min(hh, yEnd);
 
                 for (float y = yStart; y <= yEnd; y++)
                 {
@@ -588,6 +588,16 @@ namespace Geb.Image
                         this[yy, xx] = color;
                 }
             }
+        }
+
+        public unsafe TPixel[] ToArray()
+        {
+            TPixel[] array = new TPixel[this.Length];
+            for (int i = 0; i < Length; i++)
+            {
+                array[i] = this[i];
+            }
+            return array;
         }
 
         
