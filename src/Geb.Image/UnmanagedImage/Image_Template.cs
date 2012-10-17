@@ -427,6 +427,11 @@ namespace Geb.Image.Hidden
             SetColor(x, y, color, radius, Width - 1, Height - 1);
         }
 
+        public void SetColor(float x, float y, TPixel color, int radius = 1)
+        {
+            SetColor(x, y, color, radius, Width - 1, Height - 1);
+        }
+
         private void SetColor(float x, float y, TPixel color, int radius, int ww, int hh)
         {
             int xStart = (int)(x - radius - 1);

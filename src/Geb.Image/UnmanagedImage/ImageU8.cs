@@ -623,7 +623,7 @@ namespace Geb.Image
         }
 
         /// <summary>
-        /// 进行距离变换。距离变换之前，请保证前景像素的值为0。计算D8距离. 忽略第一行和最后一行，第一列和左后一列。
+        /// 进行距离变换。距离变换之前，请保证前景像素的值为0。计算D8距离. 忽略第一行和最后一行，第一列和最后一列。
         /// </summary>
         public unsafe ImageU8 ApplyDistanceTransformFast()
         {
@@ -702,7 +702,7 @@ namespace Geb.Image
                 Byte* line1 = start + (h) * width;
                 Byte* line2 = start + (h + 1) * width;
                 Byte* line = dstStart + (h) * width;
-                for (int w = 1; w < width; w++)
+                for (int w = 1; w < width - 1; w++)
                 {
                     val = Math.Min(line0[w - 1], line0[w]);
                     val = Math.Min(val, line0[w + 1]);
@@ -743,7 +743,7 @@ namespace Geb.Image
                 Byte* line1 = start + (h) * width;
                 Byte* line2 = start + (h + 1) * width;
                 Byte* line = dstStart + (h) * width;
-                for (int w = 1; w < width; w++)
+                for (int w = 1; w < width - 1; w++)
                 {
                     val = Math.Max(line0[w - 1], line0[w]);
                     val = Math.Max(val, line0[w + 1]);

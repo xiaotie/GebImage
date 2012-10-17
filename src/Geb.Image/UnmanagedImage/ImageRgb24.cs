@@ -22,6 +22,12 @@ namespace Geb.Image
         public static Rgb24 GREEN = new Rgb24 { Green = 255 };
         public static Rgb24 YELLOW = new Rgb24 { Red=255, Green = 255 };
         public static Rgb24 PINK = new Rgb24 { Red=253, Green = 215, Blue = 228 };
+
+        /// <summary>
+        /// 紫红色
+        /// </summary>
+        public static Rgb24 FUCHISIA = new Rgb24 { Red = 253, Green = 00, Blue = 255 };
+
         public static Rgb24 CYAN = new Rgb24 { Green = 255, Blue = 255 };
 
         public Rgb24(int red, int green, int blue)
