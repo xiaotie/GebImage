@@ -51,7 +51,7 @@ namespace Geb.Image
             return img;
         }
 
-        public unsafe ImageU8 Invert()
+        public unsafe ImageU8 ApplyInvert()
         {
             Byte* p = this.Start;
             Byte* end = p + this.Length;
@@ -717,6 +717,32 @@ namespace Geb.Image
             }
 
             cache.Dispose();
+            return this;
+        }
+
+        /// <summary>
+        ///  形态学开运算
+        /// </summary>
+        public ImageU8 ApplyOpenFast(int count = 1)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                this.ApplyErosionFast();
+                this.ApplyDilationFast();
+            }
+            return this;
+        }
+
+        /// <summary>
+        ///  形态学闭运算
+        /// </summary>
+        public ImageU8 ApplyCloseFast(int count = 1)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                this.ApplyDilationFast();
+                this.ApplyErosionFast();
+            }
             return this;
         }
 

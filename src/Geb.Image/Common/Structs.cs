@@ -14,7 +14,7 @@ namespace Geb.Image
     /// 点。横纵坐标都是UInt16格式。
     /// </summary>
     [StructLayout(LayoutKind.Explicit)]
-    public struct PointS
+    public partial struct PointS
     {
         [FieldOffset(0)]
         public UInt16 X;
@@ -34,7 +34,17 @@ namespace Geb.Image
         public PointS(Int64 x, Int64 y)
         {
             X = (UInt16)x; Y = (UInt16)y;
-        } 
+        }
+
+        public static Boolean operator ==(PointS lhs, PointS rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(PointS lhs, PointS rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
     }
 
     public struct Size<T> where T : struct
@@ -46,6 +56,16 @@ namespace Geb.Image
         {
             Width = width;
             Height = height;
+        }
+
+        public static Boolean operator ==(Size<T> lhs, Size<T> rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(Size<T> lhs, Size<T> rhs)
+        {
+            return !lhs.Equals(rhs);
         }
     }
 
@@ -63,6 +83,16 @@ namespace Geb.Image
             Width = w;
             Height = h;
         }
+
+        public static Boolean operator ==(Rect lhs, Rect rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(Rect lhs, Rect rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
     }
 
     public struct RectS
@@ -78,6 +108,16 @@ namespace Geb.Image
             Y = y;
             Width = w;
             Height = h;
+        }
+
+        public static Boolean operator ==(RectS lhs, RectS rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(RectS lhs, RectS rhs)
+        {
+            return !lhs.Equals(rhs);
         }
     }
 
@@ -100,6 +140,16 @@ namespace Geb.Image
         {
             return new RectF((float)X, (float)Y, (float)Width, (float)Height);
         }
+
+        public static Boolean operator ==(RectD lhs, RectD rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(RectD lhs, RectD rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
     }
 
     public struct RectF
@@ -121,6 +171,16 @@ namespace Geb.Image
         {
             return new RectD(X, Y, Width, Height);
         }
+
+        public static Boolean operator ==(RectF lhs, RectF rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(RectF lhs, RectF rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
     }
 
     /// <summary>
@@ -132,6 +192,16 @@ namespace Geb.Image
         public UInt16 Y { get; private set; }
         public UInt16 Width { get; private set; }
         public UInt16 Height { get; private set; }
+
+        public static Boolean operator ==(ROI lhs, ROI rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(ROI lhs, ROI rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
     }
 
     /// <summary>
@@ -153,6 +223,16 @@ namespace Geb.Image
         {
             Radius = radius;
             Angle = angle;
+        }
+
+        public static Boolean operator ==(PolarPointD lhs, PolarPointD rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(PolarPointD lhs, PolarPointD rhs)
+        {
+            return !lhs.Equals(rhs);
         }
     }
 }
