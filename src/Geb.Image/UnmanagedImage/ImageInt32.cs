@@ -131,6 +131,116 @@ namespace Geb.Image
             return map;
         }
 
+        /// <summary>
+        /// 生成地势图。原理：将参数空间->HSV空间->RGB空间。
+        /// 将参数值映射到色相（hue）空间中，使用固定的饱和度与色调，找到对应的RGB值。
+        /// </summary>
+        /// <param name="hueOfMinVal">最小参数值所对应的色相值</param>
+        /// <param name="hueOfMaxVal">最大参数值所对应的色相值</param>
+        /// <param name="useBgVal">是否使用背景参数值。如果使用背景参数值，则所有该值将映射到指定的RGB值</param>
+        /// <param name="bgVal">背景参数值（只有当useBgVal为true时才有效）</param>
+        /// <param name="bgColor">背景参数值所对应的背景色</param>
+        /// <returns>所生成的地势图</returns>
+        public unsafe ImageRgb24 ToHypsometricMap(double hueOfMinVal, double hueOfMaxVal, bool useBgVal, Int32 bgVal, Rgb24 bgColor)
+        {
+            int min = int.MaxValue;
+            int max = int.MinValue;
+            int length = this.Length;
+            Int32* start = this.Start;
+            for (int i = 0; i < length; i++)
+            {
+                min = Math.Min(min, start[i]);
+                max = Math.Max(max, start[i]);
+            }
+
+            double hueDiff = hueOfMaxVal - hueOfMinVal;
+            double valDiff = max - min;
+            double step = valDiff > 0 ? (hueDiff / valDiff) : 0;
+            ImageRgb24 img = new ImageRgb24(Width, Height);
+            Rgb24* rgb0 = img.Start;
+            for (int i = 0; i < length; i++)
+            {
+                Int32 val = start[i];
+                if (useBgVal && bgVal == val)
+                {
+                    rgb0[i] = bgColor;
+                }
+                else
+                {
+                    // hsv => rgb
+
+                    double h = (val - min) * step + hueOfMinVal;
+                    double s = 1;
+                    double v = 1;
+
+                    while (h < 0) { h += 360; };
+                    while (h >= 360) { h -= 360; };
+
+                    double r, g, b;
+                    double hf = h / 60.0;
+                    int floor = (int)Math.Floor(hf);
+                    double f = hf - floor;
+                    double pv = v * (1 - s);
+                    double qv = v * (1 - s * f);
+                    double tv = v * (1 - s * (1 - f));
+                    switch (floor)
+                    {
+                        case 0:
+                            r = v;
+                            g = tv;
+                            b = pv;
+                            break;
+                        case 1:
+                            r = qv;
+                            g = v;
+                            b = pv;
+                            break;
+                        case 2:
+                            r = pv;
+                            g = v;
+                            b = tv;
+                            break;
+                        case 3:
+                            r = pv;
+                            g = qv;
+                            b = v;
+                            break;
+                        case 4:
+                            r = tv;
+                            g = pv;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = pv;
+                            b = qv;
+                            break;
+                        case 6:
+                            r = v;
+                            g = tv;
+                            b = pv;
+                            break;
+                        case -1:
+                            r = v;
+                            g = pv;
+                            b = qv;
+                            break;
+                        default:
+                            r = g = b = v; // Just pretend its black/white
+                            break;
+                    }
+                    int red = (int)(r * 255.0);
+                    int green = (int)(g * 255.0);
+                    int blue = (int)(b * 255.0);
+                    red = Math.Min(255, Math.Max(0, red));
+                    green = Math.Min(255, Math.Max(0, green));
+                    blue = Math.Min(255, Math.Max(0, blue));
+                    rgb0[i] = new Rgb24(red, green, blue);
+                }
+            }
+            return img;
+        }
+
         protected override IColorConverter CreateByteConverter()
         {
             return new Int32Converter();

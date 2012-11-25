@@ -84,11 +84,12 @@ namespace Geb.Image
         /// <param name="height">缩放后的高度</param>
         /// <param name="disposePolicy">转换完毕后的Dispose策略，默认为DisposePolicy.None</param>
         /// <returns>缩放后的新Bitmap图像</returns>
-        public static Bitmap Resize(this Bitmap bmp, int width, int height, DisposePolicy disposePolicy = DisposePolicy.None)
+        public static Bitmap Resize(this Bitmap bmp, int width, int height, System.Drawing.Drawing2D.InterpolationMode mode = System.Drawing.Drawing2D.InterpolationMode.Default, DisposePolicy disposePolicy = DisposePolicy.None)
         {
             Bitmap result = new Bitmap(width, height);
             using (Graphics g = Graphics.FromImage(result))
             {
+                g.InterpolationMode = mode;
                 g.DrawImage(bmp, 0, 0, width, height);
             }
             if (disposePolicy == DisposePolicy.DisposeCaller) bmp.Dispose();

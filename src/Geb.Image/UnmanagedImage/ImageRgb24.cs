@@ -16,12 +16,12 @@ namespace Geb.Image
     public partial struct Rgb24 : IMetriable<Rgb24>
     {
         public static Rgb24 WHITE = new Rgb24 { Red = 255, Green = 255, Blue = 255 };
-        public static Rgb24 BLACK = new Rgb24 ();
+        public static Rgb24 BLACK = new Rgb24();
         public static Rgb24 RED = new Rgb24 { Red = 255 };
         public static Rgb24 BLUE = new Rgb24 { Blue = 255 };
         public static Rgb24 GREEN = new Rgb24 { Green = 255 };
-        public static Rgb24 YELLOW = new Rgb24 { Red=255, Green = 255 };
-        public static Rgb24 PINK = new Rgb24 { Red=253, Green = 215, Blue = 228 };
+        public static Rgb24 YELLOW = new Rgb24 { Red = 255, Green = 255 };
+        public static Rgb24 PINK = new Rgb24 { Red = 253, Green = 215, Blue = 228 };
 
         /// <summary>
         /// 紫红色
