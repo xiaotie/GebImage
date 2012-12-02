@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -146,7 +145,8 @@ namespace Introduce
 
                 ImageRgb24 imgBig = new ImageRgb24(3000, 4000);
 
-                sw.Restart();
+                sw.Reset();
+                sw.Start();
 
                 for (int i = 0; i < 100; i++)
                 {
@@ -184,7 +184,8 @@ namespace Introduce
                 sw.Stop();
                 long ms0 = sw.ElapsedMilliseconds;
 
-                sw.Restart();
+                sw.Reset();
+                sw.Start();
                 for (int i = 0; i < 100; i++)
                 {
                     Argb32* pStart = img.Start;
@@ -226,7 +227,8 @@ namespace Introduce
                 sw.Stop();
                 long ms0 = sw.ElapsedMilliseconds;
 
-                sw.Restart();
+                sw.Reset();
+                sw.Start();
                 for (int i = 0; i < 100; i++)
                 {
                     int width = img.Width;
@@ -263,7 +265,8 @@ namespace Introduce
                 sw.Stop();
                 long ms0 = sw.ElapsedMilliseconds;
 
-                sw.Restart();
+                sw.Reset();
+                sw.Start();
                 for (int i = 0; i < 100; i++)
                 {
                     Argb32* pStart = img.Start;
@@ -315,7 +318,8 @@ namespace Introduce
                 sw.Stop();
                 long ms0 = sw.ElapsedMilliseconds;
 
-                sw.Restart();
+                sw.Reset();
+                sw.Start();
 
                 for (int y = 0; y < img.Height; y++)
                 {
