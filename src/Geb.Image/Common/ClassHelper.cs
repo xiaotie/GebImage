@@ -1,5 +1,8 @@
 ﻿/*************************************************************************
  *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
+ *  
+ *  修改记录:
+ *      2012.12.13 Hu Fei  调整 Point 的扩展方法的名称。
  ************************************************************************/
 
 using System;
@@ -168,7 +171,7 @@ namespace Geb.Image
             return rec.Width * rec.Height;
         }
 
-        public static Boolean IsContain(this Rectangle rec, Rectangle other)
+        public static Boolean IsContains(this Rectangle rec, Rectangle other)
         {
             return rec.Top <= other.Top
                 && rec.Bottom >= other.Bottom
@@ -176,7 +179,7 @@ namespace Geb.Image
                 && rec.Right >= other.Right;
         }
 
-        public static Boolean IsContain(this Rectangle rec, Point point)
+        public static Boolean IsContains(this Rectangle rec, Point point)
         {
             return rec.Top <= point.Y
                 && rec.Bottom > point.Y
@@ -194,32 +197,32 @@ namespace Geb.Image
             return new Point(p.X - 1, p.Y);
         }
 
-        public static Point Upper(this Point p)
+        public static Point Up(this Point p)
         {
             return new Point(p.X, p.Y-1);
         }
 
-        public static Point Lower(this Point p)
+        public static Point Down(this Point p)
         {
             return new Point(p.X, p.Y+1);
         }
 
-        public static Point UpperRight(this Point p)
+        public static Point RightUp(this Point p)
         {
             return new Point(p.X + 1, p.Y-1);
         }
 
-        public static Point UpperLeft(this Point p)
+        public static Point LeftUp(this Point p)
         {
             return new Point(p.X - 1, p.Y-1);
         }
 
-        public static Point LowerRight(this Point p)
+        public static Point RightDown(this Point p)
         {
             return new Point(p.X + 1, p.Y+1);
         }
 
-        public static Point LowerLeft(this Point p)
+        public static Point LeftDown(this Point p)
         {
             return new Point(p.X - 1, p.Y+1);
         }

@@ -1,5 +1,8 @@
 ﻿/*************************************************************************
  *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
+ *  
+ *  修改记录:
+ *      2012.12.13 Hu Fei  为 PointS 添加 Left() 等方法
  ************************************************************************/
 
 using System;
@@ -16,23 +19,78 @@ namespace Geb.Image
     public partial struct PointS
     {
         [FieldOffset(0)]
-        public UInt16 X;
+        public Int16 X;
         [FieldOffset(2)]
-        public UInt16 Y;
+        public Int16 Y;
 
-        public PointS(UInt16 x, UInt16 y)
+        public PointS(Int16 x, Int16 y)
         {
             X = x; Y = y;
         }
 
         public PointS(Int32 x, Int32 y)
         {
-            X = (UInt16)x; Y = (UInt16)y;
+            X = (Int16)x; Y = (Int16)y;
         }
 
         public PointS(Int64 x, Int64 y)
         {
-            X = (UInt16)x; Y = (UInt16)y;
+            X = (Int16)x; Y = (Int16)y;
+        }
+
+        public PointS Right()
+        {
+            return new PointS(X + 1, Y);
+        }
+
+        public PointS Left()
+        {
+            return new PointS(X - 1, Y);
+        }
+
+        public PointS Up()
+        {
+            return new PointS(X, Y - 1);
+        }
+
+        public PointS Down()
+        {
+            return new PointS(X, Y + 1);
+        }
+
+        public PointS RightUp()
+        {
+            return new PointS(X + 1, Y - 1);
+        }
+
+        public PointS LeftUp()
+        {
+            return new PointS(X - 1, Y - 1);
+        }
+
+        public PointS RightDown()
+        {
+            return new PointS(X + 1, Y + 1);
+        }
+
+        public PointS LeftDown()
+        {
+            return new PointS(X - 1, Y + 1);
+        }
+
+        public PointS Move(PointS shift)
+        {
+            return new PointS(X + shift.X, Y + shift.Y);
+        }
+
+        public PointS Move(int xShift, int yShift)
+        {
+            return new PointS(X + xShift, Y + yShift);
+        }
+
+        public Int32 GetHashCode32()
+        {
+            return Y * Int16.MaxValue + X;
         }
 
         public static Boolean operator ==(PointS lhs, PointS rhs)
@@ -75,12 +133,33 @@ namespace Geb.Image
         public Int32 Width;
         public Int32 Height;
 
+        public int Top { get { return Y; } }
+        public int Bottom { get { return Y + Height; } }
+        public int Left { get { return X; } }
+        public int Right { get { return X + Width; } }
+
         public Rect(Int32 x = 0, Int32 y = 0, Int32 w = 0, Int32 h = 0)
         {
             X = x;
             Y = y;
             Width = w;
             Height = h;
+        }
+
+        public Boolean IsContains(Rect other)
+        {
+            return this.Top <= other.Top
+                && this.Bottom >= other.Bottom
+                && this.Left <= other.Left
+                && this.Right >= other.Right;
+        }
+
+        public Boolean IsContains(PointS point)
+        {
+            return this.Top <= point.Y
+                && this.Bottom > point.Y
+                && this.Left <= point.X
+                && this.Right > point.X;
         }
 
         public static Boolean operator ==(Rect lhs, Rect rhs)
@@ -101,12 +180,41 @@ namespace Geb.Image
         public Int16 Width;
         public Int16 Height;
 
+        public int Top { get { return Y; } }
+        public int Bottom { get { return Y + Height; } }
+        public int Left { get { return X; } }
+        public int Right { get { return X + Width; } }
+
         public RectS(Int16 x = 0, Int16 y = 0, Int16 w = 0, Int16 h = 0)
         {
             X = x;
             Y = y;
             Width = w;
             Height = h;
+        }
+
+        public Boolean IsContains(Rect other)
+        {
+            return this.Top <= other.Top
+                && this.Bottom >= other.Bottom
+                && this.Left <= other.Left
+                && this.Right >= other.Right;
+        }
+
+        public Boolean IsContains(RectS other)
+        {
+            return this.Top <= other.Top
+                && this.Bottom >= other.Bottom
+                && this.Left <= other.Left
+                && this.Right >= other.Right;
+        }
+
+        public Boolean IsContains(PointS point)
+        {
+            return this.Top <= point.Y
+                && this.Bottom > point.Y
+                && this.Left <= point.X
+                && this.Right > point.X;
         }
 
         public static Boolean operator ==(RectS lhs, RectS rhs)
