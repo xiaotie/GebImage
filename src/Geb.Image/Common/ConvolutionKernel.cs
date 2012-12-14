@@ -106,15 +106,17 @@ namespace Geb.Image
             double sqrSigma = sigma * sigma;
             double* kernel = stackalloc double[size*size];
             int r = size / 2;
-
+            double max = 0;
             for (int y = -r, i = 0; i < size; y++, i++)
             {
                 for (int x = -r, j = 0; j < size; x++, j++)
                 {
-                    kernel[i + j * size] = Math.Exp((x * x + y * y) / (-2 * sqrSigma)) / (2 * Math.PI * sqrSigma);
+                    double val = Math.Exp((x * x + y * y) / (-2 * sqrSigma));
+                    max = Math.Max(val, max);
+                    kernel[i + j * size] = val;
                 }
             }
-            double min = kernel[0];
+            double min = max/(128*128);
             int scale = 0;
             int[,] intKernel = new int[size, size];
             for (int i = 0; i < size; i++)
