@@ -170,7 +170,9 @@ namespace Geb.Image
                 a = (((500 * (x - y)) + (1 << ((lab_shift) - 1))) >> (lab_shift)) + 129;
                 b = (((200 * (y - z)) + (1 << ((lab_shift) - 1))) >> (lab_shift)) + 128;
 
-                l = l > 255 ? 255 : l < 0 ? 0 : l;
+                // 据Imageshop(http://www.cnblogs.com/Imageshop/) 测试，l不会超出[0,255]范围。
+                // l = l > 255 ? 255 : l < 0 ? 0 : l;
+
                 a = a > 255 ? 255 : a < 0 ? 0 : a;
                 b = b > 255 ? 255 : b < 0 ? 0 : b;
 

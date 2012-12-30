@@ -8,6 +8,12 @@ using System.Text;
 
 namespace Geb.Image
 {
+    public enum InterpolationMode
+    {
+        NearestNeighbor = 1,
+        Bilinear = 2
+    }
+
     /// <summary>
     /// 插值的工具类
     /// </summary>

@@ -10,6 +10,7 @@ using System.Text;
 namespace Geb.Image
 {
     using TPixel = System.Byte;
+    using TChannel = System.Byte;
     using TChannelTemp = System.Int32;
     using TCache = System.Int32;
     using TKernel = System.Int32;

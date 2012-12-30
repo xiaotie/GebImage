@@ -10,10 +10,10 @@ using System.Text;
 namespace Geb.Image
 {
     using TPixel = Argb32;
+    using TChannel = System.Byte;
     using TCache = System.Int32;
     using TKernel = System.Int32;
     using TImage = Geb.Image.ImageArgb32;
-    using TChannel = System.Byte;
 
     public static partial class ImageArgb32ClassHelper
     {

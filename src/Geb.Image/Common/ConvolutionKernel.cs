@@ -144,6 +144,8 @@ namespace Geb.Image
         public int Scale { get; private set; }
         public int Height { get; private set; }
         public int Width { get; private set; }
+        public int[] KernelX { get; private set; }
+        public int[] KernelY { get; private set; }
 
         public ConvolutionKernel(int[,] kernel):this(kernel,1)
         {
@@ -164,6 +166,28 @@ namespace Geb.Image
             if (scale < 1) throw new ArgumentException("Scale must >= 1");
             Scale = scale;
             Kernel = kernel;
+        }
+
+        public ConvolutionKernel(int[] kernelX, int[] kernelY, int scale)
+        {
+            if (kernelX == null) throw new ArgumentNullException("kernelX");
+            if (kernelY == null) throw new ArgumentNullException("kernelY");
+            if (scale < 1) throw new ArgumentException("Scale must >= 1");
+            Height = kernelX.Length;
+            Width = kernelY.Length;
+            if (IsEvenNumber(Height) == true) throw new ArgumentException("Height must be odd number.");
+            if (IsEvenNumber(Width) == true) throw new ArgumentException("Width must be odd number.");
+            KernelX = kernelX;
+            KernelY = kernelY;
+            Scale = scale;
+            Kernel = new int[Height,Width];
+            for (int h = 0; h < KernelY.Length; h++)
+            {
+                for (int w = 0; w < KernelX.Length; h++)
+                {
+                    Kernel[h, w] = KernelY[h] * KernelX[w];
+                }
+            }
         }
 
         // 判断是否是偶数

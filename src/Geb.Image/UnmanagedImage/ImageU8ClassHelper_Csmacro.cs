@@ -10,6 +10,7 @@ using System.Text;
 namespace Geb.Image
 {
     using TPixel = System.Byte;
+    using TChannel = System.Byte;
     using TChannelTemp = System.Int32;
     using TCache = System.Int32;
     using TKernel = System.Int32;
@@ -604,6 +605,58 @@ namespace Geb.Image
                 array[i] = this[i];
             }
             return array;
+        }
+
+        public unsafe TImage Resize(int width, int height, InterpolationMode mode = InterpolationMode.NearestNeighbor)
+        {
+            if (width < 1) throw new ArgumentException("width must > 0");
+            if (height < 1) throw new ArgumentException("height must > 0");
+
+            // 计算 channel 数量
+            int nChannel = sizeof(TPixel) / sizeof(TChannel);
+            TImage imgDst = new TImage(width, height);
+            TChannel* rootSrc = (TChannel*)this.Start;
+            TChannel* rootDst = (TChannel*)imgDst.Start;
+
+            int wSrc = this.Width;
+            int hSrc = this.Height;
+            int wSrcIdxMax = wSrc - 1;
+            int hSrcIdxMax = hSrc - 1;
+            float wCoeff = wSrc / width;
+            float hCoeff = hSrc / height;
+
+            if (mode == InterpolationMode.NearestNeighbor)
+            {
+                // 对每个 channel 进行分别处理
+                for (int n = 0; n < nChannel; n++)
+                {
+                    TChannel* s0 = rootSrc + n;
+                    TChannel* d0 = rootDst + n;
+                    for (int h = 0; h < height; h++)
+                    {
+                        float yDstF = h * hCoeff;
+                        int yDst = (int)Math.Round(yDstF);
+                        yDst = Math.Min(yDst, hSrcIdxMax);
+
+                        TChannel* sLine = s0 + yDst * wSrc * nChannel;
+                        TChannel* dLine = d0 + h * width * nChannel;
+
+                        for (int w = 0; w < width; w++)
+                        {
+                            float xDstF = w * wCoeff;
+                            int xDst = (int)Math.Round(xDstF);
+                            xDst = Math.Min(xDst, wSrcIdxMax);
+                            dLine[w * nChannel] = sLine[xDst * nChannel];
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //TODO: 实现双线性插值
+                throw new NotImplementedException("InterpolationMode not implemented");
+            }
+            return imgDst;
         }
 
         
