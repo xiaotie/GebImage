@@ -75,7 +75,14 @@ namespace Geb.Image
         {
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                g.FillPolygon(new SolidBrush(color), new PointF[] { p0, p1, p2, p3 });
+                g.FillPolygon(new SolidBrush(color), new System.Drawing.PointF[] 
+                {
+                    new System.Drawing.PointF(p0.X, p0.Y),
+                    new System.Drawing.PointF(p1.X, p1.Y),
+                    new System.Drawing.PointF(p2.X, p2.Y),
+                    new System.Drawing.PointF(p3.X, p3.Y)
+                }
+                );
             }
         }
 

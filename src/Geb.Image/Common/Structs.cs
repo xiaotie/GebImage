@@ -104,6 +104,69 @@ namespace Geb.Image
         }
     }
 
+    public partial struct PointF
+    {
+        public float X;
+        public float Y;
+
+        public PointF(float x, float y)
+        {
+            X = x; Y = y;
+        }
+
+        public PointF(double x, double y)
+        {
+            X = (float)x; Y = (float)y;
+        }
+
+        public PointF(Int16 x, Int16 y)
+        {
+            X = x; Y = y;
+        }
+
+        public PointF(Int32 x, Int32 y)
+        {
+            X = x; Y = y;
+        }
+
+        public PointF(Int64 x, Int64 y)
+        {
+            X = (float)x; Y = (float)y;
+        }
+
+        public static Boolean operator ==(PointF lhs, PointF rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(PointF lhs, PointF rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+    }
+
+    public struct Size
+    {
+        public Int32 Width;
+        public Int32 Height;
+
+        public Size(Int32 width, Int32 height)
+        {
+            Width = width;
+            Height = height;
+        }
+
+        public static Boolean operator ==(Size lhs, Size rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(Size lhs, Size rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+    }
+
     public struct Size<T> where T : struct
     {
         public T Width;

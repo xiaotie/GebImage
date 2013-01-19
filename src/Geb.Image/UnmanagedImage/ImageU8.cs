@@ -82,6 +82,24 @@ namespace Geb.Image
             return img;
         }
 
+        public unsafe ImageRgb24 ToImageRgb24()
+        {
+            ImageRgb24 img = new ImageRgb24(this.Width, this.Height);
+            Rgb24* p = img.Start;
+            Byte* to = Start;
+            Rgb24* end = p + Length;
+            while (p != end)
+            {
+                p->Red = *to;
+                p->Green = *to;
+                p->Blue = *to;
+
+                p++;
+                to++;
+            }
+            return img;
+        }
+
         /// <summary>
         /// 计算八联结的联结数，计算公式为：
         ///     (p6 - p6*p7*p0) + sigma(pk - pk*p(k+1)*p(k+2)), k = {0,2,4)
@@ -303,11 +321,11 @@ namespace Geb.Image
             // 第一步，Gauss 平滑
             copy.ApplyGaussianBlur(gaussianSiama, gaussianSize);
             byte* start = copy.Start + startX;
+            byte* p;
             int o = 0;
             for (int y = startY; y < stopY; y++)
             {
-                byte* line = start + y * width;
-                byte* p = line;
+                p = start + y * width;
                 for (int x = startX; x < stopX; x++, p++, o++)
                 {
                     gx = p[-width+1] + p[width+1] 
@@ -361,8 +379,7 @@ namespace Geb.Image
             start = this.Start + startX;
             for (int y = startY; y < stopY; y++)
             {
-                byte* line = start + y * width;
-                byte* p = line;
+                p = start + y * width;
                 // for each pixel
                 for (int x = startX; x < stopX; x++, p++, o++)
                 {
@@ -400,11 +417,14 @@ namespace Geb.Image
 
             // STEP 4 - hysteresis
             start = this.Start + startX;
+            byte* pUp;
+            byte* pDown;
             for (int y = startY; y < stopY; y++)
             {
-                byte* line = start + y * width;
-                byte* p = line;
-                for (int x = startX; x < stopX; x++, p++)
+                p = start + y * width;
+                pUp = p - width;
+                pDown = p + width;
+                for (int x = startX; x < stopX; x++, p++, pUp++, pDown++)
                 {
                     if (*p < highThreshold)
                     {
@@ -418,12 +438,12 @@ namespace Geb.Image
                             // check 8 neighboring pixels
                             if ((p[-1] < highThreshold) &&
                                 (p[1] < highThreshold) &&
-                                (p[-width - 1] < highThreshold) &&
-                                (p[-width] < highThreshold) &&
-                                (p[-width + 1] < highThreshold) &&
-                                (p[width - 1] < highThreshold) &&
-                                (p[width] < highThreshold) &&
-                                (p[width + 1] < highThreshold))
+                                (pUp[-1] < highThreshold) &&
+                                (pUp[0] < highThreshold) &&
+                                (pUp[1] < highThreshold) &&
+                                (pDown[-1] < highThreshold) &&
+                                (pDown[0] < highThreshold) &&
+                                (pDown[1] < highThreshold))
                             {
                                 *p = 0;
                             }

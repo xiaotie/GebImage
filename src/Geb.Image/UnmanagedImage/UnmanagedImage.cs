@@ -44,24 +44,68 @@ namespace Geb.Image
         /// </summary>
         public IntPtr StartIntPtr { get; private set; }
 
-        public Size<Int32> ImageSize
+        public Size ImageSize
         {
-            get { return new Size<Int32>(Width, Height); }
+            get { return new Size(Width, Height); }
         }
 
         private IColorConverter m_converter;
         private unsafe Byte* _start;
+
+        private Boolean _isOwner;
+
+        /// <summary>
+        /// 是否是图像数据所在内存的拥有者。如果非所在内存的拥有者，则不负责释放内存。
+        /// </summary>
+        public Boolean IsOwner
+        {
+            get { return _isOwner; }
+        }
+
+        /// <summary>
+        /// 是否图像内存的拥有权。
+        /// </summary>
+        /// <returns>如果释放前有所属内存，则返回所属内存的指针，否则返回空指针</returns>
+        public unsafe void* ReleaseOwner()
+        {
+            if (_start == null || _isOwner == false) return null;
+            else
+            {
+                _isOwner = false;
+                return _start;
+            }
+        }
 
         /// <summary>
         /// 感兴趣区域。目前尚无用途。
         /// </summary>
         public ROI ROI { get; private set; }
 
+        /// <summary>
+        /// 创建图像。
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
         public unsafe UnmanagedImage(Int32 width, Int32 height)
         {
             if (width <= 0) throw new ArgumentOutOfRangeException("width");
             else if (height <= 0) throw new ArgumentOutOfRangeException("height");
-            AllocMemory(width,height);
+            _isOwner = true;
+            AllocMemory(width, height);
+        }
+
+        /// <summary>
+        /// 创建图像，所创建的图像并不是图像数据的拥有者。
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="data"></param>
+        public unsafe UnmanagedImage(Int32 width, Int32 height, void* data)
+        {
+            if (width <= 0) throw new ArgumentOutOfRangeException("width");
+            else if (height <= 0) throw new ArgumentOutOfRangeException("height");
+            _isOwner = false;
+            _start = (Byte*) data;
         }
 
         private unsafe void AllocMemory(int width, int height)
@@ -92,8 +136,6 @@ namespace Geb.Image
             this.CreateFromBitmap(map);
         }
 
-        
-
         public void Dispose()
         {
             Dispose(true);
@@ -105,7 +147,10 @@ namespace Geb.Image
             if (false == disposed)
             {
                  disposed = true;
-                 Marshal.FreeHGlobal(StartIntPtr);
+                 if (_isOwner == true)
+                 {
+                     Marshal.FreeHGlobal(StartIntPtr);
+                 }
             }
         }
 
@@ -249,12 +294,6 @@ namespace Geb.Image
         public void ApplyMatrix(float a, float b, float c, float d, float e, float f)
         {
             //TODO: ApplyMatrix
-            throw new NotImplementedException();
-        }
-
-        public void Resize(UnmanagedImage<T> dst)
-        {
-            //TODO: Resize
             throw new NotImplementedException();
         }
 
