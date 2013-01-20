@@ -788,10 +788,6 @@ namespace Geb.Image
             }
         }
 
-        public void Fill(TriangleF region, TPixel color)
-        {
-        }
-
         public unsafe TPixel[] ToArray()
         {
             TPixel[] array = new TPixel[this.Length];
