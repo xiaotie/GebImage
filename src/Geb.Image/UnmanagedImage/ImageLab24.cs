@@ -127,6 +127,11 @@ namespace Geb.Image
         {
         }
 
+        public unsafe ImageLab24(Int32 width, Int32 height, void* data)
+            : base(width, height,data)
+        {
+        }
+
         public unsafe ImageLab24(ImageRgb24 img)
             : base(img.Width, img.Height)
         {

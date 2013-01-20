@@ -523,6 +523,11 @@ namespace Geb.Image
             DrawLine(new PointF(rect.X, rect.Y + rect.Height), new PointF(rect.X + rect.Width, rect.Y + rect.Height), color, radius);
         }
 
+        public void DrawLine(PointF start, PointF end, TPixel color)
+        {
+
+        }
+
         public void DrawLine(PointF start, PointF end, TPixel color, int radius)
         {
             float deltaX = end.X - start.X;
@@ -592,6 +597,18 @@ namespace Geb.Image
             SetColor(x, y, color, radius, Width - 1, Height - 1);
         }
 
+        /// <summary>
+        /// 绘制圆
+        /// </summary>
+        /// <param name="x">圆心横坐标</param>
+        /// <param name="y">圆心纵坐标</param>
+        /// <param name="color">颜色</param>
+        /// <param name="radius">圆的半径</param>
+        public void DrawCircle(float x, float y, TPixel color, int radius = 1)
+        {
+            SetColor(x, y, color, radius, Width - 1, Height - 1);
+        }
+
         public void SetColor(float x, float y, TPixel color, int radius = 1)
         {
             SetColor(x, y, color, radius, Width - 1, Height - 1);
@@ -616,6 +633,10 @@ namespace Geb.Image
                         this[yy, xx] = color;
                 }
             }
+        }
+
+        public void Fill(TriangleF region, TPixel color)
+        {
         }
 
         public unsafe TPixel[] ToArray()

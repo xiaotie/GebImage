@@ -20,6 +20,12 @@ namespace Geb.Image
         public double tx;
         public double ty;
 
+        public AffineTransform(TriangleF t1, TriangleF t2):
+            this(t1.P0.X, t1.P0.Y, t1.P1.X, t1.P1.Y, t1.P2.X, t1.P2.Y,
+                t2.P0.X, t2.P0.Y, t2.P1.X, t2.P1.Y, t2.P2.X, t2.P2.Y)
+        {
+        }
+
         /// <summary>
         /// 创建从点(x1,y1),(x2,y2),(x3,y3)变换为(xx1,yy1),(xx2,yy2),(xx3,yy3)仿射变换矩阵参数。
         /// </summary>
@@ -50,6 +56,12 @@ namespace Geb.Image
         {
             xx = a * x + c * y + tx;
             yy = b * x + d * y + ty;
+        }
+
+        public void Transform(PointF p1, ref PointF p2)
+        {
+            p2.X = (float)(a * p1.X + c * p1.Y + tx);
+            p2.Y = (float)(b * p1.X + d * p1.Y + ty);
         }
     }
 }

@@ -34,6 +34,11 @@ namespace Geb.Image
         {
         }
 
+        public unsafe ImageU8(Int32 width, Int32 height, void* data)
+            : base(width, height,data)
+        {
+        }
+
         public ImageU8(Bitmap map)
             : base(map)
         {

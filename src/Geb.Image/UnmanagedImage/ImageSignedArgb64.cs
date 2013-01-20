@@ -114,6 +114,11 @@ namespace Geb.Image
         {
         }
 
+        public unsafe ImageSignedArgb64(Int32 width, Int32 height, void* data)
+            : base(width, height,data)
+        {
+        }
+
         public ImageSignedArgb64(Bitmap map)
             : base(map)
         {

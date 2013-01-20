@@ -38,6 +38,11 @@ namespace Geb.Image
 
     public partial class ImageInt32 : UnmanagedImage<Int32>
     {
+        public unsafe ImageInt32(Int32 width, Int32 height, void* data)
+            : base(width, height,data)
+        {
+        }
+
         public unsafe ImageInt32(Int32 width, Int32 height)
             : base(width, height)
         {

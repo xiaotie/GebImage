@@ -35,6 +35,11 @@ namespace Geb.Image
         {
         }
 
+        public unsafe ImageFloat(Int32 width, Int32 height, void* data)
+            : base(width, height,data)
+        {
+        }
+
         protected override IColorConverter CreateByteConverter()
         {
             return new FloatConverter();

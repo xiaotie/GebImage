@@ -145,6 +145,95 @@ namespace Geb.Image
         }
     }
 
+    public partial struct PointD
+    {
+        public double X;
+        public double Y;
+
+        public PointD(float x, float y)
+        {
+            X = x; Y = y;
+        }
+
+        public PointD(double x, double y)
+        {
+            X = x; Y = y;
+        }
+
+        public PointD(Int16 x, Int16 y)
+        {
+            X = x; Y = y;
+        }
+
+        public PointD(Int32 x, Int32 y)
+        {
+            X = x; Y = y;
+        }
+
+        public PointD(Int64 x, Int64 y)
+        {
+            X = (float)x; Y = (float)y;
+        }
+
+        public static Boolean operator ==(PointD lhs, PointD rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(PointD lhs, PointD rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+    }
+
+    public struct TriangleF
+    {
+        public PointF P0;
+        public PointF P1;
+        public PointF P2;
+
+        public TriangleF(PointF p0, PointF p1, PointF p2)
+        {
+            P0 = p0;
+            P1 = p1;
+            P2 = p2;
+        }
+
+        public Boolean Contains(PointF p)
+        {
+            float maxX = float.MinValue;
+            float minX = float.MaxValue;
+            float maxY = float.MinValue;
+            float minY = float.MaxValue;
+            maxX = Math.Max(maxX, P0.X);
+            maxX = Math.Max(maxX, P1.X);
+            maxX = Math.Max(maxX, P2.X);
+            minX = Math.Min(minX, P0.X);
+            minX = Math.Min(minX, P1.X);
+            minX = Math.Min(minX, P2.X);
+            maxY = Math.Max(maxY, P0.Y);
+            maxY = Math.Max(maxY, P1.Y);
+            maxY = Math.Max(maxY, P2.Y);
+            minY = Math.Min(minY, P0.Y);
+            minY = Math.Min(minY, P1.Y);
+            minY = Math.Min(minY, P2.Y);
+
+            if (maxX < p.X || maxY < p.Y || minX > p.X || minY > p.Y) return false;
+
+            return (IsOnSameSide(p, P0, P1, P2) == false)
+                && (IsOnSameSide(p, P1, P2, P0) == false)
+                && (IsOnSameSide(p, P2, P0, P1) == false);
+        }
+
+        private Boolean IsOnSameSide(PointF p0, PointF p1, PointF p2, PointF p3)
+        {
+            float a = p0.Y - p1.Y;
+            float b = p1.X - p0.X;
+            float c = p0.X * p1.Y - p1.X * p0.Y;
+            return (a * p1.X + b * p2.Y + c) * (a * p3.X + b * p3.Y + c) >= 0;
+        }
+    }
+
     public struct Size
     {
         public Int32 Width;

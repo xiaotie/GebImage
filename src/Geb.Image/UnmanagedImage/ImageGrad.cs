@@ -28,6 +28,11 @@ namespace Geb.Image
         {
         }
 
+        public unsafe ImageGrad(Int32 width, Int32 height, void* data)
+            : base(width, height,data)
+        {
+        }
+
         public unsafe ImageU8 ToImageU8()
         {
             ImageU8 img = new ImageU8(this.Width, this.Height);
