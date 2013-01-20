@@ -81,6 +81,27 @@ namespace Geb.Image.Hidden
             return Start + row * this.Width;
         }
 
+        /// <summary>
+        /// 代表当前图像内容的二维数组。
+        /// .Net 的 IDE 均不支持直接查看.Net程序中的指针内容，DataSnapshot 提供了调试时查看
+        /// 图像数据的唯一途径。请谨慎使用本方法。
+        /// </summary>
+        public unsafe TPixel[,] DataSnapshot
+        {
+            get
+            {
+                TPixel[,] data = new TPixel[Height, Width];
+                for (int h = 0; h < Height; h++)
+                {
+                    for (int w = 0; w < Width; w++)
+                    {
+                        data[h, w] = this[h, w];
+                    }
+                }
+                return data;
+            }
+        }
+
         public unsafe TImage CloneFrom(UnmanagedImage<TPixel> src)
         {
             if (src == null) throw new ArgumentNullException("src");
