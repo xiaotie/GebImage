@@ -230,7 +230,7 @@ namespace Geb.Image
             float a = p0.Y - p1.Y;
             float b = p1.X - p0.X;
             float c = p0.X * p1.Y - p1.X * p0.Y;
-            return (a * p1.X + b * p2.Y + c) * (a * p3.X + b * p3.Y + c) >= 0;
+            return (a * p2.X + b * p2.Y + c) * (a * p3.X + b * p3.Y + c) >= 0;
         }
     }
 
