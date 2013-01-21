@@ -47,7 +47,8 @@ namespace Geb.Image
             b = (y31 * yy21 - y21 * yy31) / (y31 * x21 - y21 * x31);
             c = (x31 * xx21 - x21 * xx31) / (y21 * x31 - y31 * x21);
             d = (x31 * yy21 - x21 * yy31) / (y21 * x31 - y31 * x21);
-            double tCoeff = 1/(x31*(y2*x1-y1*x2)-x21*(y3*x1-y1*x3));
+            double val = (x31 * (y2 * x1 - y1 * x2) - x21 * (y3 * x1 - y1 * x3)); ;
+            double tCoeff = val == 0 ? int.MaxValue : 1/val;
             tx = ((xx2 * x1 - xx1 * x2) * (y3 * x1 - y1 * x3) - (y2 * x1 - y1 * x2) * (xx3 * x1 - xx1 * x3)) * tCoeff;
             ty = ((yy2 * x1 - yy1 * x2) * (y3 * x1 - y1 * x3) - (y2 * x1 - y1 * x2) * (yy3 * x1 - yy1 * x3)) * tCoeff;
         }

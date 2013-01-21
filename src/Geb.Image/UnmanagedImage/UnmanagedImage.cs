@@ -104,8 +104,16 @@ namespace Geb.Image
         {
             if (width <= 0) throw new ArgumentOutOfRangeException("width");
             else if (height <= 0) throw new ArgumentOutOfRangeException("height");
+            Width = width;
+            Height = height;
             _isOwner = false;
             _start = (Byte*) data;
+            Length = Width * Height;
+            SizeOfType = SizeOfT();
+            ByteCount = SizeOfType * Length;
+            m_converter = this.CreateByteConverter();
+            _start = (Byte*)data;
+            StartIntPtr = (IntPtr)_start;
         }
 
         private unsafe void AllocMemory(int width, int height)

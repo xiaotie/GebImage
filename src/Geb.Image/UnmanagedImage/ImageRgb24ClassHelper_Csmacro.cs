@@ -365,19 +365,51 @@ namespace Geb.Image
             TPixel* srcLine = (TPixel*)(src.StartIntPtr) + srcWidth * startSrcY + startSrcX;
             TPixel* dstLine = this.Start + dstWidth * startDstY + startDstX;
             TPixel* endSrcLine = srcLine + srcWidth * copyHeight;
-            while (srcLine < endSrcLine)
+
+            if (srcLine[0] is Argb32)
             {
-                TPixel* pSrc = srcLine;
-                TPixel* endPSrc = pSrc + copyWidth;
-                TPixel* pDst = dstLine;
-                while (pSrc < endPSrc)
+                int beta;
+                while (srcLine < endSrcLine)
                 {
-                    *pDst = *pSrc;
-                    pSrc++;
-                    pDst++;
+                    Argb32* pSrc = (Argb32*)srcLine;
+                    Argb32* endPSrc = pSrc + copyWidth;
+                    Argb32* pDst = (Argb32*)dstLine;
+                    while (pSrc < endPSrc)
+                    {
+                        if (pSrc->Alpha == 255 || pDst->Alpha == 0)
+                        {
+                            *pDst = *pSrc;
+                        }
+                        else if (pSrc->Alpha > 0)
+                        {
+                            beta = 255 - pSrc->Alpha;
+                            pDst->Blue = (Byte)((pSrc->Blue * pSrc->Alpha + pDst->Blue * beta) >> 8);
+                            pDst->Green = (Byte)((pSrc->Green * pSrc->Alpha + pDst->Green * beta) >> 8);
+                            pDst->Red = (Byte)((pSrc->Red * pSrc->Alpha + pDst->Red * beta) >> 8);
+                        }
+                        pSrc++;
+                        pDst++;
+                    }
+                    srcLine += srcWidth;
+                    dstLine += dstWidth;
                 }
-                srcLine += srcWidth;
-                dstLine += dstWidth;
+            }
+            else
+            {
+                while (srcLine < endSrcLine)
+                {
+                    TPixel* pSrc = srcLine;
+                    TPixel* endPSrc = pSrc + copyWidth;
+                    TPixel* pDst = dstLine;
+                    while (pSrc < endPSrc)
+                    {
+                        *pDst = *pSrc;
+                        pSrc++;
+                        pDst++;
+                    }
+                    srcLine += srcWidth;
+                    dstLine += dstWidth;
+                }
             }
             return this;
         }
