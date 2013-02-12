@@ -45,6 +45,7 @@ namespace Geb.Image.Demo
 
             this.OpenImageFile(path =>
                 {
+                    ImageRgb24 img = new ImageRgb24(path);
                 });
         }
     }

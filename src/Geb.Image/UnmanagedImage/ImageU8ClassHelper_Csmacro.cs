@@ -18,13 +18,38 @@ namespace Geb.Image
 
     public static partial class ImageU8ClassHelper
     {
+        /// <summary>
+        /// 对每个像素进行操作
+        /// </summary>
+        /// <param name="p">指向像素的指针</param>
         public unsafe delegate void ActionOnPixel(TPixel* p);
+
+        /// <summary>
+        /// 对每个位置的像素进行操作
+        /// </summary>
+        /// <param name="row">像素所在行</param>
+        /// <param name="column">像素所在列</param>
+        /// <param name="p">指向像素的指针</param>
         public unsafe delegate void ActionWithPosition(Int32 row, Int32 column, TPixel* p);
+
+        /// <summary>
+        /// 对每个像素进行判断
+        /// </summary>
+        /// <param name="p">指向像素的指针</param>
+        /// <returns></returns>
         public unsafe delegate Boolean PredicateOnPixel(TPixel* p);
 
+        /// <summary>
+        /// 遍历图像，对每个像素进行操作
+        /// </summary>
+        /// <param name="src">图像</param>
+        /// <param name="handler">void ActionOnPixel(TPixel* p)</param>
+        /// <returns>处理后的图像（同传入图像是一个对象）</returns>
         public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, ActionOnPixel handler)
         {
             TPixel* start = (TPixel*)src.StartIntPtr;
+            if (start == null) return src;
+
             TPixel* end = start + src.Length;
             while (start != end)
             {
@@ -34,12 +59,20 @@ namespace Geb.Image
             return src;
         }
 
+        /// <summary>
+        /// 遍历图像，对每个位置的像素进行操作
+        /// </summary>
+        /// <param name="src">图像</param>
+        /// <param name="handler">void ActionWithPosition(Int32 row, Int32 column, TPixel* p)</param>
+        /// <returns>处理后的图像（同传入图像是一个对象）</returns>
         public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, ActionWithPosition handler)
         {
             Int32 width = src.Width;
             Int32 height = src.Height;
 
             TPixel* p = (TPixel*)src.StartIntPtr;
+            if (p == null) return src;
+
             for (Int32 r = 0; r < height; r++)
             {
                 for (Int32 w = 0; w < width; w++)
@@ -51,8 +84,18 @@ namespace Geb.Image
             return src;
         }
 
+        /// <summary>
+        /// 遍历图像中的一段，对每个像素进行操作
+        /// </summary>
+        /// <param name="src">图像</param>
+        /// <param name="start">指向开始像素的指针</param>
+        /// <param name="length">处理的像素数量</param>
+        /// <param name="handler">void ActionOnPixel(TPixel* p)</param>
+        /// <returns>处理后的图像（同传入图像是一个对象）</returns>
         public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, TPixel* start, uint length, ActionOnPixel handler)
         {
+            if (start == null) return src;
+
             TPixel* end = start + src.Length;
             while (start != end)
             {
@@ -62,10 +105,19 @@ namespace Geb.Image
             return src;
         }
 
+        /// <summary>
+        /// 统计符合条件的像素数量
+        /// </summary>
+        /// <param name="src">图像</param>
+        /// <param name="handler">Boolean PredicateOnPixel(TPixel* p)</param>
+        /// <returns>符合条件的像素数量</returns>
         public unsafe static Int32 Count(this UnmanagedImage<TPixel> src, PredicateOnPixel handler)
         {
             TPixel* start = (TPixel*)src.StartIntPtr;
             TPixel* end = start + src.Length;
+
+            if (start == null) return 0;
+
             Int32 count = 0;
             while (start != end)
             {
@@ -75,10 +127,18 @@ namespace Geb.Image
             return count;
         }
 
+        /// <summary>
+        /// 统计符合条件的像素数量
+        /// </summary>
+        /// <param name="src">图像</param>
+        /// <param name="handler">Boolean Predicate<TPixel></param>
+        /// <returns>符合条件的像素数量</returns>
         public unsafe static Int32 Count(this UnmanagedImage<TPixel> src, Predicate<TPixel> handler)
         {
             TPixel* start = (TPixel*)src.StartIntPtr;
             TPixel* end = start + src.Length;
+            if (start == null) return 0;
+
             Int32 count = 0;
             while (start != end)
             {
@@ -88,44 +148,14 @@ namespace Geb.Image
             return count;
         }
 
-        public unsafe static List<TPixel> Where(this UnmanagedImage<TPixel> src, PredicateOnPixel handler)
-        {
-            List<TPixel> list = new List<TPixel>();
-
-            TPixel* start = (TPixel*)src.StartIntPtr;
-            TPixel* end = start + src.Length;
-            while (start != end)
-            {
-                if (handler(start) == true) list.Add(*start);
-                ++start;
-            }
-
-            return list;
-        }
-
-        public unsafe static List<TPixel> Where(this UnmanagedImage<TPixel> src, Predicate<TPixel> handler)
-        {
-            List<TPixel> list = new List<TPixel>();
-
-            TPixel* start = (TPixel*)src.StartIntPtr;
-            TPixel* end = start + src.Length;
-            while (start != end)
-            {
-                if (handler(*start) == true) list.Add(*start);
-                ++start;
-            }
-
-            return list;
-        }
-
         /// <summary>
         /// 查找模板。模板中值代表实际像素值。负数代表任何像素。返回查找得到的像素的左上端点的位置。
         /// </summary>
-        /// <param name="template"></param>
-        /// <returns></returns>
-        public static unsafe List<System.Drawing.Point> FindTemplate(this UnmanagedImage<TPixel> src, int[,] template)
+        /// <param name="template">TPixel[,]</param>
+        /// <returns>查找到的模板集合</returns>
+        public static unsafe List<PointS> FindTemplate(this UnmanagedImage<TPixel> src, TPixel[,] template)
         {
-            List<System.Drawing.Point> finds = new List<System.Drawing.Point>();
+            List<PointS> finds = new List<PointS>();
             int tHeight = template.GetUpperBound(0) + 1;
             int tWidth = template.GetUpperBound(1) + 1;
             int toWidth = src.Width - tWidth + 1;
@@ -141,15 +171,15 @@ namespace Geb.Image
                     {
                         for (int cc = 0; cc < tWidth; cc++)
                         {
-                            int pattern = template[rr, cc];
-                            if (pattern >= 0 && srcStart[rr * stride + cc] != pattern)
+                            TPixel pattern = template[rr, cc];
+                            if (srcStart[rr * stride + cc] != pattern)
                             {
                                 goto Next;
                             }
                         }
                     }
 
-                    finds.Add(new System.Drawing.Point(c, r));
+                    finds.Add(new PointS(c, r));
 
                 Next:
                     continue;
