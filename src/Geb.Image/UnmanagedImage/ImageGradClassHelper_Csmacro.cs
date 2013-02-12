@@ -15,8 +15,6 @@ namespace Geb.Image
 
     public static partial class ImageGradClassHelper
     {
-        
-
         public unsafe delegate void ActionOnPixel(TPixel* p);
         public unsafe delegate void ActionWithPosition(Int32 row, Int32 column, TPixel* p);
         public unsafe delegate Boolean PredicateOnPixel(TPixel* p);
@@ -157,14 +155,10 @@ namespace Geb.Image
 
             return finds;
         }
-
-        
     }
 
     public partial class ImageGrad
     {
-        
-
         public unsafe TPixel* Start { get { return (TPixel*)this.StartIntPtr; } }
 
         public unsafe TPixel this[int index]
@@ -363,7 +357,7 @@ namespace Geb.Image
             TPixel* srcLine = (TPixel*)(src.StartIntPtr) + srcWidth * startSrcY + startSrcX;
             TPixel* dstLine = this.Start + dstWidth * startDstY + startDstX;
             TPixel* endSrcLine = srcLine + srcWidth * copyHeight;
-
+            int alpha1, alpha2, blendAlpha,alpha;
             if (srcLine[0] is Argb32)
             {
                 int beta;
@@ -380,10 +374,27 @@ namespace Geb.Image
                         }
                         else if (pSrc->Alpha > 0)
                         {
+                               //BlendAlpha = A1 * A2 \ 255
+                               //ImageData(Speed + 3) = A1 + A2 - BlendAlpha                // Alpha
+                               //ImageData(Speed) = (B1 * A1 + B2 * A2 - BlendAlpha * (B1 + B2 - Blue)) \ 255
+                               //ImageData(Speed + 1) = (G1 * A1 + G2 * A2 - BlendAlpha * (G1 + G2 - Green)) \ 255
+                               //ImageData(Speed + 2) = (R1 * A1 + R2 * A2 - BlendAlpha * (R1 + R2 - Red)) \ 255
+
+                            //beta = 255 - pSrc->Alpha;
+                            //pDst->Blue = (Byte)((pSrc->Blue * pSrc->Alpha + pDst->Blue * beta) >> 8);
+                            //pDst->Green = (Byte)((pSrc->Green * pSrc->Alpha + pDst->Green * beta) >> 8);
+                            //pDst->Red = (Byte)((pSrc->Red * pSrc->Alpha + pDst->Red * beta) >> 8);
+
+                            alpha1 = pSrc->Alpha;
+                            alpha2 = pDst->Alpha;
+                            blendAlpha = alpha1 * alpha2 / 255;
                             beta = 255 - pSrc->Alpha;
-                            pDst->Blue = (Byte)((pSrc->Blue * pSrc->Alpha + pDst->Blue * beta) >> 8);
-                            pDst->Green = (Byte)((pSrc->Green * pSrc->Alpha + pDst->Green * beta) >> 8);
-                            pDst->Red = (Byte)((pSrc->Red * pSrc->Alpha + pDst->Red * beta) >> 8);
+                            pDst->Alpha = (Byte)(alpha1 + alpha2 - blendAlpha);
+
+                            // 严格来说，下面的转换算法只是近似算法，不是准确算法。准确算法太耗时间
+                            pDst->Blue = (Byte)((pSrc->Blue * alpha1 + pDst->Blue * beta) >> 8);
+                            pDst->Green = (Byte)((pSrc->Green * alpha1 + pDst->Green * beta) >> 8);
+                            pDst->Red = (Byte)((pSrc->Red * alpha1 + pDst->Red * beta) >> 8);
                         }
                         pSrc++;
                         pDst++;
@@ -881,14 +892,10 @@ namespace Geb.Image
             }
             return imgDst;
         }
-
-        
     }
 
     public partial struct Grad
     {
-        
-
         public static Boolean operator ==(TPixel lhs, int rhs)
         {
             throw new NotImplementedException();
@@ -928,7 +935,5 @@ namespace Geb.Image
         {
             return !lhs.Equals(rhs);
         }
-
-        
     }
 }

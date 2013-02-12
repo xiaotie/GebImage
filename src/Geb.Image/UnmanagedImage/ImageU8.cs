@@ -44,6 +44,11 @@ namespace Geb.Image
         {
         }
 
+        public ImageU8(String path)
+            :this(new Bitmap(path))
+        {
+        }
+
         protected override IColorConverter CreateByteConverter()
         {
             return new ByteConverter();
@@ -139,6 +144,89 @@ namespace Geb.Image
         /// </summary>
         public unsafe void Thinning(Byte foreground = 255)
         {
+            // TODO: laviewpbt 说这个算法有问题，性能不是最高，且有错误。他的代码如下：
+            /*
+        // http://www.cnblogs.com/xiaotie/archive/2010/08/12/1797760.html
+        public static void ThinUseHilditchAndXiaoTie(FastBitmap bmp)
+        {
+            int P1, P2, P3, P4, P5, P6, P7, P8;
+            int Speed, Fast, Connectivity;
+            int Width, Height, Stride, X, Y, Sum;
+            byte* Pointer;
+            bool Start = true;
+            Width = bmp.Width; Height = bmp.Height; Stride = bmp.Stride;
+            byte* Mark = (byte*)Marshal.AllocHGlobal(Stride * Height);          // 用于标记那些点是已经被处理为背景了
+            byte* Clone = (byte*)Marshal.AllocHGlobal(Stride * Height);         // 图像数据的克隆
+            Win32Api.FillMemory((IntPtr)Mark, Stride * Height, 0);              // 先都为0
+            Win32Api.CopyMemory(Clone, bmp.Pointer, Stride * Height);           // 复制数据
+            Pointer = bmp.Pointer;
+
+            while (Start == true)
+            {
+                Start = false;
+                for (Y = 1; Y < Height - 1; Y++)
+                {
+                    Speed = Stride * Y;
+                    for (X = 1; X < Width - 1; X++)
+                    {
+                        Speed++;
+                        if (Clone[Speed] != 255) continue;                  // 条件1：必须是前景点（=255）
+
+                        // P4 P3 P2
+                        // P5 P0 P1
+                        // P6 P7 P8
+                        Fast = Speed - Stride;                              // 获取其周边的点，将前景点（白色）映射为0，背景点（黑色）隐射为1
+                        P4 = 1 - (Clone[Fast - 1] & 1);                     // 以方便计算8连通联结数。
+                        P3 = 1 - (Clone[Fast] & 1);
+                        P2 = 1 - (Clone[Fast + 1] & 1);
+                        P5 = 1 - (Clone[Speed - 1] & 1);
+                        P1 = 1 - (Clone[Speed + 1] & 1);
+                        Fast = Speed + Stride;
+                        P6 = 1 - (Clone[Fast - 1] & 1);
+                        P7 = 1 - (Clone[Fast] & 1);
+                        P8 = 1 - (Clone[Fast + 1] & 1);
+
+                        Sum = P1 + P3 + P5 + P7;                            // 如果先只取这四个变量的值，然后根据判断结果来决定是否需要取后结果值，实践证明速度没什么提升
+                        if (Sum == 0) continue;                             // 条件2： P1,P3,P5,P7不全部为前景点
+
+                        Sum += P2 + P4 + P6 + P8;
+                        if (Sum > 6) continue;                              // 条件3：至少有两个是前景点
+
+                        Connectivity = P7 - (P7 & P8 & P1)                  // 计算8连通联结数,0和1之间的乘法可以优化为位运算
+                                     + P1 - (P1 & P2 & P3)
+                                     + P3 - (P3 & P4 & P5)
+                                     + P5 - (P5 & P6 & P7);
+                        if (Connectivity != 1) continue;                    // 条件4：P0的8连通联结数为必须为
+
+                        if (Mark[Speed - Stride] == 255)
+                        {
+                            Connectivity = P7 - (P7 & P8 & P1)
+                                        + P1 - (P1 & P2)
+                                        + 1 - (P4 & P5)
+                                        + P5 - (P5 & P6 & P7);
+                            if (Connectivity != 1) continue;                // 条件5: 假设P3已经标记删除，那么当P3为背景色（P3=1)时，P0的8联通联结数为必须为1
+                        }
+
+                        if (Mark[Speed - 1] == 255)
+                        {
+                            Connectivity = P7 - (P7 & P8 & P1)
+                                         + P1 - (P1 & P2 & P3)
+                                         + P3 - (P3 & P4)
+                                         + 1 - (P6 & P7);
+                            if (Connectivity != 1) continue;                // 条件6: 假设P5已经标记删除，那么当P5为背景色（P5=1)时，P0的8联通联结数为必须为1
+                        }
+                        Mark[Speed] = 255;                                  // 标记改点（前景点）已经被删除
+                        Pointer[Speed] = 0;                                 // 将前景色更改为背景色
+                        Start = true;                                       // 需要继续循环
+                    }
+                }
+                Win32Api.CopyMemory(Clone, Pointer, Stride * Height);       // 注意上面的循环体里用的备份数据，当原始数据更新后，必须同步更新备份数据，这个拷贝的速度要快很多
+            }
+            Marshal.FreeHGlobal((IntPtr)Mark);
+            Marshal.FreeHGlobal((IntPtr)Clone);
+        }
+
+            */
             Byte* start = this.Start;
             Int32 width = this.Width;
             Int32 height = this.Height;

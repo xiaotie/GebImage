@@ -13,8 +13,6 @@ namespace Geb.Image
 
     public partial class ImageChannelF : ImageChannel<Single>
     {
-        
-
         public static unsafe void FillImage(ImageChannel<TPixel> img, TPixel value)
         {
             int step = img.Step;
@@ -318,8 +316,6 @@ namespace Geb.Image
                 return grad;
             }
         }
-
-        
     }
 }
 
