@@ -251,13 +251,6 @@ namespace Geb.Image
             return new Int32Converter();
         }
 
-        public override IImage Clone()
-        {
-            ImageInt32 img = new ImageInt32(this.Width, this.Height);
-            img.CloneFrom(this);
-            return img;
-        }
-
         public unsafe ImageU8 ToImageU8()
         {
             ImageU8 imgU8 = new ImageU8(this.Width, this.Height);

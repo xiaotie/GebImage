@@ -152,27 +152,6 @@ namespace Geb.Image
         
         #endregion
 
-        #region IImage的扩展方法
-
-        /// <summary>
-        /// 弹出模态窗口，显示图像。安静模式下不弹出窗口，直接返回。
-        /// </summary>
-        /// <typeparam name="T">IImage类型</typeparam>
-        /// <param name="img">图像</param>
-        /// <param name="title">弹出模式窗体的标题</param>
-        /// <returns>当前图像</returns>
-        public static T ShowDialog<T>(this T img, String title = null)
-            where T : IImage
-        {
-            if (Config.SilentMode == false) // 非安静模式不弹出窗体
-            {
-                img.ToBitmap().ShowDialog(title);
-            }
-            return img;
-        }
-
-        #endregion
-
         public static int Area(this Rectangle rec)
         {
             return rec.Width * rec.Height;

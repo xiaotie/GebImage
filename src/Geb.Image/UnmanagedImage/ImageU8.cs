@@ -54,13 +54,6 @@ namespace Geb.Image
             return new ByteConverter();
         }
 
-        public override IImage Clone()
-        {
-            ImageU8 img = new ImageU8(this.Width, this.Height);
-            img.CloneFrom(this);
-            return img;
-        }
-
         public unsafe ImageU8 ApplyInvert()
         {
             Byte* p = this.Start;

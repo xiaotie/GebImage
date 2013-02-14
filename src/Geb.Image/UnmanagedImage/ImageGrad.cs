@@ -82,13 +82,6 @@ namespace Geb.Image
             throw new NotImplementedException();
         }
 
-        public override IImage Clone()
-        {
-            ImageGrad img = new ImageGrad(this.Width, this.Height);
-            img.CloneFrom(this);
-            return img;
-        }
-
         protected override IColorConverter CreateByteConverter()
         {
             return null;

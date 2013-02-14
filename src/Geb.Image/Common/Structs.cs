@@ -306,6 +306,11 @@ namespace Geb.Image
                 && this.Right >= other.Right;
         }
 
+        public Boolean IsIntersects(Rect r)
+        {
+            return !(r.Left>Right || r.Right<Left || r.Top>Bottom || r.Bottom<Top);
+        }
+
         public Boolean IsContains(PointS point)
         {
             return this.Top <= point.Y
@@ -351,6 +356,11 @@ namespace Geb.Image
                 && this.Bottom >= other.Bottom
                 && this.Left <= other.Left
                 && this.Right >= other.Right;
+        }
+
+        public Boolean IsIntersects(Rect r)
+        {
+            return !(r.Left > Right || r.Right < Left || r.Top > Bottom || r.Bottom < Top);
         }
 
         public Boolean IsContains(RectS other)

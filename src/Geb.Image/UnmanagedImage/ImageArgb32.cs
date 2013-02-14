@@ -186,13 +186,6 @@ namespace Geb.Image
             return img;
         }
 
-        public override IImage Clone()
-        {
-            ImageArgb32 img = new ImageArgb32(this.Width, this.Height);
-            img.CloneFrom(this);
-            return img;
-        }
-
         protected override System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
         {
             return System.Drawing.Imaging.PixelFormat.Format32bppArgb;

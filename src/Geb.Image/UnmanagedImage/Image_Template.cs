@@ -102,6 +102,13 @@ namespace Geb.Image.Hidden
             }
         }
 
+        public TImage Clone()
+        {
+            TImage img = new TImage(this.Width, this.Height);
+            img.CloneFrom(this);
+            return img;
+        }
+
         public unsafe TImage CloneFrom(UnmanagedImage<TPixel> src)
         {
             if (src == null) throw new ArgumentNullException("src");
@@ -116,6 +123,20 @@ namespace Geb.Image.Hidden
                 *start = *from;
                 ++start;
                 ++from;
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// 弹出模态窗口，显示图像。安静模式下不弹出窗口，直接返回。
+        /// </summary>
+        /// <param name="title">弹出模式窗体的标题</param>
+        /// <returns>当前图像</returns>
+        public TImage ShowDialog(String title = null)
+        {
+            if (Config.SilentMode == false) // 非安静模式不弹出窗体
+            {
+                this.ToBitmap().ShowDialog(title);
             }
             return this;
         }

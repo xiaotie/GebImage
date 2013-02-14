@@ -390,15 +390,6 @@ namespace Geb.Image
             }
         }
 
-        
-
-        public override IImage Clone()
-        {
-            ImageRgb24 img = new ImageRgb24(this.Width, this.Height);
-            img.CloneFrom(this);
-            return img;
-        }
-
         protected override System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
         {
             return System.Drawing.Imaging.PixelFormat.Format24bppRgb;

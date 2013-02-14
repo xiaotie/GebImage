@@ -11,7 +11,7 @@ using System.Drawing.Imaging;
 
 namespace Geb.Image
 {
-    public abstract class UnmanagedImage<T> : IDisposable, IImage
+    public abstract class UnmanagedImage<T> : IDisposable
         where T : struct
     {
         /// <summary>
@@ -308,8 +308,6 @@ namespace Geb.Image
         protected abstract PixelFormat GetOutputBitmapPixelFormat();
 
         protected abstract unsafe void ToBitmapCore(byte* src, byte* dst, int width);
-
-        public abstract IImage Clone();
 
         protected abstract IColorConverter CreateByteConverter();
     }

@@ -237,13 +237,6 @@ namespace Geb.Image
             return img;
         }
 
-        public override IImage Clone()
-        {
-            ImageSignedArgb64 img = new ImageSignedArgb64(this.Width, this.Height);
-            img.CloneFrom(this);
-            return img;
-        }
-
         protected override System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
         {
             return System.Drawing.Imaging.PixelFormat.Format32bppArgb;

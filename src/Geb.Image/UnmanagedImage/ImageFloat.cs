@@ -45,12 +45,7 @@ namespace Geb.Image
             return new FloatConverter();
         }
 
-        public override IImage Clone()
-        {
-            ImageFloat img = new ImageFloat(this.Width, this.Height);
-            img.CloneFrom(this);
-            return img;
-        }
+        
 
         public unsafe ImageU8 ToImageU8(int coeff = 255)
         {

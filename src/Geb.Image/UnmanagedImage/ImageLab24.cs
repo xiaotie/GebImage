@@ -151,13 +151,6 @@ namespace Geb.Image
             return new Lab24Converter();
         }
 
-        public override IImage Clone()
-        {
-            ImageLab24 img = new ImageLab24(this.Width,this.Height);
-            img.CloneFrom(this);
-            return img;
-        }
-
         protected override System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
         {
             return System.Drawing.Imaging.PixelFormat.Format24bppRgb;

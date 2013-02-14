@@ -144,7 +144,6 @@
     <Compile Include="UnmanagedImage\ImageClassHelper_Template.cs" />
     <Compile Include="UnmanagedImage\IByteConverter.cs" />
     <Compile Include="Common\ConvolutionKernel.cs" />
-    <Compile Include="Common\IImage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\Range.cs" />
     <Compile Include="UnmanagedImage\ImageArgb32.cs" />
