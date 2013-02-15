@@ -5,8 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Geb.Image
 {
@@ -102,63 +102,49 @@ namespace Geb.Image
         #endregion
     }
 
-    public struct Lab24Converter : IColorConverter
+    public partial class ImageLab24 : IDisposable
     {
-        public unsafe void Copy(Rgb24* from, void* to, int length)
+        #region Image <-> Bitmap 所需的方法
+
+        private unsafe void Copy(Rgb24* from, void* to, int length)
         {
             UnmanagedImageConverter.ToLab24(from, (Lab24*)to, length);
         }
 
-        public unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Argb32* from, void* to, int length)
         {
             UnmanagedImageConverter.ToLab24(from, (Lab24*)to, length);
         }
 
-        public unsafe void Copy(byte* from, void* to, int length)
+        private unsafe void Copy(byte* from, void* to, int length)
         {
             UnmanagedImageConverter.ToLab24(from, (Lab24*)to, length);
         }
-    }
 
-    public partial class ImageLab24 : UnmanagedImage<Lab24>
-    {
-        public unsafe ImageLab24(Int32 width,Int32 height)
-            : base(width,height)
+        private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
+            UnmanagedImageConverter.ToRgb24((Lab24*)src, (Rgb24*)dst, width);
         }
 
-        public unsafe ImageLab24(Int32 width, Int32 height, void* data)
-            : base(width, height,data)
+        private PixelFormat GetOutputBitmapPixelFormat()
         {
+            return PixelFormat.Format24bppRgb;
         }
+
+        #endregion
 
         public unsafe ImageLab24(ImageRgb24 img)
-            : base(img.Width, img.Height)
+            : this(img.Width, img.Height)
         {
             int length = img.Length;
-            UnmanagedImageConverter.ToLab24(img.Start, (Lab24*)this.StartIntPtr, length);
+            UnmanagedImageConverter.ToLab24(img.Start, (Lab24*)this.Start, length);
         }
 
         public unsafe ImageRgb24 ToImageRgb24()
         {
             ImageRgb24 img = new ImageRgb24(this.Width, this.Height);
-            UnmanagedImageConverter.ToRgb24((Lab24*)this.StartIntPtr, img.Start, img.Length);
+            UnmanagedImageConverter.ToRgb24((Lab24*)this.Start, img.Start, img.Length);
             return img;
-        }
-
-        protected override IColorConverter CreateByteConverter()
-        {
-            return new Lab24Converter();
-        }
-
-        protected override System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
-        {
-            return System.Drawing.Imaging.PixelFormat.Format24bppRgb;
-        }
-
-        protected override unsafe void ToBitmapCore(byte* src, byte* dst, int width)
-        {
-            UnmanagedImageConverter.ToRgb24((Lab24*)src, (Rgb24*)dst, width);
         }
     }
 }

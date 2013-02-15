@@ -12,12 +12,11 @@ using System.Text;
 
 namespace Geb.Image.Hidden
 {
-    public abstract class ImageFilter_Template : UnmanagedImage<TPixel>
+    public class ImageFilter_Template : TImage
     {
-        private ImageFilter_Template()
-            : base(1, 1)
+        public ImageFilter_Template()
+            :base(1,1)
         {
-            throw new NotImplementedException();
         }
 
         #region mixin
@@ -36,7 +35,7 @@ namespace Geb.Image.Hidden
 
             int width = this.Width;
             int height = this.Height;
-            TPixel* start = (TPixel*)this.StartIntPtr;
+            TPixel* start = this.Start;
 
             // 复制边界像素
             TPixel* dstStart = maskImage.Start + extend;

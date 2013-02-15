@@ -67,25 +67,7 @@ namespace Geb.Image
         }
     }
 
-    public struct SignedArgb64Converter : IColorConverter
-    {
-        public unsafe void Copy(Rgb24* from, void* to, int length)
-        {
-            UnmanagedImageConverter.ToSignedArgb64(from, (SignedArgb64*)to, length);
-        }
-
-        public unsafe void Copy(Argb32* from, void* to, int length)
-        {
-            UnmanagedImageConverter.ToSignedArgb64(from, (SignedArgb64*)to, length);
-        }
-
-        public unsafe void Copy(byte* from, void* to, int length)
-        {
-            UnmanagedImageConverter.ToSignedArgb64(from, (SignedArgb64*)to, length);
-        }
-    }
-
-    public partial class ImageSignedArgb64 : UnmanagedImage<SignedArgb64>
+    public partial class ImageSignedArgb64 : IDisposable
     {
         #region 静态方法
 
@@ -109,30 +91,34 @@ namespace Geb.Image
 
 	    #endregion 
         
-        public unsafe ImageSignedArgb64(Int32 width, Int32 height)
-            : base(width, height)
+        #region Image <-> Bitmap 所需的方法
+
+        private unsafe void Copy(Rgb24* from, void* to, int length)
         {
+            UnmanagedImageConverter.ToSignedArgb64(from, (SignedArgb64*)to, length);
         }
 
-        public unsafe ImageSignedArgb64(Int32 width, Int32 height, void* data)
-            : base(width, height,data)
+        private unsafe void Copy(Argb32* from, void* to, int length)
         {
+            UnmanagedImageConverter.ToSignedArgb64(from, (SignedArgb64*)to, length);
         }
 
-        public ImageSignedArgb64(Bitmap map)
-            : base(map)
+        private unsafe void Copy(byte* from, void* to, int length)
         {
+            UnmanagedImageConverter.ToSignedArgb64(from, (SignedArgb64*)to, length);
         }
 
-        public ImageSignedArgb64(String path)
-            : base(path)
+        private System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
         {
+            return System.Drawing.Imaging.PixelFormat.Format32bppArgb;
         }
 
-        protected override IColorConverter CreateByteConverter()
+        private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
-            return new SignedArgb64Converter();
+            UnmanagedImageConverter.ToArgb32((SignedArgb64*)src, (Argb32*)dst, width);
         }
+
+        #endregion
 
         public ImageU8 ToGrayscaleImage()
         {
@@ -235,16 +221,6 @@ namespace Geb.Image
             }
 
             return img;
-        }
-
-        protected override System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
-        {
-            return System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-        }
-
-        protected override unsafe void ToBitmapCore(byte* src, byte* dst, int width)
-        {
-            UnmanagedImageConverter.ToArgb32((SignedArgb64*)src, (Argb32*)dst, width);
         }
 
         public unsafe void SetAlpha(byte alpha)

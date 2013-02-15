@@ -5,32 +5,32 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Geb.Image
 {
-    using TPixel = System.Byte;
+    using TPixel = Rgb24;
     using TChannel = System.Byte;
-    using TChannelTemp = System.Int32;
     using TCache = System.Int32;
     using TKernel = System.Int32;
-    using TImage = Geb.Image.ImageU8;
+    using TImage = Geb.Image.ImageRgb24;
 
-    public static partial class ImageU8ClassHelper
+    public static partial class ImageRgb24ClassHelper
     {
-        #region include "ImageClassHelper_Template.cs"
+        #region include "__ImageClassHelper_Template.cs"
         #endregion
     }
 
-    public partial class ImageU8
+    public partial class ImageRgb24
     {
-        #region include "Image_Template.cs"
+        #region include "__Image_Template.cs" [Image_Template -> ImageRgb24]
         #endregion
+    }
 
-        #region include "ImageFilter_Template.cs"
+    public partial struct Rgb24
+    {
+        #region include "__Pixel_Template.cs"
         #endregion
     }
 }
-
-
-

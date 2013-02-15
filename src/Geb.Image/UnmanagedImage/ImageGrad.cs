@@ -21,17 +21,36 @@ namespace Geb.Image
         public float Theta;
     }
 
-    public partial class ImageGrad : UnmanagedImage<Grad>
+    public partial class ImageGrad : IDisposable
     {
-        public unsafe ImageGrad(Int32 width,Int32 height)
-            : base(width,height)
+        #region Image <-> Bitmap 所需的方法
+
+        private unsafe void Copy(Rgb24* from, void* to, int length)
         {
+            throw new NotImplementedException();
         }
 
-        public unsafe ImageGrad(Int32 width, Int32 height, void* data)
-            : base(width, height,data)
+        private unsafe void Copy(Argb32* from, void* to, int length)
         {
+            throw new NotImplementedException();
         }
+
+        private unsafe void Copy(byte* from, void* to, int length)
+        {
+            throw new NotImplementedException();
+        }
+
+        private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
+        {
+            throw new NotImplementedException();
+        }
+
+        private PixelFormat GetOutputBitmapPixelFormat()
+        {
+            return PixelFormat.Format32bppArgb;
+        }
+
+        #endregion
 
         public unsafe ImageU8 ToImageU8()
         {
@@ -60,31 +79,6 @@ namespace Geb.Image
             }
 
             return img;
-        }
-
-        public override unsafe Bitmap ToBitmap()
-        {
-            return ToImageU8().ToBitmap();
-        }
-
-        protected override unsafe void CreateFromBitmap(Bitmap map)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override PixelFormat GetOutputBitmapPixelFormat()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override unsafe void ToBitmapCore(byte* src, byte* dst, int width)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override IColorConverter CreateByteConverter()
-        {
-            return null;
         }
     }
 }

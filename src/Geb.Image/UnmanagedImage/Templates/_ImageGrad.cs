@@ -5,7 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Geb.Image
 {
@@ -15,19 +16,19 @@ namespace Geb.Image
 
     public static partial class ImageGradClassHelper
     {
-        #region include "ImageClassHelper_Template.cs"
+        #region include "__ImageClassHelper_Template.cs"
         #endregion
     }
 
     public partial class ImageGrad
     {
-        #region include "Image_Template.cs"
+        #region include "__Image_Template.cs" [Image_Template -> ImageGrad]
         #endregion
     }
 
     public partial struct Grad
     {
-        #region include "TPixel_Template.cs"
+        #region include "__Pixel_Template.cs"
         #endregion
     }
 }

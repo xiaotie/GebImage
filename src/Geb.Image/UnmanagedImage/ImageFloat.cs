@@ -10,42 +10,36 @@ using System.Drawing.Imaging;
 
 namespace Geb.Image
 {
-    public struct FloatConverter : IColorConverter
+    public partial class ImageFloat : IDisposable
     {
-        public unsafe void Copy(Rgb24* from, void* to, int length)
+        #region Image <-> Bitmap 所需的方法
+
+        private unsafe void Copy(Rgb24* from, void* to, int length)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Argb32* from, void* to, int length)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void Copy(byte* from, void* to, int length)
+        private unsafe void Copy(byte* from, void* to, int length)
         {
             throw new NotImplementedException();
         }
-    }
 
-    public partial class ImageFloat : UnmanagedImage<float>
-    {
-        public unsafe ImageFloat(Int32 width, Int32 height)
-            : base(width, height)
+        private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
+            throw new NotImplementedException();
         }
 
-        public unsafe ImageFloat(Int32 width, Int32 height, void* data)
-            : base(width, height,data)
+        private PixelFormat GetOutputBitmapPixelFormat()
         {
+            return PixelFormat.Format32bppArgb;
         }
 
-        protected override IColorConverter CreateByteConverter()
-        {
-            return new FloatConverter();
-        }
-
-        
+        #endregion
 
         public unsafe ImageU8 ToImageU8(int coeff = 255)
         {
@@ -63,16 +57,6 @@ namespace Geb.Image
                 dst++;
             }
             return img;
-        }
-
-        protected override PixelFormat GetOutputBitmapPixelFormat()
-        {
-            return PixelFormat.Format8bppIndexed;
-        }
-
-        protected override unsafe void ToBitmapCore(byte* src, byte* dst, int width)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -14,15 +14,12 @@ using System.Text;
 
 namespace Geb.Image.Hidden
 {
-    public abstract class Image_Paramid_Argb_Templete : UnmanagedImage<TPixel>
+    public partial class Image_Paramid_Argb_Templete : ImageArgb32
     {
-        private Image_Paramid_Argb_Templete()
-            : base(1, 1)
+        public Image_Paramid_Argb_Templete()
+            :base(1,1)
         {
-            throw new NotImplementedException();
         }
-
-        public unsafe TPixel* Start { get { return (TPixel*)this.StartIntPtr; } }
 
         #region mixin
 

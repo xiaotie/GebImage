@@ -5,6 +5,7 @@
 using TPixel = System.Byte;
 using TCache = System.Int32;
 using TKernel = System.Int32;
+using TImage = Geb.Image.ImageU8;
 
 using System;
 using System.Collections.Generic;
@@ -43,9 +44,9 @@ namespace Geb.Image.Hidden
         /// <param name="src">图像</param>
         /// <param name="handler">void ActionOnPixel(TPixel* p)</param>
         /// <returns>处理后的图像（同传入图像是一个对象）</returns>
-        public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, ActionOnPixel handler)
+        public unsafe static TImage ForEach(this TImage src, ActionOnPixel handler)
         {
-            TPixel* start = (TPixel*)src.StartIntPtr;
+            TPixel* start = src.Start;
             if (start == null) return src;
 
             TPixel* end = start + src.Length;
@@ -63,12 +64,12 @@ namespace Geb.Image.Hidden
         /// <param name="src">图像</param>
         /// <param name="handler">void ActionWithPosition(Int32 row, Int32 column, TPixel* p)</param>
         /// <returns>处理后的图像（同传入图像是一个对象）</returns>
-        public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, ActionWithPosition handler)
+        public unsafe static TImage ForEach(this TImage src, ActionWithPosition handler)
         {
             Int32 width = src.Width;
             Int32 height = src.Height;
 
-            TPixel* p = (TPixel*)src.StartIntPtr;
+            TPixel* p = src.Start;
             if (p == null) return src;
 
             for (Int32 r = 0; r < height; r++)
@@ -90,7 +91,7 @@ namespace Geb.Image.Hidden
         /// <param name="length">处理的像素数量</param>
         /// <param name="handler">void ActionOnPixel(TPixel* p)</param>
         /// <returns>处理后的图像（同传入图像是一个对象）</returns>
-        public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, TPixel* start, uint length, ActionOnPixel handler)
+        public unsafe static TImage ForEach(this TImage src, TPixel* start, uint length, ActionOnPixel handler)
         {
             if (start == null) return src;
 
@@ -109,9 +110,9 @@ namespace Geb.Image.Hidden
         /// <param name="src">图像</param>
         /// <param name="handler">Boolean PredicateOnPixel(TPixel* p)</param>
         /// <returns>符合条件的像素数量</returns>
-        public unsafe static Int32 Count(this UnmanagedImage<TPixel> src, PredicateOnPixel handler)
+        public unsafe static Int32 Count(this TImage src, PredicateOnPixel handler)
         {
-            TPixel* start = (TPixel*)src.StartIntPtr;
+            TPixel* start = src.Start;
             TPixel* end = start + src.Length;
 
             if (start == null) return 0;
@@ -131,9 +132,9 @@ namespace Geb.Image.Hidden
         /// <param name="src">图像</param>
         /// <param name="handler">Boolean Predicate<TPixel></param>
         /// <returns>符合条件的像素数量</returns>
-        public unsafe static Int32 Count(this UnmanagedImage<TPixel> src, Predicate<TPixel> handler)
+        public unsafe static Int32 Count(this TImage src, Predicate<TPixel> handler)
         {
-            TPixel* start = (TPixel*)src.StartIntPtr;
+            TPixel* start = src.Start;
             TPixel* end = start + src.Length;
             if (start == null) return 0;
 
@@ -151,7 +152,7 @@ namespace Geb.Image.Hidden
         /// </summary>
         /// <param name="template">TPixel[,]</param>
         /// <returns>查找到的模板集合</returns>
-        public static unsafe List<PointS> FindTemplate(this UnmanagedImage<TPixel> src, TPixel[,] template)
+        public static unsafe List<PointS> FindTemplate(this TImage src, TPixel[,] template)
         {
             List<PointS> finds = new List<PointS>();
             int tHeight = template.GetUpperBound(0) + 1;
@@ -159,7 +160,7 @@ namespace Geb.Image.Hidden
             int toWidth = src.Width - tWidth + 1;
             int toHeight = src.Height - tHeight + 1;
             int stride = src.Width;
-            TPixel* start = (TPixel*)src.StartIntPtr;
+            TPixel* start = src.Start;
             for (int r = 0; r < toHeight; r++)
             {
                 for (int c = 0; c < toWidth; c++)

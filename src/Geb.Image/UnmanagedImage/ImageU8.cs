@@ -9,50 +9,36 @@ using System.Drawing;
 
 namespace Geb.Image
 {
-    public struct ByteConverter : IColorConverter
+    public partial class ImageU8 : IDisposable
     {
-        public unsafe void Copy(Rgb24* from, void* to, int length)
+        #region Image <-> Bitmap 所需的方法
+
+        private unsafe void Copy(Rgb24* from, void* to, int length)
         {
             UnmanagedImageConverter.ToByte(from, (byte*)to, length);
         }
 
-        public unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Argb32* from, void* to, int length)
         {
             UnmanagedImageConverter.ToByte(from, (byte*)to, length);
         }
 
-        public unsafe void Copy(byte* from, void* to, int length)
+        private unsafe void Copy(byte* from, void* to, int length)
         {
             UnmanagedImageConverter.Copy(from, (byte*)to, length);
         }
-    }
 
-    public partial class ImageU8 : UnmanagedImage<Byte>
-    {
-        public unsafe ImageU8(Int32 width, Int32 height)
-            : base(width, height)
+        private System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
         {
+            return System.Drawing.Imaging.PixelFormat.Format8bppIndexed;
         }
 
-        public unsafe ImageU8(Int32 width, Int32 height, void* data)
-            : base(width, height,data)
+        private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
+            UnmanagedImageConverter.Copy(src, dst, width);
         }
 
-        public ImageU8(Bitmap map)
-            : base(map)
-        {
-        }
-
-        public ImageU8(String path)
-            :this(new Bitmap(path))
-        {
-        }
-
-        protected override IColorConverter CreateByteConverter()
-        {
-            return new ByteConverter();
-        }
+        #endregion
 
         public unsafe ImageU8 ApplyInvert()
         {
@@ -711,21 +697,6 @@ namespace Geb.Image
             ApplyThreshold((byte)calculatedThreshold, lowerValue, upperValue);
 
             return this;
-        }
-
-        protected override void InitPalette(Bitmap map)
-        {
-            map.InitGrayscalePalette();
-        }
-
-        protected override System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
-        {
-            return System.Drawing.Imaging.PixelFormat.Format8bppIndexed;
-        }
-
-        protected override unsafe void ToBitmapCore(byte* src, byte* dst, int width)
-        {
-            UnmanagedImageConverter.Copy(src, dst, width);
         }
 
         /// <summary>

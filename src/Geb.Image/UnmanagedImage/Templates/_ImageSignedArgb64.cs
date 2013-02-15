@@ -5,7 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Geb.Image
 {
@@ -17,22 +18,22 @@ namespace Geb.Image
 
     public static partial class ImageSignedArgb64ClassHelper
     {
-        #region include "ImageClassHelper_Template.cs"
+        #region include "__ImageClassHelper_Template.cs"
         #endregion
     }
 
     public partial class ImageSignedArgb64
     {
-        #region include "Image_Template.cs"
+        #region include "__Image_Template.cs"  [Image_Template -> ImageSignedArgb64]
         #endregion
 
-        #region include "Image_Paramid_Argb_Templete.cs"
+        #region include "__Paramid_Templete.cs"
         #endregion
     }
 
     public partial struct SignedArgb64
     {
-        #region include "TPixel_Template.cs"
+        #region include "__Pixel_Template.cs"
         #endregion
     }
 }

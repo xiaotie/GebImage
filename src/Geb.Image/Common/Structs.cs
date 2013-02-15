@@ -13,7 +13,7 @@ using System.Text;
 namespace Geb.Image
 {
     /// <summary>
-    /// 点。横纵坐标都是UInt16格式。
+    /// 点。横纵坐标都是Int16格式。
     /// </summary>
     [StructLayout(LayoutKind.Explicit)]
     public partial struct PointS

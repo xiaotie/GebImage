@@ -123,50 +123,36 @@ namespace Geb.Image
         }
     }
 
-    public struct Rgb24Converter : IColorConverter
+    public partial class ImageRgb24 : IDisposable
     {
-        public unsafe void Copy(Rgb24* from, void* to, int length)
+        #region Image <-> Bitmap 所需的方法
+
+        private unsafe void Copy(Rgb24* from, void* to, int length)
         {
-            UnmanagedImageConverter.Copy((byte*)from, (byte*)to, 3* length);
+            UnmanagedImageConverter.Copy((byte*)from, (byte*)to, 3 * length);
         }
 
-        public unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Argb32* from, void* to, int length)
         {
             UnmanagedImageConverter.ToRgb24(from, (Rgb24*)to, length);
         }
 
-        public unsafe void Copy(byte* from, void* to, int length)
+        private unsafe void Copy(byte* from, void* to, int length)
         {
             UnmanagedImageConverter.ToRgb24(from, (Rgb24*)to, length);
         }
-    }
 
-    public partial class ImageRgb24 : UnmanagedImage<Rgb24>
-    {
-        public unsafe ImageRgb24(Int32 width, Int32 height)
-            : base(width, height)
+        private System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
         {
+            return System.Drawing.Imaging.PixelFormat.Format24bppRgb;
         }
 
-        public unsafe ImageRgb24(Int32 width, Int32 height, void* data)
-            : base(width, height,data)
+        private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
+            UnmanagedImageConverter.Copy(src, dst, width * sizeof(Rgb24));
         }
 
-        public ImageRgb24(Bitmap map)
-            : base(map)
-        {
-        }
-
-        public ImageRgb24(String path)
-            : base(path)
-        {
-        }
-
-        protected override IColorConverter CreateByteConverter()
-        {
-            return new Rgb24Converter();
-        }
+        #endregion
 
         public ImageU8 ToGrayscaleImage()
         {
@@ -182,7 +168,7 @@ namespace Geb.Image
         {
             if (channel < 0 && channel > 2) throw new ArgumentOutOfRangeException("channel");
             int length = this.Length;
-            Byte* start = (Byte*)this.StartIntPtr;
+            Byte* start = (Byte*)this.Start;
             int size = sizeof(Rgb24);
             Byte* end = start + sizeof(Rgb24) * length;
             ImageU8 imgU8 = new ImageU8(this.Width, this.Height);
@@ -388,16 +374,6 @@ namespace Geb.Image
                 Point p = points[i];
                 this[p] = vals[i];
             }
-        }
-
-        protected override System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
-        {
-            return System.Drawing.Imaging.PixelFormat.Format24bppRgb;
-        }
-
-        protected override unsafe void ToBitmapCore(byte* src, byte* dst, int width)
-        {
-            UnmanagedImageConverter.Copy(src, dst, width * 3);
         }
     }
 }

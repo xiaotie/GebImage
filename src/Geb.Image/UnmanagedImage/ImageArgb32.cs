@@ -57,51 +57,36 @@ namespace Geb.Image
         }
     }
 
-    public struct Argb32Converter : IColorConverter
+    public partial class ImageArgb32 : IDisposable
     {
-        public unsafe void Copy(Rgb24* from, void* to, int length)
+        #region Image <-> Bitmap 所需的方法
+
+        private unsafe void Copy(Rgb24* from, void* to, int length)
         {
             UnmanagedImageConverter.ToArgb32(from, (Argb32*)to, length);
         }
 
-        public unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Argb32* from, void* to, int length)
         {
-            UnmanagedImageConverter.Copy((byte*)from, (byte*)to, 4* length);
+            UnmanagedImageConverter.Copy((byte*)from, (byte*)to, 4 * length);
         }
 
-        public unsafe void Copy(byte* from, void* to, int length)
+        private unsafe void Copy(byte* from, void* to, int length)
         {
             UnmanagedImageConverter.ToArgb32(from, (Argb32*)to, length);
         }
-    }
 
-    public partial class ImageArgb32 : UnmanagedImage<Argb32>
-    {
-        public unsafe ImageArgb32(Int32 width, Int32 height)
-            : base(width, height)
+        private PixelFormat GetOutputBitmapPixelFormat()
         {
+            return PixelFormat.Format32bppArgb;
         }
 
-        public unsafe ImageArgb32(Int32 width, Int32 height, void* data)
-            : base(width, height,data)
+        private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
+            UnmanagedImageConverter.Copy(src, dst, width * 4);
         }
-
-        public ImageArgb32(Bitmap map)
-            :base(map)
-        {
-        }
-
-        public ImageArgb32(String path)
-            : base(path)
-        {
-            
-        }
-
-        protected override IColorConverter CreateByteConverter()
-        {
-            return new Argb32Converter();
-        }
+        
+        #endregion
 
         public ImageU8 ToGrayscaleImage()
         {
@@ -186,16 +171,6 @@ namespace Geb.Image
             return img;
         }
 
-        protected override System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
-        {
-            return System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-        }
-
-        protected override unsafe void ToBitmapCore(byte* src, byte* dst, int width)
-        {
-            UnmanagedImageConverter.Copy(src, dst, width * 4);
-        }
-
         public unsafe void SetAlpha(byte alpha)
         {
             Argb32* start = (Argb32*)this.Start;
@@ -233,7 +208,7 @@ namespace Geb.Image
             int srcWidth = src.Width;
             int dstWidth = this.Width;
 
-            Argb32* srcLine = (Argb32*)(src.StartIntPtr) + srcWidth * startSrcY + startSrcX;
+            Argb32* srcLine = (Argb32*)(src.Start) + srcWidth * startSrcY + startSrcX;
             Argb32* dstLine = this.Start + dstWidth * startDstY + startDstX;
             Argb32* endSrcLine = srcLine + srcWidth * copyHeight;
             while (srcLine < endSrcLine)

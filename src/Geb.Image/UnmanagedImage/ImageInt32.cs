@@ -10,19 +10,21 @@ using System.Drawing.Imaging;
 
 namespace Geb.Image
 {
-    public struct Int32Converter : IColorConverter
+    public partial class ImageInt32 : IDisposable
     {
-        public unsafe void Copy(Rgb24* from, void* to, int length)
+        #region Image <-> Bitmap 所需的方法
+
+        private unsafe void Copy(Rgb24* from, void* to, int length)
         {
             UnmanagedImageConverter.ToArgb32(from, (Argb32*)to, length);
         }
 
-        public unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Argb32* from, void* to, int length)
         {
             UnmanagedImageConverter.Copy((Byte*)from, (Byte*)to, length * 4);
         }
 
-        public unsafe void Copy(byte* from, void* to, int length)
+        private unsafe void Copy(byte* from, void* to, int length)
         {
             if (length < 1) return;
             Byte* end = from + length;
@@ -34,24 +36,27 @@ namespace Geb.Image
                 dst++;
             }
         }
-    }
 
-    public partial class ImageInt32 : UnmanagedImage<Int32>
-    {
-        public unsafe ImageInt32(Int32 width, Int32 height, void* data)
-            : base(width, height,data)
+        private PixelFormat GetOutputBitmapPixelFormat()
         {
+            return PixelFormat.Format32bppArgb;
         }
 
-        public unsafe ImageInt32(Int32 width, Int32 height)
-            : base(width, height)
+        private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
+            Int32* start = (Int32*)src;
+            Int32* end = start + width;
+            while (start != end)
+            {
+                Int32 val = *start;
+                val = val < 0 ? 0 : val > 255 ? 255 : val;
+                *dst = (byte)val;
+                start++;
+                dst++;
+            }
         }
 
-        public ImageInt32(Bitmap map)
-            : base(map)
-        {
-        }
+        #endregion
 
         public unsafe ImageRgb24 ToImageRgb24WithRamdomColorMap()
         {
@@ -226,11 +231,6 @@ namespace Geb.Image
             return img;
         }
 
-        protected override IColorConverter CreateByteConverter()
-        {
-            return new Int32Converter();
-        }
-
         public unsafe ImageU8 ToImageU8()
         {
             ImageU8 imgU8 = new ImageU8(this.Width, this.Height);
@@ -246,25 +246,6 @@ namespace Geb.Image
                 dst++;
             }
             return imgU8;
-        }
-
-        protected override PixelFormat GetOutputBitmapPixelFormat()
-        {
-            return PixelFormat.Format8bppIndexed;
-        }
-
-        protected override unsafe void ToBitmapCore(byte* src, byte* dst, int width)
-        {
-            Int32* start = (Int32*)src;
-            Int32* end = start + width;
-            while (start != end)
-            {
-                Int32 val = *start;
-                val = val < 0? 0: val > 255 ? 255 : val;
-                *dst = (byte)val;
-                start++;
-                dst++;
-            }
         }
 
         /// <summary>

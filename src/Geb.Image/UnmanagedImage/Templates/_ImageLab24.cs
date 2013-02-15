@@ -5,7 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Geb.Image
 {
@@ -17,19 +18,19 @@ namespace Geb.Image
 
     public partial struct Lab24
     {
-        #region include "TPixel_Template.cs"
+        #region include "__Pixel_Template.cs"
         #endregion
     }
 
     public static partial class ImageLab24ClassHelper
     {
-        #region include "ImageClassHelper_Template.cs"
+        #region include "__ImageClassHelper_Template.cs"
         #endregion
     }
 
     public partial class ImageLab24
     {
-        #region include "Image_Template.cs"
+        #region include "__Image_Template.cs"  [Image_Template -> ImageLab24]
         #endregion
     }
 }

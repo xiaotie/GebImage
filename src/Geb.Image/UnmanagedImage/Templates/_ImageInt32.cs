@@ -5,7 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Geb.Image
 {
@@ -18,16 +19,16 @@ namespace Geb.Image
 
     public static partial class ImageInt32ClassHelper
     {
-        #region include "ImageClassHelper_Template.cs"
+        #region include "__ImageClassHelper_Template.cs"
         #endregion
     }
 
     public partial class ImageInt32
     {
-        #region include "Image_Template.cs"
+        #region include "__Image_Template.cs" [Image_Template -> ImageInt32]
         #endregion
 
-        #region include "ImageFilter_Template.cs"
+        #region include "__ImageFilter_Template.cs"
         #endregion
     }
 }

@@ -1,198 +1,84 @@
-/*************************************************************************
+﻿/*************************************************************************
  *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
+using TPixel = System.Byte;
+using TChannel = System.Byte;
+using TCache = System.Int32;
+using TKernel = System.Int32;
+using TImage = Geb.Image.Hidden.Image_Template;
+
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Drawing;
-using System.Text;
+using System.Drawing.Imaging;
 
-namespace Geb.Image
+namespace Geb.Image.Hidden
 {
-    using TPixel = System.Byte;
-    using TChannel = System.Byte;
-    using TChannelTemp = System.Int32;
-    using TCache = System.Int32;
-    using TKernel = System.Int32;
-    using TImage = Geb.Image.ImageU8;
-
-    public static partial class ImageU8ClassHelper
+    public class Image_Template
     {
-        /// <summary>
-        /// 对每个像素进行操作
-        /// </summary>
-        /// <param name="p">指向像素的指针</param>
-        public unsafe delegate void ActionOnPixel(TPixel* p);
-
-        /// <summary>
-        /// 对每个位置的像素进行操作
-        /// </summary>
-        /// <param name="row">像素所在行</param>
-        /// <param name="column">像素所在列</param>
-        /// <param name="p">指向像素的指针</param>
-        public unsafe delegate void ActionWithPosition(Int32 row, Int32 column, TPixel* p);
-
-        /// <summary>
-        /// 对每个像素进行判断
-        /// </summary>
-        /// <param name="p">指向像素的指针</param>
-        /// <returns></returns>
-        public unsafe delegate Boolean PredicateOnPixel(TPixel* p);
-
-        /// <summary>
-        /// 遍历图像，对每个像素进行操作
-        /// </summary>
-        /// <param name="src">图像</param>
-        /// <param name="handler">void ActionOnPixel(TPixel* p)</param>
-        /// <returns>处理后的图像（同传入图像是一个对象）</returns>
-        public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, ActionOnPixel handler)
+        private unsafe void Copy(Rgb24* from, void* to, int length)
         {
-            TPixel* start = (TPixel*)src.StartIntPtr;
-            if (start == null) return src;
-
-            TPixel* end = start + src.Length;
-            while (start != end)
-            {
-                handler(start);
-                ++start;
-            }
-            return src;
+            UnmanagedImageConverter.ToByte(from, (byte*)to, length);
         }
 
-        /// <summary>
-        /// 遍历图像，对每个位置的像素进行操作
-        /// </summary>
-        /// <param name="src">图像</param>
-        /// <param name="handler">void ActionWithPosition(Int32 row, Int32 column, TPixel* p)</param>
-        /// <returns>处理后的图像（同传入图像是一个对象）</returns>
-        public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, ActionWithPosition handler)
+        private unsafe void Copy(Argb32* from, void* to, int length)
         {
-            Int32 width = src.Width;
-            Int32 height = src.Height;
-
-            TPixel* p = (TPixel*)src.StartIntPtr;
-            if (p == null) return src;
-
-            for (Int32 r = 0; r < height; r++)
-            {
-                for (Int32 w = 0; w < width; w++)
-                {
-                    handler(w, r, p);
-                    p++;
-                }
-            }
-            return src;
+            UnmanagedImageConverter.ToByte(from, (byte*)to, length);
         }
 
-        /// <summary>
-        /// 遍历图像中的一段，对每个像素进行操作
-        /// </summary>
-        /// <param name="src">图像</param>
-        /// <param name="start">指向开始像素的指针</param>
-        /// <param name="length">处理的像素数量</param>
-        /// <param name="handler">void ActionOnPixel(TPixel* p)</param>
-        /// <returns>处理后的图像（同传入图像是一个对象）</returns>
-        public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, TPixel* start, uint length, ActionOnPixel handler)
+        private unsafe void Copy(byte* from, void* to, int length)
         {
-            if (start == null) return src;
-
-            TPixel* end = start + src.Length;
-            while (start != end)
-            {
-                handler(start);
-                ++start;
-            }
-            return src;
+            UnmanagedImageConverter.Copy(from, (byte*)to, length);
         }
 
-        /// <summary>
-        /// 统计符合条件的像素数量
-        /// </summary>
-        /// <param name="src">图像</param>
-        /// <param name="handler">Boolean PredicateOnPixel(TPixel* p)</param>
-        /// <returns>符合条件的像素数量</returns>
-        public unsafe static Int32 Count(this UnmanagedImage<TPixel> src, PredicateOnPixel handler)
+        private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
-            TPixel* start = (TPixel*)src.StartIntPtr;
-            TPixel* end = start + src.Length;
-
-            if (start == null) return 0;
-
-            Int32 count = 0;
-            while (start != end)
-            {
-                if (handler(start) == true) count++;
-                ++start;
-            }
-            return count;
+            UnmanagedImageConverter.Copy(src, dst, width);
         }
 
-        /// <summary>
-        /// 统计符合条件的像素数量
-        /// </summary>
-        /// <param name="src">图像</param>
-        /// <param name="handler">Boolean Predicate<TPixel></param>
-        /// <returns>符合条件的像素数量</returns>
-        public unsafe static Int32 Count(this UnmanagedImage<TPixel> src, Predicate<TPixel> handler)
+        private PixelFormat GetOutputBitmapPixelFormat()
         {
-            TPixel* start = (TPixel*)src.StartIntPtr;
-            TPixel* end = start + src.Length;
-            if (start == null) return 0;
-
-            Int32 count = 0;
-            while (start != end)
-            {
-                if (handler(*start) == true) count++;
-                ++start;
-            }
-            return count;
+            return PixelFormat.Format8bppIndexed;
         }
 
+        #region mixin
+
         /// <summary>
-        /// 查找模板。模板中值代表实际像素值。负数代表任何像素。返回查找得到的像素的左上端点的位置。
+        /// 图像所占字节数。
         /// </summary>
-        /// <param name="template">TPixel[,]</param>
-        /// <returns>查找到的模板集合</returns>
-        public static unsafe List<PointS> FindTemplate(this UnmanagedImage<TPixel> src, TPixel[,] template)
+        public Int32 ByteCount { get; private set; }
+
+        /// <summary>
+        /// 图像的像素数量
+        /// </summary>
+        public Int32 Length { get; private set; }
+
+        /// <summary>
+        /// 每像素的尺寸（字节数）
+        /// </summary>
+        public Int32 SizeOfType { get; private set; }
+
+        /// <summary>
+        /// 图像宽（像素）
+        /// </summary>
+        public Int32 Width { get; protected set; }
+
+        /// <summary>
+        /// 图像的高（像素）
+        /// </summary>
+        public Int32 Height { get; protected set; }
+
+        /// <summary>
+        /// 图像的起始指针。
+        /// </summary>
+        public unsafe TPixel* Start { get; private set; }
+
+        public Size ImageSize
         {
-            List<PointS> finds = new List<PointS>();
-            int tHeight = template.GetUpperBound(0) + 1;
-            int tWidth = template.GetUpperBound(1) + 1;
-            int toWidth = src.Width - tWidth + 1;
-            int toHeight = src.Height - tHeight + 1;
-            int stride = src.Width;
-            TPixel* start = (TPixel*)src.StartIntPtr;
-            for (int r = 0; r < toHeight; r++)
-            {
-                for (int c = 0; c < toWidth; c++)
-                {
-                    TPixel* srcStart = start + r * stride + c;
-                    for (int rr = 0; rr < tHeight; rr++)
-                    {
-                        for (int cc = 0; cc < tWidth; cc++)
-                        {
-                            TPixel pattern = template[rr, cc];
-                            if (srcStart[rr * stride + cc] != pattern)
-                            {
-                                goto Next;
-                            }
-                        }
-                    }
-
-                    finds.Add(new PointS(c, r));
-
-                Next:
-                    continue;
-                }
-            }
-
-            return finds;
+            get { return new Size(Width, Height); }
         }
-    }
-
-    public partial class ImageU8
-    {
-        public unsafe TPixel* Start { get { return (TPixel*)this.StartIntPtr; } }
 
         public unsafe TPixel this[int index]
         {
@@ -248,6 +134,247 @@ namespace Geb.Image
             return Start + row * this.Width;
         }
 
+        private Boolean _isOwner;
+
+        /// <summary>
+        /// 是否是图像数据所在内存的拥有者。如果非所在内存的拥有者，则不负责释放内存。
+        /// </summary>
+        public Boolean IsOwner
+        {
+            get { return _isOwner; }
+        }
+
+        /// <summary>
+        /// 是否图像内存的拥有权。
+        /// </summary>
+        /// <returns>如果释放前有所属内存，则返回所属内存的指针，否则返回空指针</returns>
+        public unsafe void* ReleaseOwner()
+        {
+            if (Start == null || _isOwner == false) return null;
+            else
+            {
+                _isOwner = false;
+                return Start;
+            }
+        }
+
+        /// <summary>
+        /// 感兴趣区域。目前尚无用途。
+        /// </summary>
+        public ROI ROI { get; private set; }
+
+        /// <summary>
+        /// 创建图像。
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        public unsafe Image_Template(Int32 width, Int32 height)
+        {
+            if (width <= 0) throw new ArgumentOutOfRangeException("width");
+            else if (height <= 0) throw new ArgumentOutOfRangeException("height");
+            _isOwner = true;
+            AllocMemory(width, height);
+        }
+
+        /// <summary>
+        /// 创建图像，所创建的图像并不是图像数据的拥有者。
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="data"></param>
+        public unsafe Image_Template(Int32 width, Int32 height, void* data)
+        {
+            if (width <= 0) throw new ArgumentOutOfRangeException("width");
+            else if (height <= 0) throw new ArgumentOutOfRangeException("height");
+            Width = width;
+            Height = height;
+            _isOwner = false;
+            Start = (TPixel*) data;
+            Length = Width * Height;
+            SizeOfType = SizeOfT();
+            ByteCount = SizeOfType * Length;
+        }
+
+        private unsafe void AllocMemory(int width, int height)
+        {
+            Height = height;
+            Width = width;
+            Length = Width * Height;
+            SizeOfType = SizeOfT();
+            ByteCount = SizeOfType * Length;
+            Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
+        }
+
+        public unsafe Image_Template(String path)
+        {
+            using (Bitmap bmp = new Bitmap(path))
+            {
+                AllocMemory(bmp.Width, bmp.Height);
+                this.CreateFromBitmap(bmp);
+            }
+        }
+
+        public Image_Template(Bitmap map)
+        {
+            if (map == null) throw new ArgumentNullException("map");
+            AllocMemory(map.Width, map.Height);
+            this.CreateFromBitmap(map);
+        }
+
+        public unsafe virtual void Dispose()
+        {
+            if (_isOwner == true)
+            {
+                if (Start != null)
+                {
+                    Marshal.FreeHGlobal((IntPtr)Start);
+                    Start = null;
+                }
+                _isOwner = false;
+            }
+        }
+
+        ~Image_Template()
+        {
+            Dispose();
+        }
+
+        private static Int32 SizeOfT()
+        {
+            return Marshal.SizeOf(typeof(TPixel));
+        }
+
+        protected virtual unsafe void CreateFromBitmap(Bitmap map)
+        {
+            int height = map.Height;
+            int width = map.Width;
+
+            const int PixelFormat32bppCMYK = 8207;
+
+            PixelFormat format = map.PixelFormat;
+
+            this.Width = width;
+            this.Height = height;
+
+            Bitmap newMap = map;
+            Int32 step = SizeOfT();
+
+            switch (format)
+            {
+                case PixelFormat.Format24bppRgb:
+                    break;
+                case PixelFormat.Format32bppArgb:
+                    break;
+                default:
+                    if ((int)format == PixelFormat32bppCMYK)
+                    {
+                        format = PixelFormat.Format24bppRgb;
+                        newMap = new Bitmap(width, height, format);
+                        using (Graphics g = Graphics.FromImage(newMap))
+                        {
+                            g.DrawImage(map, new Point());
+                        }
+                    }
+                    else
+                    {
+                        format = PixelFormat.Format32bppArgb;
+                        newMap = map.Clone(new Rectangle(0, 0, width, height), PixelFormat.Format32bppArgb);
+                    }
+                    break;
+            }
+
+            BitmapData data = newMap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, format);
+            Byte* line = (Byte*)data.Scan0;
+            Byte* dstLine = (Byte*)Start;
+            try
+            {
+                if (format == PixelFormat.Format24bppRgb)
+                {
+                    for (int h = 0; h < height; h++)
+                    {
+                        Copy((Rgb24*)line, (void*)dstLine, width);
+                        line += data.Stride;
+                        dstLine += step * width;
+                    }
+                }
+                else
+                {
+                    for (int h = 0; h < height; h++)
+                    {
+                        Copy((Argb32*)line, (void*)dstLine, width);
+
+                        line += data.Stride;
+                        dstLine += step * width;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                newMap.UnlockBits(data);
+                if (newMap != map)
+                {
+                    newMap.Dispose();
+                }
+            }
+        }
+
+        public virtual unsafe Bitmap ToBitmap()
+        {
+            Bitmap map = new Bitmap(this.Width, this.Height, GetOutputBitmapPixelFormat());
+            ToBitmap(map);
+            return map;
+        }
+
+        public virtual unsafe void ToBitmap(Bitmap map)
+        {
+            if (map == null) throw new ArgumentNullException("map");
+            if (map.Width != this.Width || map.Height != this.Height)
+            {
+                throw new ArgumentException("尺寸不匹配.");
+            }
+
+            if (map.PixelFormat != GetOutputBitmapPixelFormat())
+            {
+                throw new ArgumentException("只支持 " + GetOutputBitmapPixelFormat().ToString() + " 格式。 ");
+            }
+
+            if (map.PixelFormat == PixelFormat.Format8bppIndexed)
+            {
+                map.InitGrayscalePalette();
+            }
+
+            Int32 step = SizeOfT();
+            Byte* srcLine = (Byte*)Start;
+
+            BitmapData data = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, map.PixelFormat);
+            try
+            {
+                int width = map.Width;
+                int height = map.Height;
+                Byte* dstLine = (Byte*)data.Scan0;
+                for (int h = 0; h < height; h++)
+                {
+                    ToBitmapCore(srcLine, dstLine, width);
+                    dstLine += data.Stride;
+                    srcLine += step * width;
+                }
+            }
+            finally
+            {
+                map.UnlockBits(data);
+            }
+        }
+
+        public void ApplyMatrix(float a, float b, float c, float d, float e, float f)
+        {
+            //TODO: ApplyMatrix
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// 代表当前图像内容的二维数组。
         /// .Net 的 IDE 均不支持直接查看.Net程序中的指针内容，DataSnapshot 提供了调试时查看
@@ -276,14 +403,14 @@ namespace Geb.Image
             return img;
         }
 
-        public unsafe TImage CloneFrom(UnmanagedImage<TPixel> src)
+        public unsafe TImage CloneFrom(TImage src)
         {
             if (src == null) throw new ArgumentNullException("src");
             if (src.ByteCount != this.ByteCount) throw new NotSupportedException("与src图像的像素数量不一致，无法复制.");
 
             TPixel* start = Start;
             TPixel* end = start + Length;
-            TPixel* from = (TPixel*)(src.StartIntPtr);
+            TPixel* from = src.Start;
 
             while (start != end)
             {
@@ -382,11 +509,16 @@ namespace Geb.Image
             return this;
         }
 
-        public unsafe TImage CopyFrom(UnmanagedImage<TPixel> src, System.Drawing.Point start, System.Drawing.Rectangle region, System.Drawing.Point destAnchor)
+        public unsafe TImage CopyFrom(TImage src, System.Drawing.Point start, System.Drawing.Rectangle region, System.Drawing.Point destAnchor)
+        {
+            return CopyFrom(src, new PointS(start.X, start.Y), new Rect(region.X, region.Y, region.Width, region.Height), new PointS(destAnchor.X, destAnchor.Y));
+        }
+
+        public unsafe TImage CopyFrom(TImage src, PointS start, Rect region, PointS destAnchor)
         {
             if (start.X >= src.Width || start.Y >= src.Height) return this;
-            int startSrcX = Math.Max(0, start.X);
-            int startSrcY = Math.Max(0, start.Y);
+            int startSrcX = Math.Max(0, (int)start.X);
+            int startSrcY = Math.Max(0, (int)start.Y);
             int endSrcX = Math.Min(start.X + region.Width, src.Width);
             int endSrcY = Math.Min(start.Y + region.Height, src.Height);
             int offsetX = start.X < 0? -start.X : 0;
@@ -408,7 +540,7 @@ namespace Geb.Image
             int srcWidth = src.Width;
             int dstWidth = this.Width;
 
-            TPixel* srcLine = (TPixel*)(src.StartIntPtr) + srcWidth * startSrcY + startSrcX;
+            TPixel* srcLine = src.Start + srcWidth * startSrcY + startSrcX;
             TPixel* dstLine = this.Start + dstWidth * startDstY + startDstX;
             TPixel* endSrcLine = srcLine + srcWidth * copyHeight;
             int alpha1, alpha2, blendAlpha,alpha;
@@ -535,12 +667,12 @@ namespace Geb.Image
             int* vals = stackalloc int[size * size + 1];
             TPixel* keys = stackalloc TPixel[size * size + 1];
 
-            UnmanagedImage<TPixel> mask = this.Clone() as UnmanagedImage<TPixel>;
+            Image_Template mask = this.Clone();
             int height = this.Height;
             int width = this.Width;
 
-            TPixel* pMask = (TPixel*)mask.StartIntPtr;
-            TPixel* pThis = (TPixel*)this.StartIntPtr;
+            TPixel* pMask = mask.Start;
+            TPixel* pThis = this.Start;
 
             int radius = size / 2;
 
@@ -902,7 +1034,7 @@ namespace Geb.Image
 
             // 计算 channel 数量
             int nChannel = sizeof(TPixel) / sizeof(TChannel);
-            TImage imgDst = new TImage(width, height);
+            TImage imgDst = new Image_Template(width, height);
             TChannel* rootSrc = (TChannel*)this.Start;
             TChannel* rootDst = (TChannel*)imgDst.Start;
 
@@ -947,161 +1079,6 @@ namespace Geb.Image
             return imgDst;
         }
 
-        public unsafe void ApplyConvolution(ConvolutionKernel  k)
-        {
-            int kernelHeight = k.Width;
-            int kernelWidth = k.Height;
-            int scale = k.Scale;
-            int[,] kernel = k.Kernel;
-            int extend = Math.Max(kernelWidth, kernelHeight) / 2;
-            TImage maskImage = new TImage(Width + extend * 2, Height + extend * 2);
-            maskImage.Fill(0);//这里效率不高。原本只需要填充四周扩大的部分即可
-
-            maskImage.CopyFrom(this, new System.Drawing.Point(0, 0), new System.Drawing.Rectangle(0, 0, this.Width, this.Height), new System.Drawing.Point(extend, extend));
-
-            int width = this.Width;
-            int height = this.Height;
-            TPixel* start = (TPixel*)this.StartIntPtr;
-
-            // 复制边界像素
-            TPixel* dstStart = maskImage.Start + extend;
-            int extendWidth = this.Width + extend * 2;
-            int extendHeight = this.Height + extend * 2;
-
-            // 复制上方的像素
-            for (int y = 0; y < extend; y++)
-            {
-                TPixel* dstP = dstStart + y * extendWidth;
-                TPixel* srcStart = start;
-                TPixel* srcEnd = srcStart + width;
-
-                while (srcStart != srcEnd)
-                {
-                    *dstP = *srcStart;
-                    srcStart++;
-                    dstP++;
-                }
-            }
-
-            // 复制下方的像素
-            for (int y = height + extend; y < extendHeight; y++)
-            {
-                TPixel* dstP = dstStart + y * extendWidth;
-                TPixel* srcStart = start + (height - 1)*width;
-                TPixel* srcEnd = srcStart + width;
-
-                while (srcStart != srcEnd)
-                {
-                    *dstP = *srcStart;
-                    srcStart++;
-                    dstP++;
-                }
-            }
-
-            // 复制左右两侧的像素
-            TPixel* dstLine = maskImage.Start + extendWidth * extend;
-            TPixel* srcLine = start;
-            TPixel p = default(TPixel);
-            for (int y = extend; y < height + extend; y++)
-            {
-                for(int x = 0; x < extend; x ++)
-                {
-                    p = srcLine[0];
-                    dstLine[x] = p;
-                }
-
-                p = srcLine[width-1];
-                for(int x = width + extend; x < extendWidth; x++)
-                {
-                   dstLine[x] = p;
-                }
-                dstLine += extendWidth;
-                srcLine += width;
-            }
-
-            // 复制四个角落的像素
-
-            // 左上
-            p = start[0];
-            for (int y = 0; y < extend; y++)
-            {
-                for (int x = 0; x < extend; x++)
-                {
-                    maskImage[y, x] = p;
-                }
-            }
-
-            // 右上
-            p = start[width - 1];
-            for (int y = 0; y < extend; y++)
-            {
-                for (int x = width + extend; x < extendWidth; x++)
-                {
-                    maskImage[y, x] = p;
-                }
-            }
-
-            // 左下
-            p = start[(height - 1) * width];
-            for (int y = height + extend; y < extendHeight; y++)
-            {
-                for (int x = 0; x < extend; x++)
-                {
-                    maskImage[y, x] = p;
-                }
-            }
-
-            // 右下
-            p = start[height * width - 1];
-            for (int y = height + extend; y < extendHeight; y++)
-            {
-                for (int x = width + extend; x < extendWidth; x++)
-                {
-                    maskImage[y, x] = p;
-                }
-            }
-
-            if (scale == 1)
-            {
-                for (int h = 0; h < height; h++)
-                {
-                    for (int w = 0; w < width; w++)
-                    {
-                        TChannelTemp val = 0;
-                        for (int kw = 0; kw < kernelWidth; kw++)
-                        {
-                            for (int kh = 0; kh < kernelHeight; kh++)
-                            {
-                                val += maskImage[h + kh, w + kw] * kernel[kh, kw];
-                            }
-                        }
-                        start[h * width + w] = (TPixel)val;
-                    }
-                }
-            }
-            else
-            {
-                double factor = 1.0 / scale;
-                for (int h = 0; h < height; h++)
-                {
-                    for (int w = 0; w < width; w++)
-                    {
-                        TChannelTemp val = 0;
-                        for (int kw = 0; kw < kernelWidth; kw++)
-                        {
-                            for (int kh = 0; kh < kernelHeight; kh++)
-                            {
-                                val += maskImage[h + kh, w + kw] * kernel[kh, kw];
-                            }
-                        }
-                        start[h * width + w] = (TPixel)(val * factor);
-                    }
-                }
-            }
-            maskImage.Dispose();
-        }
+        #endregion
     }
 }
-
-
-

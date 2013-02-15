@@ -5,7 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Geb.Image
 {
@@ -44,9 +45,9 @@ namespace Geb.Image
         /// <param name="src">图像</param>
         /// <param name="handler">void ActionOnPixel(TPixel* p)</param>
         /// <returns>处理后的图像（同传入图像是一个对象）</returns>
-        public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, ActionOnPixel handler)
+        public unsafe static TImage ForEach(this TImage src, ActionOnPixel handler)
         {
-            TPixel* start = (TPixel*)src.StartIntPtr;
+            TPixel* start = src.Start;
             if (start == null) return src;
 
             TPixel* end = start + src.Length;
@@ -64,12 +65,12 @@ namespace Geb.Image
         /// <param name="src">图像</param>
         /// <param name="handler">void ActionWithPosition(Int32 row, Int32 column, TPixel* p)</param>
         /// <returns>处理后的图像（同传入图像是一个对象）</returns>
-        public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, ActionWithPosition handler)
+        public unsafe static TImage ForEach(this TImage src, ActionWithPosition handler)
         {
             Int32 width = src.Width;
             Int32 height = src.Height;
 
-            TPixel* p = (TPixel*)src.StartIntPtr;
+            TPixel* p = src.Start;
             if (p == null) return src;
 
             for (Int32 r = 0; r < height; r++)
@@ -91,7 +92,7 @@ namespace Geb.Image
         /// <param name="length">处理的像素数量</param>
         /// <param name="handler">void ActionOnPixel(TPixel* p)</param>
         /// <returns>处理后的图像（同传入图像是一个对象）</returns>
-        public unsafe static UnmanagedImage<TPixel> ForEach(this UnmanagedImage<TPixel> src, TPixel* start, uint length, ActionOnPixel handler)
+        public unsafe static TImage ForEach(this TImage src, TPixel* start, uint length, ActionOnPixel handler)
         {
             if (start == null) return src;
 
@@ -110,9 +111,9 @@ namespace Geb.Image
         /// <param name="src">图像</param>
         /// <param name="handler">Boolean PredicateOnPixel(TPixel* p)</param>
         /// <returns>符合条件的像素数量</returns>
-        public unsafe static Int32 Count(this UnmanagedImage<TPixel> src, PredicateOnPixel handler)
+        public unsafe static Int32 Count(this TImage src, PredicateOnPixel handler)
         {
-            TPixel* start = (TPixel*)src.StartIntPtr;
+            TPixel* start = src.Start;
             TPixel* end = start + src.Length;
 
             if (start == null) return 0;
@@ -132,9 +133,9 @@ namespace Geb.Image
         /// <param name="src">图像</param>
         /// <param name="handler">Boolean Predicate<TPixel></param>
         /// <returns>符合条件的像素数量</returns>
-        public unsafe static Int32 Count(this UnmanagedImage<TPixel> src, Predicate<TPixel> handler)
+        public unsafe static Int32 Count(this TImage src, Predicate<TPixel> handler)
         {
-            TPixel* start = (TPixel*)src.StartIntPtr;
+            TPixel* start = src.Start;
             TPixel* end = start + src.Length;
             if (start == null) return 0;
 
@@ -152,7 +153,7 @@ namespace Geb.Image
         /// </summary>
         /// <param name="template">TPixel[,]</param>
         /// <returns>查找到的模板集合</returns>
-        public static unsafe List<PointS> FindTemplate(this UnmanagedImage<TPixel> src, TPixel[,] template)
+        public static unsafe List<PointS> FindTemplate(this TImage src, TPixel[,] template)
         {
             List<PointS> finds = new List<PointS>();
             int tHeight = template.GetUpperBound(0) + 1;
@@ -160,7 +161,7 @@ namespace Geb.Image
             int toWidth = src.Width - tWidth + 1;
             int toHeight = src.Height - tHeight + 1;
             int stride = src.Width;
-            TPixel* start = (TPixel*)src.StartIntPtr;
+            TPixel* start = src.Start;
             for (int r = 0; r < toHeight; r++)
             {
                 for (int c = 0; c < toWidth; c++)
@@ -191,7 +192,40 @@ namespace Geb.Image
 
     public partial class ImageSignedArgb64
     {
-        public unsafe TPixel* Start { get { return (TPixel*)this.StartIntPtr; } }
+        /// <summary>
+        /// 图像所占字节数。
+        /// </summary>
+        public Int32 ByteCount { get; private set; }
+
+        /// <summary>
+        /// 图像的像素数量
+        /// </summary>
+        public Int32 Length { get; private set; }
+
+        /// <summary>
+        /// 每像素的尺寸（字节数）
+        /// </summary>
+        public Int32 SizeOfType { get; private set; }
+
+        /// <summary>
+        /// 图像宽（像素）
+        /// </summary>
+        public Int32 Width { get; protected set; }
+
+        /// <summary>
+        /// 图像的高（像素）
+        /// </summary>
+        public Int32 Height { get; protected set; }
+
+        /// <summary>
+        /// 图像的起始指针。
+        /// </summary>
+        public unsafe TPixel* Start { get; private set; }
+
+        public Size ImageSize
+        {
+            get { return new Size(Width, Height); }
+        }
 
         public unsafe TPixel this[int index]
         {
@@ -247,6 +281,247 @@ namespace Geb.Image
             return Start + row * this.Width;
         }
 
+        private Boolean _isOwner;
+
+        /// <summary>
+        /// 是否是图像数据所在内存的拥有者。如果非所在内存的拥有者，则不负责释放内存。
+        /// </summary>
+        public Boolean IsOwner
+        {
+            get { return _isOwner; }
+        }
+
+        /// <summary>
+        /// 是否图像内存的拥有权。
+        /// </summary>
+        /// <returns>如果释放前有所属内存，则返回所属内存的指针，否则返回空指针</returns>
+        public unsafe void* ReleaseOwner()
+        {
+            if (Start == null || _isOwner == false) return null;
+            else
+            {
+                _isOwner = false;
+                return Start;
+            }
+        }
+
+        /// <summary>
+        /// 感兴趣区域。目前尚无用途。
+        /// </summary>
+        public ROI ROI { get; private set; }
+
+        /// <summary>
+        /// 创建图像。
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        public unsafe ImageSignedArgb64(Int32 width, Int32 height)
+        {
+            if (width <= 0) throw new ArgumentOutOfRangeException("width");
+            else if (height <= 0) throw new ArgumentOutOfRangeException("height");
+            _isOwner = true;
+            AllocMemory(width, height);
+        }
+
+        /// <summary>
+        /// 创建图像，所创建的图像并不是图像数据的拥有者。
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="data"></param>
+        public unsafe ImageSignedArgb64(Int32 width, Int32 height, void* data)
+        {
+            if (width <= 0) throw new ArgumentOutOfRangeException("width");
+            else if (height <= 0) throw new ArgumentOutOfRangeException("height");
+            Width = width;
+            Height = height;
+            _isOwner = false;
+            Start = (TPixel*) data;
+            Length = Width * Height;
+            SizeOfType = SizeOfT();
+            ByteCount = SizeOfType * Length;
+        }
+
+        private unsafe void AllocMemory(int width, int height)
+        {
+            Height = height;
+            Width = width;
+            Length = Width * Height;
+            SizeOfType = SizeOfT();
+            ByteCount = SizeOfType * Length;
+            Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
+        }
+
+        public unsafe ImageSignedArgb64(String path)
+        {
+            using (Bitmap bmp = new Bitmap(path))
+            {
+                AllocMemory(bmp.Width, bmp.Height);
+                this.CreateFromBitmap(bmp);
+            }
+        }
+
+        public ImageSignedArgb64(Bitmap map)
+        {
+            if (map == null) throw new ArgumentNullException("map");
+            AllocMemory(map.Width, map.Height);
+            this.CreateFromBitmap(map);
+        }
+
+        public unsafe virtual void Dispose()
+        {
+            if (_isOwner == true)
+            {
+                if (Start != null)
+                {
+                    Marshal.FreeHGlobal((IntPtr)Start);
+                    Start = null;
+                }
+                _isOwner = false;
+            }
+        }
+
+        ~ImageSignedArgb64()
+        {
+            Dispose();
+        }
+
+        private static Int32 SizeOfT()
+        {
+            return Marshal.SizeOf(typeof(TPixel));
+        }
+
+        protected virtual unsafe void CreateFromBitmap(Bitmap map)
+        {
+            int height = map.Height;
+            int width = map.Width;
+
+            const int PixelFormat32bppCMYK = 8207;
+
+            PixelFormat format = map.PixelFormat;
+
+            this.Width = width;
+            this.Height = height;
+
+            Bitmap newMap = map;
+            Int32 step = SizeOfT();
+
+            switch (format)
+            {
+                case PixelFormat.Format24bppRgb:
+                    break;
+                case PixelFormat.Format32bppArgb:
+                    break;
+                default:
+                    if ((int)format == PixelFormat32bppCMYK)
+                    {
+                        format = PixelFormat.Format24bppRgb;
+                        newMap = new Bitmap(width, height, format);
+                        using (Graphics g = Graphics.FromImage(newMap))
+                        {
+                            g.DrawImage(map, new Point());
+                        }
+                    }
+                    else
+                    {
+                        format = PixelFormat.Format32bppArgb;
+                        newMap = map.Clone(new Rectangle(0, 0, width, height), PixelFormat.Format32bppArgb);
+                    }
+                    break;
+            }
+
+            BitmapData data = newMap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, format);
+            Byte* line = (Byte*)data.Scan0;
+            Byte* dstLine = (Byte*)Start;
+            try
+            {
+                if (format == PixelFormat.Format24bppRgb)
+                {
+                    for (int h = 0; h < height; h++)
+                    {
+                        Copy((Rgb24*)line, (void*)dstLine, width);
+                        line += data.Stride;
+                        dstLine += step * width;
+                    }
+                }
+                else
+                {
+                    for (int h = 0; h < height; h++)
+                    {
+                        Copy((Argb32*)line, (void*)dstLine, width);
+
+                        line += data.Stride;
+                        dstLine += step * width;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                newMap.UnlockBits(data);
+                if (newMap != map)
+                {
+                    newMap.Dispose();
+                }
+            }
+        }
+
+        public virtual unsafe Bitmap ToBitmap()
+        {
+            Bitmap map = new Bitmap(this.Width, this.Height, GetOutputBitmapPixelFormat());
+            ToBitmap(map);
+            return map;
+        }
+
+        public virtual unsafe void ToBitmap(Bitmap map)
+        {
+            if (map == null) throw new ArgumentNullException("map");
+            if (map.Width != this.Width || map.Height != this.Height)
+            {
+                throw new ArgumentException("尺寸不匹配.");
+            }
+
+            if (map.PixelFormat != GetOutputBitmapPixelFormat())
+            {
+                throw new ArgumentException("只支持 " + GetOutputBitmapPixelFormat().ToString() + " 格式。 ");
+            }
+
+            if (map.PixelFormat == PixelFormat.Format8bppIndexed)
+            {
+                map.InitGrayscalePalette();
+            }
+
+            Int32 step = SizeOfT();
+            Byte* srcLine = (Byte*)Start;
+
+            BitmapData data = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, map.PixelFormat);
+            try
+            {
+                int width = map.Width;
+                int height = map.Height;
+                Byte* dstLine = (Byte*)data.Scan0;
+                for (int h = 0; h < height; h++)
+                {
+                    ToBitmapCore(srcLine, dstLine, width);
+                    dstLine += data.Stride;
+                    srcLine += step * width;
+                }
+            }
+            finally
+            {
+                map.UnlockBits(data);
+            }
+        }
+
+        public void ApplyMatrix(float a, float b, float c, float d, float e, float f)
+        {
+            //TODO: ApplyMatrix
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// 代表当前图像内容的二维数组。
         /// .Net 的 IDE 均不支持直接查看.Net程序中的指针内容，DataSnapshot 提供了调试时查看
@@ -275,14 +550,14 @@ namespace Geb.Image
             return img;
         }
 
-        public unsafe TImage CloneFrom(UnmanagedImage<TPixel> src)
+        public unsafe TImage CloneFrom(TImage src)
         {
             if (src == null) throw new ArgumentNullException("src");
             if (src.ByteCount != this.ByteCount) throw new NotSupportedException("与src图像的像素数量不一致，无法复制.");
 
             TPixel* start = Start;
             TPixel* end = start + Length;
-            TPixel* from = (TPixel*)(src.StartIntPtr);
+            TPixel* from = src.Start;
 
             while (start != end)
             {
@@ -381,11 +656,16 @@ namespace Geb.Image
             return this;
         }
 
-        public unsafe TImage CopyFrom(UnmanagedImage<TPixel> src, System.Drawing.Point start, System.Drawing.Rectangle region, System.Drawing.Point destAnchor)
+        public unsafe TImage CopyFrom(TImage src, System.Drawing.Point start, System.Drawing.Rectangle region, System.Drawing.Point destAnchor)
+        {
+            return CopyFrom(src, new PointS(start.X, start.Y), new Rect(region.X, region.Y, region.Width, region.Height), new PointS(destAnchor.X, destAnchor.Y));
+        }
+
+        public unsafe TImage CopyFrom(TImage src, PointS start, Rect region, PointS destAnchor)
         {
             if (start.X >= src.Width || start.Y >= src.Height) return this;
-            int startSrcX = Math.Max(0, start.X);
-            int startSrcY = Math.Max(0, start.Y);
+            int startSrcX = Math.Max(0, (int)start.X);
+            int startSrcY = Math.Max(0, (int)start.Y);
             int endSrcX = Math.Min(start.X + region.Width, src.Width);
             int endSrcY = Math.Min(start.Y + region.Height, src.Height);
             int offsetX = start.X < 0? -start.X : 0;
@@ -407,7 +687,7 @@ namespace Geb.Image
             int srcWidth = src.Width;
             int dstWidth = this.Width;
 
-            TPixel* srcLine = (TPixel*)(src.StartIntPtr) + srcWidth * startSrcY + startSrcX;
+            TPixel* srcLine = src.Start + srcWidth * startSrcY + startSrcX;
             TPixel* dstLine = this.Start + dstWidth * startDstY + startDstX;
             TPixel* endSrcLine = srcLine + srcWidth * copyHeight;
             int alpha1, alpha2, blendAlpha,alpha;
@@ -534,12 +814,12 @@ namespace Geb.Image
             int* vals = stackalloc int[size * size + 1];
             TPixel* keys = stackalloc TPixel[size * size + 1];
 
-            UnmanagedImage<TPixel> mask = this.Clone() as UnmanagedImage<TPixel>;
+            ImageSignedArgb64 mask = this.Clone();
             int height = this.Height;
             int width = this.Width;
 
-            TPixel* pMask = (TPixel*)mask.StartIntPtr;
-            TPixel* pThis = (TPixel*)this.StartIntPtr;
+            TPixel* pMask = mask.Start;
+            TPixel* pThis = this.Start;
 
             int radius = size / 2;
 
@@ -901,7 +1181,7 @@ namespace Geb.Image
 
             // 计算 channel 数量
             int nChannel = sizeof(TPixel) / sizeof(TChannel);
-            TImage imgDst = new TImage(width, height);
+            TImage imgDst = new ImageSignedArgb64(width, height);
             TChannel* rootSrc = (TChannel*)this.Start;
             TChannel* rootDst = (TChannel*)imgDst.Start;
 
