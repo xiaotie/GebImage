@@ -144,29 +144,22 @@ namespace Geb.Image
             this.CreateFromBitmap(map);
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (false == disposed)
+            if (_isOwner == true)
             {
-                 disposed = true;
-                 if (_isOwner == true)
-                 {
-                     Marshal.FreeHGlobal(StartIntPtr);
-                 }
+                if (StartIntPtr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(StartIntPtr);
+                    StartIntPtr = IntPtr.Zero;
+                }
+                _isOwner = false;
             }
         }
 
-        private bool disposed;
-
         ~UnmanagedImage()
         {
-            Dispose(false);
+            Dispose();
         }
 
         private static Int32 SizeOfT()

@@ -53,26 +53,6 @@ namespace Geb.Image
         {
         }
 
-        private ImageChannel32 _channel;
-
-        public ImageChannel32 Channel
-        {
-            get 
-            {
-                if (_channel == null)
-                {
-                    lock (this)
-                    {
-                        if (_channel == null)
-                        {
-                            _channel = new ImageChannel32(this.Width, this.Height, this.StartIntPtr, sizeof(Int32));
-                        }
-                    }
-                }
-                return _channel;
-            }
-        }
-
         public unsafe ImageRgb24 ToImageRgb24WithRamdomColorMap()
         {
             ImageRgb24 img = new ImageRgb24(this.Width, this.Height);
