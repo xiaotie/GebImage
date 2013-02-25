@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image", "src\Geb.Image\Geb.Image.csproj", "{F86CF18F-70F4-4491-9C1C-9F390A09E978}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "00_Introduce", "src\00_Introduce\00_Introduce.csproj", "{F72A40A6-8398-482A-AAB1-655C2884CFD1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Demo", "src\Geb.Image.Demo\Geb.Image.Demo.csproj", "{A45FC993-F853-4364-8FF6-B0CC54C01958}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Test", "src\Geb.Image.Test\Geb.Image.Test.csproj", "{208408E2-559D-473D-B03F-B2D1FAD80339}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +67,21 @@ Global
 		{A45FC993-F853-4364-8FF6-B0CC54C01958}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A45FC993-F853-4364-8FF6-B0CC54C01958}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A45FC993-F853-4364-8FF6-B0CC54C01958}.Release|x86.ActiveCfg = Release|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Demo|Any CPU.ActiveCfg = Debug|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Demo|Any CPU.Build.0 = Debug|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Demo|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Demo|Mixed Platforms.Build.0 = Debug|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Demo|x86.ActiveCfg = Debug|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{208408E2-559D-473D-B03F-B2D1FAD80339}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
