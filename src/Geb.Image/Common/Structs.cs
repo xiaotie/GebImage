@@ -23,6 +23,11 @@ namespace Geb.Image
         [FieldOffset(2)]
         public Int16 Y;
 
+        public PointF ToPointF()
+        {
+            return new PointF(X, Y);
+        }
+
         public PointS(Int16 x, Int16 y)
         {
             X = x; Y = y;

@@ -119,6 +119,8 @@
     <Compile Include="UnmanagedImage\Templates\_ImageSignedArgb64_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageU8_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\__Paramid_Templete.cs" />
+    <Compile Include="UnmanagedImage\UnmanagedImage.cs" />
+    <Compile Include="UnmanagedImage\Utils\HersheyGlyphs.cs" />
     <Compile Include="UnmanagedImage\Utils\ImageConverter.cs" />
     <Compile Include="UnmanagedImage\ImageLab24.cs" />
     <Compile Include="UnmanagedImage\Utils\PixelHelper.cs" />

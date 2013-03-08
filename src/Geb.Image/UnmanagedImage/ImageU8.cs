@@ -653,7 +653,7 @@ namespace Geb.Image
         /// <param name="threshold">阈值。小于此阈值的设为 lowerValue，大于此阈值的设为 upperValue</param>
         /// <param name="lowerValue">lowerValue</param>
         /// <param name="upperValue">upperValue</param>
-        public unsafe void ApplyThreshold(byte threshold, byte lowerValue = 0, byte upperValue = 255)
+        public unsafe ImageU8 ApplyThreshold(byte threshold, byte lowerValue = 0, byte upperValue = 255)
         {
             byte* start = this.Start;
             byte* end = start + this.Length;
@@ -666,6 +666,7 @@ namespace Geb.Image
 
                 start++;
             }
+            return this;
         }
 
         /// <summary>

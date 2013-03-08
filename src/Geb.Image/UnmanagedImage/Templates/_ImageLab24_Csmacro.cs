@@ -324,6 +324,11 @@ namespace Geb.Image
             return Start + row * this.Width;
         }
 
+        public Rect Rect
+        {
+            get { return new Rect(0, 0, Width, Height); }
+        }
+
         private Boolean _isOwner;
 
         /// <summary>
@@ -1152,7 +1157,6 @@ namespace Geb.Image
                     step = 1 / grad;
                 }
 
-
                 for (float x = xStart; x <= xEnd; x += step)
                 {
                     float deltaXX = start.X - x;
@@ -1167,6 +1171,64 @@ namespace Geb.Image
         public void Draw(float x, float y, TPixel color, int radius)
         {
             SetColor(x, y, color, radius, Width - 1, Height - 1);
+        }
+
+        /// <summary>
+        /// 绘制文字
+        /// </summary>
+        /// <param name="txt">文字内容。目前支持ASCII内容。</param>
+        /// <param name="color">文字颜色</param>
+        /// <param name="pos">文字绘制的位置</param>
+        /// <param name="scale">缩放比例</param>
+        public unsafe void DrawText(String txt, TPixel color, PointS org, double fontSize = 1)
+        {
+            int[] ascii = HersheyGlyphs.HersheyPlain;
+            String[] faces = HersheyGlyphs.Data;
+            int base_line = +(ascii[0] & 15);
+            double hscale = fontSize, vscale = hscale;
+            double view_x = org.X;
+            double view_y = org.Y + base_line * vscale;
+            List<PointS> pts = new List<PointS>(1 << 10);
+            for (int i = 0; i < txt.Length; i++)
+            {
+                Char c = txt[i];
+                if (c >= 127 || c < ' ')
+                    c = '?';
+                String fontData = faces[ascii[(c - ' ') + 1]];
+
+                PointS p = new PointS();
+                p.X = (short)(fontData[0] - 'R');
+                p.Y = (short)(fontData[1] - 'R');
+                double dx = p.Y * hscale;
+                view_x -= p.X * hscale;
+                pts.Clear();
+                for (int k = 2; k <= fontData.Length; )
+                {
+                    if (k == fontData.Length || fontData[k] == ' ')
+                    {
+                        // Draw Poly Line
+                        if (pts.Count > 1)
+                        {
+                            for (int j = 1; j < pts.Count; j++)
+                            {
+                                DrawLine(pts[j - 1].ToPointF(), pts[j].ToPointF(), color);
+                            }
+                        }
+                        pts.Clear();
+                        k++;
+                    }
+                    else
+                    {
+                        p.X = (short)(fontData[k] - 'R');
+                        p.Y = (short)(fontData[k+1] - 'R');
+                        k += 2;
+                        pts.Add(new PointS((short)Math.Round(p.X * hscale + view_x),
+                            (short)Math.Round(p.Y * vscale + view_y)));
+                    }
+                }
+
+                view_x += dx;
+            }
         }
 
         /// <summary>
