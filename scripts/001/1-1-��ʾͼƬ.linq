@@ -9,10 +9,8 @@
 
 String baseDir = "E:\\MyWorkspace\\DotNetWorkspace\\01_Public_Geb.Image\\scripts\\img\\";
 
-unsafe void Main()
+void Main()
 {
 	ImageRgb24 img = new ImageRgb24(baseDir + "cjk.jpg");
 	img.ShowDialog();
-	img.ForEach((Rgb24* p)=>{ p->Red = (Byte)(p->Red/2); });
-	img.ShowDialog();	
 }
