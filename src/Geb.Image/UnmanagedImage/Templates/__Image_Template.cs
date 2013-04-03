@@ -210,6 +210,14 @@ namespace Geb.Image.Hidden
             Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
         }
 
+        public void Save(String path)
+        {
+            using (Bitmap bmp = this.ToBitmap())
+            {
+                bmp.Save(path);
+            }
+        }
+
         public unsafe Image_Template(String path)
         {
             using (Bitmap bmp = new Bitmap(path))

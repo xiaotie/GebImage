@@ -400,6 +400,14 @@ namespace Geb.Image
             Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
         }
 
+        public void Save(String path)
+        {
+            using (Bitmap bmp = this.ToBitmap())
+            {
+                bmp.Save(path);
+            }
+        }
+
         public unsafe ImageLab24(String path)
         {
             using (Bitmap bmp = new Bitmap(path))
