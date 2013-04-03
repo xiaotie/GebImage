@@ -391,6 +391,50 @@ namespace Geb.Image
             return img;
         }
 
+        /// <summary>
+        /// 创建平方后的积分图像
+        /// </summary>
+        /// <returns></returns>
+        public unsafe ImageInt32 CreateSquareIntegral()
+        {
+            int width = Width;
+            int height = Height;
+            int widthPlus = width + 1;
+            ImageInt32 img = new ImageInt32(width, height);
+            Byte* p = this.Start;
+            Byte* pEnd = null;
+            Int32* v = img.Start;
+
+            // 第一行
+            pEnd = p + width;
+            *v = (*p) * (*p);
+            p++; v++;   // 第一个元素跳开
+            while (p < pEnd) // 剩下的元素
+            {
+                *v = v[-1] + (*p)*(*p);
+                p++;
+                v++;
+            }
+
+            for (int h = 1; h < height; h++)
+            {
+                p = this.Start + h * width;
+                v = img.Start + h * width;
+                pEnd = p + width;
+                *v = (*p) * (*p) + v[-width];
+                p++; v++;
+
+                while (p < pEnd) // 剩下的元素
+                {
+                    *v = v[-1] + v[-width] - v[-widthPlus] + (*p) * (*p);
+                    p++;
+                    v++;
+                }
+            }
+
+            return img;
+        }
+
         public unsafe ImageInt32 ToImageInt32()
         {
             ImageInt32 img32 = new ImageInt32(this.Width, this.Height);

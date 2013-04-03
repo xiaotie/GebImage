@@ -42,11 +42,11 @@ namespace Geb.Image
         /// <param name="bmp">Bitmap图像</param>
         /// <param name="title">模态窗口的标题</param>
         /// <returns>当前Bitmap图像</returns>
-        public static Bitmap ShowDialog(this Bitmap bmp, String title = null)
+        public static Bitmap ShowDialog(this Bitmap bmp, String title = null, Boolean zoom = true)
         {
             if (Config.SilentMode == false)  // 非安静模式下，弹出窗体
             {
-                ImageBox.ShowDialog(bmp, title);
+                ImageBox.ShowDialog(bmp, title, zoom);
             }
 
             return bmp;

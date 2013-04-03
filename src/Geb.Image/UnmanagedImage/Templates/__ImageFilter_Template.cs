@@ -21,7 +21,12 @@ namespace Geb.Image.Hidden
 
         #region mixin
 
-        public unsafe void ApplyConvolution(ConvolutionKernel  k)
+        /// <summary>
+        /// 使用卷积。
+        /// </summary>
+        /// <param name="k">卷积核</param>
+        /// <returns>直接在原图像上使用卷积，返回为卷积后的原图像</returns>
+        public unsafe TImage ApplyConvolution(ConvolutionKernel k)
         {
             int kernelHeight = k.Width;
             int kernelWidth = k.Height;
@@ -173,6 +178,7 @@ namespace Geb.Image.Hidden
                 }
             }
             maskImage.Dispose();
+            return this;
         }
 
         #endregion

@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Geb.Image</RootNamespace>
     <AssemblyName>Geb.Image</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -87,10 +87,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\libs\Geb.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="Geb.Utils.WinForm, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\libs\Geb.Utils.WinForm.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -119,7 +115,7 @@
     <Compile Include="UnmanagedImage\Templates\_ImageSignedArgb64_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageU8_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\__Paramid_Templete.cs" />
-    <Compile Include="UnmanagedImage\UnmanagedImage.cs" />
+    <Compile Include="UnmanagedImage\Image.cs" />
     <Compile Include="UnmanagedImage\Utils\HersheyGlyphs.cs" />
     <Compile Include="UnmanagedImage\Utils\ImageConverter.cs" />
     <Compile Include="UnmanagedImage\ImageLab24.cs" />
@@ -165,7 +161,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\00_Public_Geb.Common\src\Geb.Utils.WinForm\Geb.Utils.WinForm.csproj">
+      <Project>{efb08eb4-709f-4f70-b644-bf7d99662fbb}</Project>
+      <Name>Geb.Utils.WinForm</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

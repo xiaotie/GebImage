@@ -576,11 +576,11 @@ namespace Geb.Image
         /// </summary>
         /// <param name="title">弹出模式窗体的标题</param>
         /// <returns>当前图像</returns>
-        public TImage ShowDialog(String title = null)
+        public TImage ShowDialog(String title = null, Boolean zoom = true)
         {
             if (Config.SilentMode == false) // 非安静模式不弹出窗体
             {
-                this.ToBitmap().ShowDialog(title);
+                this.ToBitmap().ShowDialog(title,zoom);
             }
             return this;
         }
@@ -889,6 +889,14 @@ namespace Geb.Image
             mask.Dispose();
 
             return this;
+        }
+
+        public void DrawRect(RectF rect, TPixel color)
+        {
+            DrawLine(new PointF(rect.X, rect.Y), new PointF(rect.X + rect.Width, rect.Y), color);
+            DrawLine(new PointF(rect.X, rect.Y), new PointF(rect.X, rect.Y + rect.Height), color);
+            DrawLine(new PointF(rect.X + rect.Width, rect.Y), new PointF(rect.X + rect.Width, rect.Y + rect.Height), color);
+            DrawLine(new PointF(rect.X, rect.Y + rect.Height), new PointF(rect.X + rect.Width, rect.Y + rect.Height), color);
         }
 
         public void DrawRect(RectF rect, TPixel color, int radius)
@@ -1249,8 +1257,8 @@ namespace Geb.Image
             int hSrc = this.Height;
             int wSrcIdxMax = wSrc - 1;
             int hSrcIdxMax = hSrc - 1;
-            float wCoeff = wSrc / width;
-            float hCoeff = hSrc / height;
+            float wCoeff = (float)wSrc / width;
+            float hCoeff = (float)hSrc / height;
 
             if (mode == InterpolationMode.NearestNeighbor)
             {
