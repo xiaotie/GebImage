@@ -788,6 +788,40 @@ namespace Geb.Image
             return this;
         }
 
+        public unsafe ImageU8 ApplyLocalThreshold(int windowSize)
+        {
+            // 参照了 AForge.Net 里的 BradleyLocalThresholding 
+            using (ImageInt32 imgIntegral = this.CreateIntegral())
+            {
+                int width = this.Width;
+                int height = this.Height;
+                Byte* p = this.Start;
+                int radius = windowSize / 2;
+                if (radius < 3) radius = 3;
+                float avgBrightnessPart = 0.85f;
+                for (int h = 0; h < height; h++)
+                {
+                    int y1 = h - radius - 1;
+                    int y2 = h + radius;
+                    if (y1 < 0) y1 = 0;
+                    if (y2 >= height) y2 = height - 1;
+
+                    for (int w = 0; w < width; w++, p++)
+                    {
+                        int x1 = w - radius - 1;
+                        int x2 = w + radius;
+                        if (x1 < 0) x1 = 0;
+                        if (x2 >= width) x2 = width - 1;
+                        int val = imgIntegral[y2, x2] + imgIntegral[y1, x1] - imgIntegral[y2, x1] - imgIntegral[y1, x2];
+                        val = val / ((x2 - x1) * (y2 - y1));
+                        if (*p < val * avgBrightnessPart) *p = 0;
+                        else *p = 255;
+                    }
+                }
+            }
+            return this;
+        }
+
         /// <summary>
         /// 进行距离变换。距离变换之前，请保证前景像素的值为0。计算D8距离. 忽略第一行和最后一行，第一列和最后一列。
         /// </summary>
