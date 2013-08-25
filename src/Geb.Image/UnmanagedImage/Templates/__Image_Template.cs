@@ -207,6 +207,7 @@ namespace Geb.Image.Hidden
             Length = Width * Height;
             SizeOfType = SizeOfT();
             ByteCount = SizeOfType * Length;
+            _isOwner = true;
             Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
         }
 

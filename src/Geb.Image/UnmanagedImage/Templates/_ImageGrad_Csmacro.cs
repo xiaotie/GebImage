@@ -352,6 +352,7 @@ namespace Geb.Image
             Length = Width * Height;
             SizeOfType = SizeOfT();
             ByteCount = SizeOfType * Length;
+            _isOwner = true;
             Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
         }
 

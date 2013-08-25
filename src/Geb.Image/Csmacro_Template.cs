@@ -1,1 +1,1 @@
-#define NET2
+#define NET4
