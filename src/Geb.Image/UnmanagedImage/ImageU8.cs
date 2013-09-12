@@ -11,6 +11,8 @@ namespace Geb.Image
 {
     public partial class ImageU8 : IDisposable
     {
+        public const int ChannelCount = 1;
+
         #region Image <-> Bitmap 所需的方法
 
         private unsafe void Copy(Rgb24* from, void* to, int length)

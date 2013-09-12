@@ -69,6 +69,8 @@ namespace Geb.Image
 
     public partial class ImageSignedArgb64 : IDisposable
     {
+        public const int ChannelCount = 4;
+
         #region 静态方法
 
         public unsafe static ImageSignedArgb64 CreateFrom(ImageArgb32 img)
