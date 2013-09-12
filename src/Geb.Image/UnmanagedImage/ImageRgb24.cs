@@ -44,7 +44,8 @@ namespace Geb.Image
             Blue = blue;
         }
 
-        public Rgb24(int value):this((value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF)
+        public Rgb24(int value)
+            : this((value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF)
         {
         }
 
@@ -173,11 +174,11 @@ namespace Geb.Image
             Byte* end = start + sizeof(Rgb24) * length;
             ImageU8 imgU8 = new ImageU8(this.Width, this.Height);
             Byte* dst = imgU8.Start;
-            while(start != end)
+            while (start != end)
             {
                 *dst = start[channel];
                 start += size;
-                dst ++;
+                dst++;
             }
             return imgU8;
         }
@@ -204,7 +205,7 @@ namespace Geb.Image
                 int* gCache = stackalloc int[256];
                 int* rCache = stackalloc int[256];
 
-                const int shift = 1<<10;
+                const int shift = 1 << 10;
                 int rShift = (int)(rCoeff * shift);
                 int gShift = (int)(gCoeff * shift);
                 int bShift = shift - rShift - gShift;
@@ -222,7 +223,7 @@ namespace Geb.Image
 
                 while (p != end)
                 {
-                    *to = (Byte)(( bCache[p->Red] + gCache[p->Green] + rCache[p->Red] ) >> 10);
+                    *to = (Byte)((bCache[p->Red] + gCache[p->Green] + rCache[p->Red]) >> 10);
                     p++;
                     to++;
                 }
@@ -337,7 +338,7 @@ namespace Geb.Image
             byte[] b = new byte[size * size];
             int height = this.Height;
             int width = this.Width;
-
+            
             for (int i = 0; i < points.Count; i++)
             {
                 Point p = points[i];
@@ -375,5 +376,6 @@ namespace Geb.Image
                 this[p] = vals[i];
             }
         }
+
     }
 }

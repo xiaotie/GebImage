@@ -6,6 +6,7 @@ using TPixel = System.Byte;
 using TCache = System.Int32;
 using TKernel = System.Int32;
 using TImage = Geb.Image.ImageU8;
+using TConfig = Geb.Image.Hidden.ImageClassHelper_Template;
 
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,12 @@ using System.Text;
 
 namespace Geb.Image.Hidden
 {
+    static class ImageClassHelper_Config
+    {
+        public const int PixelSize = 1;
+        public const int Channels = 1;
+    }
+
     static class ImageClassHelper_Template
     {
         #region mixin

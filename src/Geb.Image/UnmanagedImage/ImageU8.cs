@@ -1010,5 +1010,67 @@ namespace Geb.Image
                 start++;
             }
         }
+
+        /// <summary>
+        /// 进行双边滤波。双边滤波（Bilateral filter）是一种非线性的滤波方法，是结合图像的空间邻近度和像素值相似度的一种折衷处理，同时考虑空域信息和灰度相似性，达到保边去噪的目的。具有简单、非迭代、局部的特点。
+        /// 双边滤波器的好处是可以做边缘保存（edge preserving），一般过去用的维纳滤波或者高斯滤波去降噪，都会较明显地模糊边缘，对于高频细节的保护效果并不明显。双边滤波器顾名思义比高斯滤波多了一个高斯方差sigma－d，它是基于空间分布的高斯滤波函数，所以在边缘附近，离的较远的像素不会太多影响到边缘上的像素值，这样就保证了边缘附近像素值的保存。但是由于保存了过多的高频信息，对于彩色图像里的高频噪声，双边滤波器不能够干净的滤掉，只能够对于低频信息进行较好的滤波，
+        /// </summary>
+        /// <param name="sigmaDistance">距离加权的高斯方差</param>
+        /// <param name="sigmaColor">颜色加权的高斯方差</param>
+        /// <param name="radius">加权窗口的半径</param>
+        public unsafe ImageU8 ApplyBilateralFilter(double sigmaDistance, double sigmaColor, int radius)
+        {
+            using (ImageU8 tmp = this.Clone())
+            {
+                int windowSize = radius * 2 + 1;
+                double* distanceCoeff = stackalloc double[windowSize * windowSize]; //计算距离中间点的几何距离  
+                double colorCoeff = 0;
+
+                // 计算空间权重
+                for (int y = 0; y < windowSize; y++)
+                {
+                    for (int x = 0; x < windowSize; x++)
+                    {
+                        int idx = y * windowSize + x;
+                        distanceCoeff[idx] = (radius - x) * (radius - x) + (radius - y) * (radius - y);
+                        distanceCoeff[idx] = Math.Exp(-0.5 * distanceCoeff[idx] / sigmaDistance / sigmaDistance); 
+                    }
+                }
+
+                //以下求解灰度值的差  
+                for (int h = 0; h < Height; h++)
+                {
+                    for (int w = 0; w < Width; w++)
+                    {
+                        double p = tmp[h, w];    //当前点的灰度值  
+                        double val = 0.0;
+                        double sum = 0.0;                      //用于进行归一化   
+
+                        int x0 = Math.Max(0,w - radius);
+                        int x1 = Math.Min(Width, w + radius);
+                        int y0 = Math.Max(0, h - radius);
+                        int y1 = Math.Min(Height, h + radius);
+
+                        for (int y = y0; y < y1; y++)
+                        {
+                            for (int x = x0; x < x1; x++)
+                            {
+                                int idx = (y - h) * windowSize + (x - w);
+                                double p0 = tmp[y, x];
+                                colorCoeff = Math.Abs(p - p0);
+                                colorCoeff = Math.Exp(-0.5 * colorCoeff * colorCoeff / sigmaColor / sigmaColor);
+                                val += p0 * colorCoeff * distanceCoeff[idx];
+                                sum += colorCoeff * distanceCoeff[idx];    
+                            }
+                        }
+
+                        if(sum != 0) val = val / sum;
+                        this[h, w] = (Byte)Math.Round(val);
+                    }
+                }
+            }
+
+            return this;
+        }
     }
 }
