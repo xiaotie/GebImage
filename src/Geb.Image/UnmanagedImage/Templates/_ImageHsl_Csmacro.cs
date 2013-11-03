@@ -1,6 +1,7 @@
 /*************************************************************************
- *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
+ *  Copyright (c) 2013 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
+
 
 using System;
 using System.Collections.Generic;
@@ -10,13 +11,13 @@ using System.Runtime.InteropServices;
 
 namespace Geb.Image
 {
-    using TPixel = Geb.Image.Lab24;
-    using TChannel = System.Byte;
-    using TCache = Geb.Image.Lab24;
-    using TKernel = System.Int32;
-    using TImage = Geb.Image.ImageLab24;
+    using TPixel = Geb.Image.Hsl;
+    using TChannel = System.Single;
+    using TCache = Geb.Image.Hsl;
+    using TKernel = System.Single;
+    using TImage = Geb.Image.ImageHsl;
 
-    public partial struct Lab24
+    public partial struct Hsl
     {
         public static Boolean operator ==(TPixel lhs, int rhs)
         {
@@ -59,7 +60,7 @@ namespace Geb.Image
         }
     }
 
-    public static partial class ImageLab24ClassHelper
+    public static partial class ImageHslClassHelper
     {
         /// <summary>
         /// 对每个像素进行操作
@@ -233,7 +234,7 @@ namespace Geb.Image
         }
     }
 
-    public partial class ImageLab24
+    public partial class ImageHsl
     {
         /// <summary>
         /// 图像所占字节数。
@@ -363,7 +364,7 @@ namespace Geb.Image
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public unsafe ImageLab24(Int32 width, Int32 height)
+        public unsafe ImageHsl(Int32 width, Int32 height)
         {
             if (width <= 0) throw new ArgumentOutOfRangeException("width");
             else if (height <= 0) throw new ArgumentOutOfRangeException("height");
@@ -377,7 +378,7 @@ namespace Geb.Image
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="data"></param>
-        public unsafe ImageLab24(Int32 width, Int32 height, void* data)
+        public unsafe ImageHsl(Int32 width, Int32 height, void* data)
         {
             if (width <= 0) throw new ArgumentOutOfRangeException("width");
             else if (height <= 0) throw new ArgumentOutOfRangeException("height");
@@ -409,7 +410,7 @@ namespace Geb.Image
             }
         }
 
-        public unsafe ImageLab24(String path)
+        public unsafe ImageHsl(String path)
         {
             using (Bitmap bmp = new Bitmap(path))
             {
@@ -418,7 +419,7 @@ namespace Geb.Image
             }
         }
 
-        public ImageLab24(Bitmap map)
+        public ImageHsl(Bitmap map)
         {
             if (map == null) throw new ArgumentNullException("map");
             AllocMemory(map.Width, map.Height);
@@ -438,7 +439,7 @@ namespace Geb.Image
             }
         }
 
-        ~ImageLab24()
+        ~ImageHsl()
         {
             Dispose();
         }
@@ -871,7 +872,7 @@ namespace Geb.Image
             int* vals = stackalloc int[size * size + 1];
             TPixel* keys = stackalloc TPixel[size * size + 1];
 
-            ImageLab24 mask = this.Clone();
+            ImageHsl mask = this.Clone();
             int height = this.Height;
             int width = this.Width;
 
@@ -1303,7 +1304,7 @@ namespace Geb.Image
 
             // 计算 channel 数量
             int nChannel = sizeof(TPixel) / sizeof(TChannel);
-            TImage imgDst = new ImageLab24(width, height);
+            TImage imgDst = new ImageHsl(width, height);
             TChannel* rootSrc = (TChannel*)this.Start;
             TChannel* rootDst = (TChannel*)imgDst.Start;
 

@@ -1313,6 +1313,9 @@ namespace Geb.Image
         /// </summary>
         public unsafe void ApplyBiExponentialEdgePreservingSmoother(double photometricStandardDeviation = 30, double spatialDecay = 0.01)
         {
+            // BiExponentialEdgePreservingSmoother 算法是 java 算法的移植
+            // java 算法见： http://bigwww.epfl.ch/thevenaz/beeps/
+
             TChannel* p0 = (TChannel*)this.Start;
             int length = this.Width * this.Height;
 

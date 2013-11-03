@@ -522,5 +522,175 @@ namespace Geb.Image
                 to++;
             }
         }
+
+        public static unsafe void ToHsl(Rgb24* from, Hsl* to, int length = 1)
+        {
+            Rgb24* end = from + length;
+            while (from != end)
+            {
+                float r = (from->Red / 255f);
+                float g = (from->Green / 255f);
+                float b = (from->Blue / 255f);
+
+                float min = Math.Min(Math.Min(r, g), b);
+                float max = Math.Max(Math.Max(r, g), b);
+                float delta = max - min;
+
+                float h = 0;
+                float s = 0;
+                float l = (float)((max + min) / 2.0f);
+
+                if (delta != 0)
+                {
+                    if (l < 0.5f)
+                    {
+                        s = (float)(delta / (max + min));
+                    }
+                    else
+                    {
+                        s = (float)(delta / (2.0f - max - min));
+                    }
+
+                    float deltaR = (float)(((max - r) / 6.0f + (delta / 2.0f)) / delta);
+                    float deltaG = (float)(((max - g) / 6.0f + (delta / 2.0f)) / delta);
+                    float deltaB = (float)(((max - b) / 6.0f + (delta / 2.0f)) / delta);
+
+                    if (r == max)
+                    {
+                        h = deltaB - deltaG;
+                    }
+                    else if (g == max)
+                    {
+                        h = (1.0f / 3.0f) + deltaR - deltaB;
+                    }
+                    else if (b == max)
+                    {
+                        h = (2.0f / 3.0f) + deltaG - deltaR;
+                    }
+
+                    if (h < 0) h += 1.0f;
+                    if (h > 1) h -= 1.0f;
+                }
+
+                to->H = h;
+                to->S = s;
+                to->L = l;
+                from++;
+                to++;
+            }
+        }
+
+        public static unsafe void ToHsl(Argb32* from, Hsl* to, int length = 1)
+        {
+            Argb32* end = from + length;
+            while (from != end)
+            {
+                float r = (from->Red / 255f);
+                float g = (from->Green / 255f);
+                float b = (from->Blue / 255f);
+
+                float min = Math.Min(Math.Min(r, g), b);
+                float max = Math.Max(Math.Max(r, g), b);
+                float delta = max - min;
+
+                float h = 0;
+                float s = 0;
+                float l = (float)((max + min) / 2.0f);
+
+                if (delta != 0)
+                {
+                    if (l < 0.5f)
+                    {
+                        s = (float)(delta / (max + min));
+                    }
+                    else
+                    {
+                        s = (float)(delta / (2.0f - max - min));
+                    }
+
+                    float deltaR = (float)(((max - r) / 6.0f + (delta / 2.0f)) / delta);
+                    float deltaG = (float)(((max - g) / 6.0f + (delta / 2.0f)) / delta);
+                    float deltaB = (float)(((max - b) / 6.0f + (delta / 2.0f)) / delta);
+
+                    if (r == max)
+                    {
+                        h = deltaB - deltaG;
+                    }
+                    else if (g == max)
+                    {
+                        h = (1.0f / 3.0f) + deltaR - deltaB;
+                    }
+                    else if (b == max)
+                    {
+                        h = (2.0f / 3.0f) + deltaG - deltaR;
+                    }
+
+                    if (h < 0) h += 1.0f;
+                    if (h > 1) h -= 1.0f;
+                }
+
+                to->H = h;
+                to->S = s;
+                to->L = l;
+                from++;
+                to++;
+            }
+        }
+
+        public static unsafe void ToHsl(Byte* from, Hsl* to, int length = 1)
+        {
+            Byte* end = from + length;
+            while (from != end)
+            {
+                to->H = 0;
+                to->S = 0;
+                to->L = *from / 255f;
+                from++;
+                to++;
+            }
+        }
+
+        public static unsafe void ToRgb24(Hsl* from, Rgb24* to, int length = 1)
+        {
+            Hsl* end = from + length;
+            Byte r, g, b;
+
+            while (from != end)
+            {
+                float var_1, var_2;
+
+                if (from->S == 0)
+                {
+                    r = g  = b = (Byte)(from->L * 255);
+                }
+                else
+                {
+                    if (from->L < 0.5) var_2 = from->L * (1 + from->S);
+                    else var_2 = (from->L + from->S) - (from->S * from->L);
+
+                    var_1 = 2 * from->L - var_2;
+
+                    r = (Byte)(255 * HueToRgb(var_1, var_2, from->H + (1 / 3)));
+                    g = (Byte)(255 * HueToRgb(var_1, var_2, from->H));
+                    b = (Byte)(255 * HueToRgb(var_1, var_2, from->H - (1 / 3)));
+                }
+                to->Red = r;
+                to->Green = g;
+                to->Blue = b;
+
+                from++;
+                to++;
+            }
+        }
+
+        private static float HueToRgb(float v1, float v2, float vH)
+        {
+            if (vH < 0) vH += 1;
+            if (vH > 1) vH -= 1;
+            if ((6 * vH) < 1) return (v1 + (v2 - v1) * 6 * vH);
+            if ((2 * vH) < 1) return (v2);
+            if ((3 * vH) < 2) return (v1 + (v2 - v1) * ((2 / 3) - vH) * 6);
+            return (v1);
+        }
     }
 }

@@ -106,12 +106,15 @@
     <Compile Include="Common\Structs.cs" />
     <Compile Include="UnmanagedImage\ImageCmyk.cs" />
     <Compile Include="UnmanagedImage\ImageFloat.cs" />
+    <Compile Include="UnmanagedImage\ImageHsl.cs" />
+    <Compile Include="UnmanagedImage\ImageRgbSingle96.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageArgb32_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageFloat.cs" />
     <Compile Include="UnmanagedImage\ImageGrad.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageFloat_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageGrad.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageGrad_Csmacro.cs" />
+    <Compile Include="UnmanagedImage\Templates\_ImageHsl_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageInt32_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageLab24.cs" />
     <Compile Include="UnmanagedImage\ImageSignedArgb64.cs" />
@@ -120,6 +123,7 @@
     <Compile Include="UnmanagedImage\Templates\_ImageSignedArgb64.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageSignedArgb64_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageU8_Csmacro.cs" />
+    <Compile Include="UnmanagedImage\Templates\_ImageHsl.cs" />
     <Compile Include="UnmanagedImage\Templates\__Paramid_Templete.cs" />
     <Compile Include="UnmanagedImage\Image.cs" />
     <Compile Include="UnmanagedImage\Utils\HersheyGlyphs.cs" />
