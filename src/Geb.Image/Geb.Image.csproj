@@ -120,6 +120,8 @@
     <Compile Include="UnmanagedImage\ImageSignedArgb64.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageLab24_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageRgb24_Csmacro.cs" />
+    <Compile Include="UnmanagedImage\Templates\_ImageRgbSingle96.cs" />
+    <Compile Include="UnmanagedImage\Templates\_ImageRgbSingle96_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageSignedArgb64.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageSignedArgb64_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageU8_Csmacro.cs" />
