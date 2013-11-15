@@ -82,9 +82,6 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Geb.Patch">
-      <HintPath>..\..\libs\Geb.Patch.dll</HintPath>
-    </Reference>
     <Reference Include="Geb.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\libs\Geb.Utils.dll</HintPath>

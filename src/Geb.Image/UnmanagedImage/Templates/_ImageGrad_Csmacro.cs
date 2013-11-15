@@ -653,6 +653,31 @@ namespace Geb.Image
             return this;
         }
 
+        public unsafe TImage Fill(int x, int y, int width, int height, TPixel pixel)
+        {
+            int x0 = Math.Max(x, 0);
+            int y0 = Math.Max(y, 0);
+            int x1 = Math.Min(Width, x + width);
+            int y1 = Math.Min(Height, y + height);
+            if (x1 <= x0 || y1 <= y0) return this;
+
+            int ww = x1 - x0;
+            TPixel* p0 = this.Start;
+
+            for (int h = y0; h < y1; h++)
+            {
+                TPixel* h0 = p0 + h * Width + x0;
+                TPixel* h1 = h0 + ww;
+                while (h0 < h1)
+                {
+                    *h0 = pixel;
+                    h0++;
+                }
+            }
+
+            return this;
+        }
+
         public unsafe TImage Replace(TPixel pixel, TPixel replaced)
         {
             TPixel* p = this.Start;

@@ -31,6 +31,7 @@ namespace Geb.Image.Hidden
             int kernelHeight = k.Width;
             int kernelWidth = k.Height;
             int scale = k.Scale;
+            int valShift = k.ValueShift;
             int[,] kernel = k.Kernel;
             int extend = Math.Max(kernelWidth, kernelHeight) / 2;
             TImage maskImage = new TImage(Width + extend * 2, Height + extend * 2);
@@ -154,7 +155,7 @@ namespace Geb.Image.Hidden
                                 val += maskImage[h + kh, w + kw] * kernel[kh, kw];
                             }
                         }
-                        start[h * width + w] = (TPixel)val;
+                        start[h * width + w] = (TPixel)(val + valShift);
                     }
                 }
             }
@@ -173,7 +174,7 @@ namespace Geb.Image.Hidden
                                 val += maskImage[h + kh, w + kw] * kernel[kh, kw];
                             }
                         }
-                        start[h * width + w] = (TPixel)(val * factor);
+                        start[h * width + w] = (TPixel)(val * factor + valShift);
                     }
                 }
             }

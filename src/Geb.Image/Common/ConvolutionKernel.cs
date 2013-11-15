@@ -89,7 +89,7 @@ namespace Geb.Image
                 {-1, 0, 1},
                 {-2, 0, 2},
                 {-1, 0, 1}
-            });
+            },8);
 
         public static readonly ConvolutionKernel SobelY = new ConvolutionKernel(
             new int[,]
@@ -97,7 +97,7 @@ namespace Geb.Image
                 {-1, -2, -1},
                 {0, 0, 0},
                 {1, 2, 1}
-            });
+            },8);
 
         public static unsafe ConvolutionKernel CreateGaussianKernel(double sigma = 1.4, int size = 5)
         {
@@ -142,6 +142,7 @@ namespace Geb.Image
         /// </summary>
         public int[,] Kernel { get; private set; }
         public int Scale { get; private set; }
+        public int ValueShift { get; private set; }
         public int Height { get; private set; }
         public int Width { get; private set; }
         public int[] KernelX { get; private set; }
@@ -156,7 +157,7 @@ namespace Geb.Image
         /// </summary>
         /// <param name="kernel">kernel</param>
         /// <param name="divisor">divisor</param>
-        public ConvolutionKernel(int[,] kernel, int scale)
+        public ConvolutionKernel(int[,] kernel, int scale, int shift = 0)
         {
             if (kernel == null) throw new ArgumentNullException("kernel");
             Height = kernel.GetUpperBound(0) + 1;
@@ -165,6 +166,7 @@ namespace Geb.Image
             if (IsEvenNumber(Width) == true) throw new ArgumentException("Width must be odd number.");
             if (scale < 1) throw new ArgumentException("Scale must >= 1");
             Scale = scale;
+            ValueShift = shift;
             Kernel = kernel;
         }
 

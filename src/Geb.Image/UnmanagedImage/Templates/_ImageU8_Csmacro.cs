@@ -655,6 +655,31 @@ namespace Geb.Image
             return this;
         }
 
+        public unsafe TImage Fill(int x, int y, int width, int height, TPixel pixel)
+        {
+            int x0 = Math.Max(x, 0);
+            int y0 = Math.Max(y, 0);
+            int x1 = Math.Min(Width, x + width);
+            int y1 = Math.Min(Height, y + height);
+            if (x1 <= x0 || y1 <= y0) return this;
+
+            int ww = x1 - x0;
+            TPixel* p0 = this.Start;
+
+            for (int h = y0; h < y1; h++)
+            {
+                TPixel* h0 = p0 + h * Width + x0;
+                TPixel* h1 = h0 + ww;
+                while (h0 < h1)
+                {
+                    *h0 = pixel;
+                    h0++;
+                }
+            }
+
+            return this;
+        }
+
         public unsafe TImage Replace(TPixel pixel, TPixel replaced)
         {
             TPixel* p = this.Start;
@@ -1639,6 +1664,7 @@ namespace Geb.Image
             int kernelHeight = k.Width;
             int kernelWidth = k.Height;
             int scale = k.Scale;
+            int valShift = k.ValueShift;
             int[,] kernel = k.Kernel;
             int extend = Math.Max(kernelWidth, kernelHeight) / 2;
             TImage maskImage = new TImage(Width + extend * 2, Height + extend * 2);
@@ -1762,7 +1788,7 @@ namespace Geb.Image
                                 val += maskImage[h + kh, w + kw] * kernel[kh, kw];
                             }
                         }
-                        start[h * width + w] = (TPixel)val;
+                        start[h * width + w] = (TPixel)(val + valShift);
                     }
                 }
             }
@@ -1781,7 +1807,7 @@ namespace Geb.Image
                                 val += maskImage[h + kh, w + kw] * kernel[kh, kw];
                             }
                         }
-                        start[h * width + w] = (TPixel)(val * factor);
+                        start[h * width + w] = (TPixel)(val * factor + valShift);
                     }
                 }
             }

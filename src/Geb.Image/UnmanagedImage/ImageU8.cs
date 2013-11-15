@@ -54,6 +54,56 @@ namespace Geb.Image
             return this;
         }
 
+        /// <summary>
+        /// 使用直方图均衡
+        /// </summary>
+        /// <returns>均衡后的图像</returns>
+        public unsafe ImageU8 ApplyHistogramEqualization()
+        {
+            int* c0 = stackalloc int[256];
+            int* c = c0;
+            for (int i = 0; i < 256; i++)
+            {
+                *c = 0;
+                c++;
+            }
+
+            Byte* p = this.Start;
+            Byte* end = p + this.Length;
+            
+            while (p != end)
+            {
+                c0[*p] = c0[*p] + 1;
+                p++;
+            }
+
+            int* sum0 = stackalloc int[256];
+            *sum0 = *c0;
+            for (int i = 1; i < 256; i++)
+            {
+                sum0[i] = sum0[i - 1] + c0[i];
+            }
+            int max = sum0[255];
+            int min = sum0[0];
+
+            if (max > min)
+            {
+                for (int i = 0; i < 256; i++)
+                {
+                    sum0[i] = (sum0[i] - min) * 255 / (max - min);
+                }
+
+                p = this.Start;
+                while (p != end)
+                {
+                    *p = (Byte)sum0[*p];
+                    p++;
+                }
+            }
+
+            return this;
+        }
+
         public unsafe ImageArgb32 ToImageArgb32()
         {
             ImageArgb32 img = new ImageArgb32(this.Width, this.Height);
@@ -452,10 +502,10 @@ namespace Geb.Image
             return img32;
         }
 
-        public void ApplyGaussianBlur(double sigma = 1.4, int size = 5)
+        public ImageU8 ApplyGaussianBlur(double sigma = 1.4, int size = 5)
         {
             ConvolutionKernel kernel = ConvolutionKernel.CreateGaussianKernel(sigma, size);
-            this.ApplyConvolution(kernel);
+            return this.ApplyConvolution(kernel);
         }
 
         public unsafe ImageU8 ApplyCannyEdgeDetector(double gaussianSiama = 1.4, int gaussianSize = 5, byte lowThreshold = 20, byte highThreshold = 100)
@@ -470,7 +520,9 @@ namespace Geb.Image
             int ww = width - 2;
             int hh = height - 2;
 
-            using (ImageU8 copy = this.Clone() as ImageU8)
+            // 第一步，Gauss 平滑
+            this.ApplyGaussianBlur(gaussianSiama, gaussianSize);
+
             using (ImageU8 orients = new ImageU8(ww, hh))             // orientation array
             using (ImageFloat gradients = new ImageFloat(this.Width, this.Height))                  // gradients array
             {
@@ -479,9 +531,7 @@ namespace Geb.Image
                 double orientation, toAngle = 180.0 / System.Math.PI;
                 float leftPixel = 0, rightPixel = 0;
 
-                // 第一步，Gauss 平滑
-                copy.ApplyGaussianBlur(gaussianSiama, gaussianSize);
-                byte* start = copy.Start + startX;
+                byte* start = this.Start + startX;
                 byte* p;
                 int o = 0;
                 for (int y = startY; y < stopY; y++)
