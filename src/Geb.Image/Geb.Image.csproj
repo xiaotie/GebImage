@@ -97,10 +97,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\ClassHelper.cs" />
+    <Compile Include="Common\Complex.cs" />
     <Compile Include="Common\Config.cs" />
     <Compile Include="Common\Enums.cs" />
+    <Compile Include="Common\FourierTransform.cs" />
     <Compile Include="Common\ImagePool.cs" />
     <Compile Include="Common\Structs.cs" />
+    <Compile Include="ManagedImage\ComplexImage.cs" />
     <Compile Include="UnmanagedImage\ImageCmyk.cs" />
     <Compile Include="UnmanagedImage\ImageFloat.cs" />
     <Compile Include="UnmanagedImage\ImageHsl.cs" />
