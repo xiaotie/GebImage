@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Geb.Image</RootNamespace>
     <AssemblyName>Geb.Image</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -108,6 +108,7 @@
     <Compile Include="UnmanagedImage\ImageFloat.cs" />
     <Compile Include="UnmanagedImage\ImageHsl.cs" />
     <Compile Include="UnmanagedImage\ImageRgbSingle96.cs" />
+    <Compile Include="UnmanagedImage\ImageU8\ImageU8_Sobel.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageArgb32_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageFloat.cs" />
     <Compile Include="UnmanagedImage\ImageGrad.cs" />

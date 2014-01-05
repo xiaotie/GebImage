@@ -1332,6 +1332,125 @@ namespace Geb.Image
         }
 
         /// <summary>
+        /// 创建钳边(clamp)图像。
+        /// </summary>
+        /// <param name="paddingSize">边缘填充的尺寸</param>
+        /// <returns>填充边缘后的图像</returns>
+        public unsafe TImage CreatePaddingImage(int paddingSize)
+        {
+            if (paddingSize < 1) throw new ArgumentException("PaddingSize must > 0");
+
+            TImage img = new TImage(Width + paddingSize * 2, Height + paddingSize * 2);
+            img.Fill(default(TPixel));//这里效率不高。原本只需要填充四周扩大的部分即可
+
+            img.CopyFrom(this, new System.Drawing.Point(0, 0), new System.Drawing.Rectangle(0, 0, this.Width, this.Height), new System.Drawing.Point(paddingSize, paddingSize));
+
+            int width = this.Width;
+            int height = this.Height;
+            TPixel* start = this.Start;
+
+            // 复制边界像素
+            TPixel* dstStart = img.Start + paddingSize;
+            int extendWidth = this.Width + paddingSize * 2;
+            int extendHeight = this.Height + paddingSize * 2;
+
+            // 复制上方的像素
+            for (int y = 0; y < paddingSize; y++)
+            {
+                TPixel* dstP = dstStart + y * extendWidth;
+                TPixel* srcStart = start;
+                TPixel* srcEnd = srcStart + width;
+
+                while (srcStart != srcEnd)
+                {
+                    *dstP = *srcStart;
+                    srcStart++;
+                    dstP++;
+                }
+            }
+
+            // 复制下方的像素
+            for (int y = height + paddingSize; y < extendHeight; y++)
+            {
+                TPixel* dstP = dstStart + y * extendWidth;
+                TPixel* srcStart = start + (height - 1) * width;
+                TPixel* srcEnd = srcStart + width;
+
+                while (srcStart != srcEnd)
+                {
+                    *dstP = *srcStart;
+                    srcStart++;
+                    dstP++;
+                }
+            }
+
+            // 复制左右两侧的像素
+            TPixel* dstLine = img.Start + extendWidth * paddingSize;
+            TPixel* srcLine = start;
+            TPixel p = default(TPixel);
+            for (int y = paddingSize; y < height + paddingSize; y++)
+            {
+                for (int x = 0; x < paddingSize; x++)
+                {
+                    p = srcLine[0];
+                    dstLine[x] = p;
+                }
+
+                p = srcLine[width - 1];
+                for (int x = width + paddingSize; x < extendWidth; x++)
+                {
+                    dstLine[x] = p;
+                }
+                dstLine += extendWidth;
+                srcLine += width;
+            }
+
+            // 复制四个角落的像素
+
+            // 左上
+            p = start[0];
+            for (int y = 0; y < paddingSize; y++)
+            {
+                for (int x = 0; x < paddingSize; x++)
+                {
+                    img[y, x] = p;
+                }
+            }
+
+            // 右上
+            p = start[width - 1];
+            for (int y = 0; y < paddingSize; y++)
+            {
+                for (int x = width + paddingSize; x < extendWidth; x++)
+                {
+                    img[y, x] = p;
+                }
+            }
+
+            // 左下
+            p = start[(height - 1) * width];
+            for (int y = height + paddingSize; y < extendHeight; y++)
+            {
+                for (int x = 0; x < paddingSize; x++)
+                {
+                    img[y, x] = p;
+                }
+            }
+
+            // 右下
+            p = start[height * width - 1];
+            for (int y = height + paddingSize; y < extendHeight; y++)
+            {
+                for (int x = width + paddingSize; x < extendWidth; x++)
+                {
+                    img[y, x] = p;
+                }
+            }
+
+            return img;
+        }
+
+        /// <summary>
         /// 应用双指数保边平滑算法，这是一种计算速度比较快的保边平滑算法。算法描述：
         /// Philippe Thévenaz, Daniel Sage, and Michael Unser. Bi-Exponential Edge-Preserving Smoother.
         /// IEEE TRANSACTIONS ON IMAGE PROCESSING, VOL. 21, NO. 9, SEPTEMBER 2012
@@ -1668,112 +1787,10 @@ namespace Geb.Image
             int valShift = k.ValueShift;
             int[,] kernel = k.Kernel;
             int extend = Math.Max(kernelWidth, kernelHeight) / 2;
-            TImage maskImage = new TImage(Width + extend * 2, Height + extend * 2);
-            maskImage.Fill(0);//这里效率不高。原本只需要填充四周扩大的部分即可
-
-            maskImage.CopyFrom(this, new System.Drawing.Point(0, 0), new System.Drawing.Rectangle(0, 0, this.Width, this.Height), new System.Drawing.Point(extend, extend));
-
             int width = this.Width;
             int height = this.Height;
             TPixel* start = this.Start;
-
-            // 复制边界像素
-            TPixel* dstStart = maskImage.Start + extend;
-            int extendWidth = this.Width + extend * 2;
-            int extendHeight = this.Height + extend * 2;
-
-            // 复制上方的像素
-            for (int y = 0; y < extend; y++)
-            {
-                TPixel* dstP = dstStart + y * extendWidth;
-                TPixel* srcStart = start;
-                TPixel* srcEnd = srcStart + width;
-
-                while (srcStart != srcEnd)
-                {
-                    *dstP = *srcStart;
-                    srcStart++;
-                    dstP++;
-                }
-            }
-
-            // 复制下方的像素
-            for (int y = height + extend; y < extendHeight; y++)
-            {
-                TPixel* dstP = dstStart + y * extendWidth;
-                TPixel* srcStart = start + (height - 1)*width;
-                TPixel* srcEnd = srcStart + width;
-
-                while (srcStart != srcEnd)
-                {
-                    *dstP = *srcStart;
-                    srcStart++;
-                    dstP++;
-                }
-            }
-
-            // 复制左右两侧的像素
-            TPixel* dstLine = maskImage.Start + extendWidth * extend;
-            TPixel* srcLine = start;
-            TPixel p = default(TPixel);
-            for (int y = extend; y < height + extend; y++)
-            {
-                for(int x = 0; x < extend; x ++)
-                {
-                    p = srcLine[0];
-                    dstLine[x] = p;
-                }
-
-                p = srcLine[width-1];
-                for(int x = width + extend; x < extendWidth; x++)
-                {
-                   dstLine[x] = p;
-                }
-                dstLine += extendWidth;
-                srcLine += width;
-            }
-
-            // 复制四个角落的像素
-
-            // 左上
-            p = start[0];
-            for (int y = 0; y < extend; y++)
-            {
-                for (int x = 0; x < extend; x++)
-                {
-                    maskImage[y, x] = p;
-                }
-            }
-
-            // 右上
-            p = start[width - 1];
-            for (int y = 0; y < extend; y++)
-            {
-                for (int x = width + extend; x < extendWidth; x++)
-                {
-                    maskImage[y, x] = p;
-                }
-            }
-
-            // 左下
-            p = start[(height - 1) * width];
-            for (int y = height + extend; y < extendHeight; y++)
-            {
-                for (int x = 0; x < extend; x++)
-                {
-                    maskImage[y, x] = p;
-                }
-            }
-
-            // 右下
-            p = start[height * width - 1];
-            for (int y = height + extend; y < extendHeight; y++)
-            {
-                for (int x = width + extend; x < extendWidth; x++)
-                {
-                    maskImage[y, x] = p;
-                }
-            }
+            TImage maskImage = CreatePaddingImage(extend);
 
             if (scale == 1)
             {
