@@ -692,5 +692,64 @@ namespace Geb.Image
             if ((3 * vH) < 2) return (v1 + (v2 - v1) * ((2 / 3) - vH) * 6);
             return (v1);
         }
+
+        public static unsafe void YV12ToRgb24(Byte* yv12, Rgb24* rgb, int width, int height)
+        {
+            // 构建转换表
+            byte* map = stackalloc byte[256*3];
+            int* vMap0 = stackalloc int[256];
+            int* vMap1 = stackalloc int[256];
+            int* uMap0 = stackalloc int[256];
+            int* uMap1 = stackalloc int[256];
+
+            for (int i = 0; i < 256 * 3; i++)
+            {
+                if (i < 256) map[i] = 0;
+                else if (i >= 512) map[i] = 255;
+                else map[i] = (byte)(i - 256);
+            }
+
+            for (int i = 0; i < 256; i++)
+            {
+                int val = i - 128;
+                vMap0[i] = (int)(1.4075 * val);
+                vMap1[i] = (int)(0.7169 * val);
+                uMap0[i] = (int)(0.3455 * val);
+                uMap1[i] = (int)(1.779 * val);
+
+                //vMap0[i] = (int)(1.370705 * val);
+                //vMap1[i] = (int)(0.703125 * val);
+                //uMap0[i] = (int)(0.698001 * val);
+                //uMap1[i] = (int)(1.732446 * val);
+            }
+
+            Byte* y0 = yv12;
+            byte* v0 = y0 + width * height;
+            byte* u0 = v0 + width * height / 4;
+            Rgb24* c0 = rgb;
+            int y, u, v;
+            Rgb24* pVal;
+            for (int h = 0; h < height; h++)
+            {
+                byte* yLine = y0 + h * width;
+                int hHalf = h >> 1;
+                int wStrideHalf = width >> 1;
+                byte* uLine = u0 + ((hHalf * wStrideHalf));
+                byte* vLine = v0 + ((hHalf * wStrideHalf));
+                Rgb24* pLine = c0 + h * width;
+                for (int w = 0; w < width; w++)
+                {
+                    pVal = pLine + w;
+                    int wHalf = w >> 1;
+                    y = yLine[w] + 256;
+                    u = uLine[wHalf];
+                    v = vLine[wHalf];
+
+                    pVal->Blue = map[(y + uMap1[u])];
+                    pVal->Green = map[(y - uMap0[u] - vMap1[v])];
+                    pVal->Red = map[(y + vMap0[v])];
+                }
+            }
+        }
     }
 }
