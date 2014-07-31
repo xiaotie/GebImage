@@ -13,7 +13,7 @@ namespace Geb.Image
     using Geb.Utils;
 
     [StructLayout(LayoutKind.Explicit)]
-    public partial struct Rgb24 : IMetriable<Rgb24>
+    public partial struct Rgb24
     {
         public static Rgb24 WHITE = new Rgb24 { Red = 255, Green = 255, Blue = 255 };
         public static Rgb24 BLACK = new Rgb24();

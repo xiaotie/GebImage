@@ -12,7 +12,7 @@ namespace Geb.Image
 {
     using Geb.Utils;
 
-    public partial struct Lab24 : IMetriable<Lab24>
+    public partial struct Lab24
     {
         public byte L;
         public byte A;
