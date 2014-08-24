@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.container = new Geb.Controls.GebContainer();
+            this.container = new Geb.Controls.WinStage();
             this.SuspendLayout();
             // 
             // container
@@ -58,7 +58,7 @@
 
         #endregion
 
-        private GebContainer container;
+        private WinStage container;
     }
 }
 

@@ -101,6 +101,7 @@
     <Compile Include="Common\Config.cs" />
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\FourierTransform.cs" />
+    <Compile Include="Common\GdiplusHelper.cs" />
     <Compile Include="Common\ImagePool.cs" />
     <Compile Include="Common\Structs.cs" />
     <Compile Include="ManagedImage\ComplexImage.cs" />

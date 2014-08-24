@@ -7,9 +7,9 @@ using System.Drawing.Imaging;
 
 namespace Geb.Controls
 {
-    public class GebContainer : Control
+    public class WinStage : Control
     {
-        public GebContainer()
+        public WinStage()
         {
             this.DoubleBuffered = true;
         }
@@ -85,7 +85,6 @@ namespace Geb.Controls
         {
             this.SuspendLayout();
             this.ResumeLayout(false);
-
         }
     }
 }

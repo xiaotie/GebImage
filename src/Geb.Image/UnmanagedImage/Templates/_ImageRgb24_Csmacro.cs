@@ -1491,6 +1491,39 @@ namespace Geb.Image
             }
         }
 
+        #region 转换为JPG、PNG流数据
+        
+        /// <summary>
+        /// 将图像转换为PNG图像数据
+        /// </summary>
+        /// <returns>PNG图像的二进制数据</returns>
+        public Byte[] ToPngData()
+        {
+            Bitmap bmp = this.ToBitmap();
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+            {
+                bmp.Save(ms, GdiplusHelper.GetPngEncoder(), null);
+                return ms.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// 将图像转换为 JPEG 图像数据
+        /// </summary>
+        /// <param name="quality">图像质量，0-100 之间</param>
+        /// <returns>JPEG 图像的二进制数据</returns>
+        public Byte[] ToJpegData(int quality)
+        {
+            Bitmap bmp = this.ToBitmap();
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+            {
+                bmp.Save(ms, GdiplusHelper.GetJpegEncoder(), GdiplusHelper.GetJpegEncoderParameters(quality));
+                return ms.ToArray();
+            }
+        }
+
+        #endregion
+
         #region BiExponentialEdgePreservingSmooth 的具体实现类
 
         internal class BEEPSGain

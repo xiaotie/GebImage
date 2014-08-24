@@ -40,7 +40,7 @@
     <Compile Include="Button.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="DisplayObject.cs" />
-    <Compile Include="GebContainer.cs">
+    <Compile Include="WinStage.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Label.cs" />
@@ -51,8 +51,8 @@
     <Folder Include="Shape\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="GebContainer.resx">
-      <DependentUpon>GebContainer.cs</DependentUpon>
+    <EmbeddedResource Include="WinStage.resx">
+      <DependentUpon>WinStage.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
