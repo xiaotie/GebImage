@@ -75,14 +75,17 @@ namespace Geb.Controls
 
             SetInvalidated(false);
             _invalidated = true;
-
-            this.DrawRectBackground(g, this.GetDrawContextPostion());
+            
+            this.DrawBackground(g);
 
             if (Controls != null)
             {
                 foreach (DisplayObject item in Controls)
                 {
+                    var oldM = g.Transform;
+                    g.Transform = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, oldM.OffsetX + (float)item.X, oldM.OffsetY + (float)item.Y);
                     item.Draw(g);
+                    g.Transform = oldM;
                 }
             }
         }

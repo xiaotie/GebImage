@@ -30,7 +30,7 @@ namespace Geb.Controls
         {
             if (element == null) throw new ArgumentNullException("element");
             if (Controls == null) DisplayObjects = new List<DisplayObject>();
-            element.IsRootDisplayObject = true;
+            element.IsRoot = true;
             element.OnInvalidate = (DisplayObject item) => { this.Invalidate(); };
             element.Create();
             DisplayObjects.Add(element);
@@ -50,25 +50,55 @@ namespace Geb.Controls
         {
             //base.OnPaint(e);
             var g = e.Graphics;
+            
             foreach (DisplayObject item in DisplayObjects)
             {
-                item.SetInvalidated(false);
+                var oldM = g.Transform;
+                g.Transform = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, oldM.OffsetX + (float)item.X, oldM.OffsetY + (float)item.Y);
+                item.SetInvalidated(false); 
                 item.Draw(g);
+                g.Transform = oldM;
             }
         }
 
         public void InitEvents()
         {
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.GebContainer_MouseDown);
+            this.MouseDown += GebContainer_MouseDown;
             this.MouseUp += GebContainer_MouseUp;
+            this.MouseMove += GebContainer_MouseMove;
         }
 
-       private  void GebContainer_MouseUp(object sender, MouseEventArgs e)
+        private DisplayObject _captureObj;
+
+        private void GebContainer_MouseMove(object sender, MouseEventArgs e)
         {
+            if (_captureObj != null && _captureObj.Captured == true)
+            {
+                _captureObj.OnMouseEvent("MouseMove", e.Location.X - _captureObj.X, e.Location.Y - _captureObj.Y);
+                return;
+            }
+
             DisplayObject find = HitTest(e.Location.X, e.Location.Y);
             if (find != null)
             {
-                find.OnMouseEvent("MouseUp", e.Location.X, e.Location.Y);
+                find.OnMouseEvent("MouseMove", e.Location.X - find.X, e.Location.Y - find.Y);
+            }
+        }
+
+       private  void GebContainer_MouseUp(object sender, MouseEventArgs e)
+       {
+           if (_captureObj != null && _captureObj.Captured == true)
+           {
+               _captureObj.OnMouseEvent("MouseUp", e.Location.X - _captureObj.X, e.Location.Y - _captureObj.Y);
+               _captureObj = null;
+               return;
+           }
+
+           _captureObj = null;
+            DisplayObject find = HitTest(e.Location.X, e.Location.Y);
+            if (find != null)
+            {
+                find.OnMouseEvent("MouseUp", e.Location.X - find.X, e.Location.Y - find.Y);
             }
         }
 
@@ -77,7 +107,8 @@ namespace Geb.Controls
             DisplayObject find = HitTest(e.Location.X, e.Location.Y);
             if (find != null)
             {
-                find.OnMouseEvent("MouseDown", e.Location.X, e.Location.Y);
+                if (find.Captured == true) _captureObj = find;
+                find.OnMouseEvent("MouseDown", e.Location.X - find.X, e.Location.Y - find.Y);
             }
         }
 

@@ -10,15 +10,16 @@ namespace Geb.Controls
     {
         public double X, Y;
         public double Width = 100, Height = 30;
-        public Color BackgroundColor = Color.White;
-        public double BackgroundAlpha = 1;
-        public Color ForegroundColor = Color.Gray;
-        public double ForegroundAlpha = 1;
-        public Boolean IsRootDisplayObject;
+
+        public Color BackgroundColor = Color.Gray;
+        public Border Border { get; private set; }
+        public Boolean IsRoot;
 
         protected bool _invalidated = false;
 
         public Action<DisplayObject> OnInvalidate;
+
+        public Boolean Captured { get; set; }
 
         public virtual void SetInvalidated(Boolean value)
         {
@@ -37,17 +38,13 @@ namespace Geb.Controls
 
         public virtual void OnMouseEvent(String eventName, double x, double y)
         {
-            PointD pos = GetDrawContextPostion();
-            pos = new PointD { X = x - pos.X, Y = y - pos.Y };
-            System.Windows.Forms.MessageBox.Show(String.Format("{0}({1},{2})", eventName, pos.X, pos.Y));
         }
 
         public DisplayObject Parent;
 
         public virtual DisplayObject HitTest(double x, double y)
         {
-            PointD pos = GetDrawContextPostion();
-            if (x < pos.X || y < pos.Y || x > pos.X + this.Width || y > pos.Y + this.Height) return null;
+            if (x < X || y < Y || x > X + this.Width || y > Y + Height) return null;
             else return this;
         }
 
@@ -55,22 +52,19 @@ namespace Geb.Controls
         {
         }
 
-        protected virtual PointD GetDrawContextPostion(DisplayObject child)
+        protected void DrawBackground(Graphics g)
         {
-            PointD pos = GetDrawContextPostion();
-            return new PointD { X = pos.X + child.X, Y = pos.Y + child.Y } ;
-        }
-
-        protected virtual PointD GetDrawContextPostion()
-        {
-            if (Parent == null) return IsRootDisplayObject ? new PointD { X = X, Y = Y } : new PointD();
-            else return Parent.GetDrawContextPostion(this);
-        }
-
-        protected void DrawRectBackground(Graphics g, PointD pos)
-        {
-            RectangleF r = new RectangleF(pos.ToPointF(), new SizeF((float)Width, (float)Height));
-            g.FillRectangle(new SolidBrush(BackgroundColor), r.X, r.Y, r.Width, r.Height);
+            if(BackgroundColor.A > 0)
+            {
+                RectangleF r = new RectangleF(new Point(), new SizeF((float)Width, (float)Height));
+                g.FillRectangle(new SolidBrush(BackgroundColor), r.X, r.Y, r.Width, r.Height);
+            }
+            
+            if(Border.Thickness > 0 && Border.Color.A > 0)
+            {
+                RectangleF r = new RectangleF(new Point(), new SizeF((float)Width, (float)Height));
+                g.DrawRectangle(new Pen(new SolidBrush(Border.Color)), r.X, r.Y, r.Width, r.Height);
+            }
         }
 
         public virtual void Draw(Graphics g)

@@ -24,7 +24,7 @@ namespace Geb.Controls.Demo
                 {
                     Button btn = new Button();
                     btn.Width = 30;
-                    btn.Text = h.ToString(0 + "," + w.ToString());
+                    btn.Text = h.ToString() + "," + w.ToString();
                     btn.X = w * 40;
                     btn.Y = h * 40;
                     this.container.Add(btn);

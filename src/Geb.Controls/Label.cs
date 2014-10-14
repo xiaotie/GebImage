@@ -13,9 +13,7 @@ namespace Geb.Controls
         {
             if (Text == null) return;
 
-            PointD p0 = this.GetDrawContextPostion();
-
-            g.DrawString(Text, new System.Drawing.Font("微软雅黑", 10), new SolidBrush(Color.Black), p0.ToPointF());
+            g.DrawString(Text, new System.Drawing.Font("微软雅黑", 10), new SolidBrush(Color.Black), 0, 0);
         }
     }
 }
