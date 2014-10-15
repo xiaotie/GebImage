@@ -13,20 +13,6 @@ namespace Geb.Controls
             IsChildrenMouseEnable = false;
         }
 
-        public override void OnMouseEvent(String eventName, double x, double y)
-        {
-            switch(eventName)
-            {
-                case "MouseDown":
-                    this.BackgroundColor = Color.Red;
-                    break;
-                case "MouseUp":
-                    this.BackgroundColor = Color.White;
-                    break;
-            }
-            this.Invalidate();
-        }
-
         public override void Create()
         {
             base.Create();

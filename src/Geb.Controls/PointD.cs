@@ -10,6 +10,11 @@ namespace Geb.Controls
         public double X;
         public double Y;
 
+        public PointD(double x, double y)
+        {
+            X = x; Y = y;
+        }
+
         public PointF ToPointF()
         {
             return new PointF((float)X, (float)Y);
@@ -18,6 +23,16 @@ namespace Geb.Controls
         public Point ToPoint()
         {
             return new Point((int)Math.Round(X), (int)Math.Round(Y));
+        }
+
+        public static PointD operator  +(PointD left, PointD right)
+        {
+            return new PointD { X = left.X + right.X, Y = left.Y + right.Y };
+        }
+
+        public static PointD operator -(PointD left, PointD right)
+        {
+            return new PointD { X = left.X - right.X, Y = left.Y - right.Y };
         }
     }
 }

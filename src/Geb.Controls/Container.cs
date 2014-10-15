@@ -23,9 +23,10 @@ namespace Geb.Controls
             {
                 if (Controls != null && IsChildrenMouseEnable == true)
                 {
-                    foreach (DisplayObject item in Controls)
+                    for (int i = Controls.Count - 1; i >= 0; i--)
                     {
-                        DisplayObject m = item.HitTest(x, y);
+                        DisplayObject item = Controls[i];
+                        DisplayObject m = item.HitTest(x - item.X, y - item.Y);
                         if (m != null) return m;
                     }
                 }
@@ -35,7 +36,8 @@ namespace Geb.Controls
 
         public override void SetInvalidated(Boolean value)
         {
-            this._invalidated = value;
+            this._needDraw = value;
+            if (Controls == null) return;
             foreach (DisplayObject item in this.Controls)
             {
                 item.SetInvalidated(value);
@@ -57,6 +59,7 @@ namespace Geb.Controls
             if (Controls == null) Controls = new List<DisplayObject>();
             element.Parent = this;
             Controls.Add(element);
+            Controls.Sort();
         }
 
         public void Remove(DisplayObject element)
@@ -71,10 +74,10 @@ namespace Geb.Controls
 
         public override void Draw(Graphics g)
         {
-            if (_invalidated == true) return;
+            if (_needDraw == true) return;
 
             SetInvalidated(false);
-            _invalidated = true;
+            _needDraw = true;
             
             this.DrawBackground(g);
 
@@ -82,10 +85,12 @@ namespace Geb.Controls
             {
                 foreach (DisplayObject item in Controls)
                 {
+                    item.Update();
                     var oldM = g.Transform;
                     g.Transform = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, oldM.OffsetX + (float)item.X, oldM.OffsetY + (float)item.Y);
                     item.Draw(g);
                     g.Transform = oldM;
+                    g.ResetClip();
                 }
             }
         }

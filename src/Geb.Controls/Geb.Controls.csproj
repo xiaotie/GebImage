@@ -41,6 +41,8 @@
     <Compile Include="Button.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="DisplayObject.cs" />
+    <Compile Include="MouseEventArgs.cs" />
+    <Compile Include="Padding.cs" />
     <Compile Include="WinStage.cs">
       <SubType>Component</SubType>
     </Compile>
