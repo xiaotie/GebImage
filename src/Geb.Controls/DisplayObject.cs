@@ -33,6 +33,8 @@ namespace Geb.Controls
 
         public Boolean Capture { get; set; }
 
+        public Boolean IsMouseDisable { get; set; }
+
         public virtual void SetInvalidated(Boolean value)
         {
             this._needDraw = value;
@@ -84,7 +86,7 @@ namespace Geb.Controls
 
         public virtual DisplayObject HitTest(double x, double y)
         {
-            if (x < 0 || y < 0 || x > this.Width || y > Height) return null;
+            if (IsMouseDisable == true || x < 0 || y < 0 || x > this.Width || y > Height) return null;
             else return this;
         }
 
