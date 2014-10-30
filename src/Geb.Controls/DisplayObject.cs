@@ -5,8 +5,41 @@ using System.Drawing.Imaging;
 
 namespace Geb.Controls
 {
+    public enum Cursors
+    {
+        Default,
+        Arrow,
+        Hand,
+        AppStarting,
+        Cross,
+        Help,
+        HSplit,
+        IBeam,
+        No,
+        NoMove2D,
+        NoMoveHoriz,
+        NoMoveVert,
+        PanEast,
+        PanNE,
+        PanNorth,
+        PanNW,
+        PanSE,
+        PanSouth,
+        PanSW,
+        PanWest,
+        SizeAll,
+        SizeNESW,
+        SizeNS,
+        SizeNWSE,
+        SizeWE,
+        UpArrow,
+        VSplit,
+        WaitCursor
+    }
+
     public class DisplayObject : IComparable<DisplayObject>
     {
+        public Cursors Cursor { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
 
