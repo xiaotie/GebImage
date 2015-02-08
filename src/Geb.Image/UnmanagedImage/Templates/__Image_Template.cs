@@ -419,6 +419,18 @@ namespace Geb.Image.Hidden
             return img;
         }
 
+        /// <summary>
+        /// 浅复制。只复制属性和指针，不复制图像的内存数据。复制后得到的新图像的IsOwner为false，代表它并不拥有图像内存的所有权。
+        /// </summary>
+        /// <returns>浅复制后的图像</returns>
+        public unsafe TImage ShadowClone()
+        {
+            TImage img = new TImage(this.Width, this.Height);
+            img.Start = this.Start;
+            img._isOwner = false;
+            return img;
+        }
+
         public unsafe TImage CloneFrom(TImage src)
         {
             if (src == null) throw new ArgumentNullException("src");
@@ -948,6 +960,170 @@ namespace Geb.Image.Hidden
                         if (cx >= 0 && cx < width && cy >= 0 && cy < height)
                         {
                             p0[width * cy + cx] = color;
+                            count++;
+                        }
+                        else
+                        {
+                            if (count > 0) return;
+                        }
+                    }
+                }
+            }
+        }
+
+        public unsafe void ForEachPixelsOnLine(PointF start, PointF end, Action<PointS> action)
+        {
+            if (action == null) return;
+
+            // Bresenham画线算法
+            int x1 = (int)Math.Floor(start.X);
+            int y1 = (int)Math.Floor(start.Y);
+            int x2 = (int)Math.Floor(end.X);
+            int y2 = (int)Math.Floor(end.Y);
+            int xMin = Math.Min(x1, x2);
+            int yMin = Math.Min(y1, y2);
+            int xMax = Math.Max(x1, x2);
+            int yMax = Math.Max(y1, y2);
+
+            // 线一定在图像外部
+            if (xMin >= Width || yMin >= Height || yMax < 0 || xMax < 0)
+            {
+                return;
+            }
+
+            int dx = Math.Abs(x2 - x1);
+            int dy = Math.Abs(y2 - y1);
+            Boolean dyIsLargerThanDx = false;
+            int tmp;
+            if (dx < dy)
+            {
+                dyIsLargerThanDx = true;
+
+                tmp = x1;
+                x1 = y1;
+                y1 = tmp;
+
+                tmp = x2;
+                x2 = y2;
+                y2 = tmp;
+
+                tmp = dx;
+                dx = dy;
+                dy = tmp;
+            }
+
+            int ix = (x2 - x1) > 0 ? 1 : -1;
+            int iy = (y2 - y1) > 0 ? 1 : -1;
+            int cx = x1;
+            int cy = y1;
+            int n2dy = dy * 2;
+            int n2dydx = (dy - dx) * 2;
+            int d = dy * 2 - dx;
+
+            // 线在图像内部，则不检查是否指针越位
+            if (xMin >= 0 && yMin >= 0 && yMax < (Height - 1) && xMax < Width)
+            {
+                if (dyIsLargerThanDx == true)
+                { // 如果直线与 x 轴的夹角大于 45 度
+                    
+                    action(new PointS(cx,cy));
+                    while (cx != x2)
+                    {
+                        cx += ix;
+                        if (d < 0)
+                        {
+                            d += n2dy;
+                        }
+                        else
+                        {
+                            cy += iy;
+                            d += n2dydx;
+                        }
+                        action(new PointS(cx, cy));
+                    }
+                }
+                else
+                { // 如果直线与 x 轴的夹角小于 45 度
+                    action(new PointS(cx, cy));
+                    while (cx != x2)
+                    {
+                        cx += ix;
+                        if (d < 0)
+                        {
+                            d += n2dy;
+                        }
+                        else
+                        {
+                            cy += iy;
+                            d += n2dydx;
+                        }
+                        action(new PointS(cx, cy));
+                    }
+                }
+            }
+            else
+            {
+                TPixel* p0 = Start;
+                int width = this.Width;
+                int height = this.Height;
+                int count = 0;
+
+                if (dyIsLargerThanDx == true)
+                { // 如果直线与 x 轴的夹角大于 45 度
+                    if (cy >= 0 && cy < width && cx >= 0 && cx < height)
+                    {
+                        action(new PointS(width * cx, cy));
+                        count++;
+                    }
+                    while (cx != x2)
+                    {
+                        cx += ix;
+
+                        if (d < 0)
+                        {
+                            d += n2dy;
+                        }
+                        else
+                        {
+                            cy += iy;
+                            d += n2dydx;
+                        }
+
+                        if (cy >= 0 && cy < width && cx >= 0 && cx < height)
+                        {
+                            action(new PointS(width * cx, cy));
+                            count++;
+                        }
+                        else
+                        {
+                            if (count > 0) return;
+                        }
+                    }
+                }
+                else
+                { // 如果直线与 x 轴的夹角小于 45 度
+                    if (cx >= 0 && cx < width && cy >= 0 && cy < height)
+                    {
+                        action(new PointS(cx, width * cy));
+                        count++;
+                    }
+                    while (cx != x2)
+                    {
+                        cx += ix;
+
+                        if (d < 0)
+                        {
+                            d += n2dy;
+                        }
+                        else
+                        {
+                            cy += iy;
+                            d += n2dydx;
+                        }
+
+                        if (cx >= 0 && cx < width && cy >= 0 && cy < height)
+                        {
+                            action(new PointS(cx, width * cy));
                             count++;
                         }
                         else

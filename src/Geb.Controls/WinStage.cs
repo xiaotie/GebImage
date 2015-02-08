@@ -88,6 +88,8 @@ namespace Geb.Controls
             this.MouseDown += GebContainer_MouseDown;
             this.MouseUp += GebContainer_MouseUp;
             this.MouseMove += GebContainer_MouseMove;
+            this.MouseWheel += GebContainer_MouseWheel;
+            this.MouseDoubleClick += GebContainer_MouseDoubleClick;
         }
 
         private DisplayObject _captureObj;
@@ -176,6 +178,29 @@ namespace Geb.Controls
                 MouseEventArgs me = MouseEventArgs.Create(e, find);
                 find.OnMouseDown(me);
                 if (find.Capture == true) _captureObj = find;
+            }
+        }
+
+        private void GebContainer_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            Capture = true;
+            DisplayObject find = HitTest(e.Location.X, e.Location.Y);
+            if (find != null)
+            {
+                MouseEventArgs me = MouseEventArgs.Create(e, find);
+                find.OnMouseDoubleClick(me);
+                if (find.Capture == true) _captureObj = find;
+            }
+        }
+
+        private void GebContainer_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            Capture = true;
+            DisplayObject find = HitTest(e.Location.X, e.Location.Y);
+            if (find != null)
+            {
+                MouseEventArgs me = MouseEventArgs.Create(e, find);
+                find.OnMouseWheel(me);
             }
         }
 

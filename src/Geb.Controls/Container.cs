@@ -36,7 +36,7 @@ namespace Geb.Controls
 
         public override void SetInvalidated(Boolean value)
         {
-            this._needDraw = value;
+            this._painted = value;
             if (Controls == null) return;
             foreach (DisplayObject item in this.Controls)
             {
@@ -74,10 +74,10 @@ namespace Geb.Controls
 
         public override void Draw(Graphics g)
         {
-            if (_needDraw == true) return;
+            if (_painted == true || Visible == false) return;
 
             SetInvalidated(false);
-            _needDraw = true;
+            _painted = true;
             
             this.DrawBackground(g);
 
@@ -90,8 +90,8 @@ namespace Geb.Controls
                     g.Transform = new System.Drawing.Drawing2D.Matrix(1, 0, 0, 1, oldM.OffsetX + (float)item.X, oldM.OffsetY + (float)item.Y);
                     item.Draw(g);
                     g.Transform = oldM;
-                    g.ResetClip();
                 }
+                    g.ResetClip();
             }
         }
     }

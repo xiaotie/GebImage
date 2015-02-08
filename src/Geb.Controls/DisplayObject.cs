@@ -54,13 +54,13 @@ namespace Geb.Controls
             get { return _backColor; }
             set {
                 _backColor = value;
-                _needDraw = false;
+                _painted = false;
             }
         }
         public Border Border { get; set; }
         public Boolean IsRoot;
 
-        protected bool _needDraw = false;
+        protected bool _painted = false;
 
         public Action<DisplayObject> OnInvalidate;
 
@@ -70,14 +70,14 @@ namespace Geb.Controls
 
         public virtual void SetInvalidated(Boolean value)
         {
-            this._needDraw = value;
+            this._painted = value;
         }
 
         public void Invalidate()
         {
-            if (_needDraw == true)
+            if (_painted == true)
             {
-                _needDraw = false;
+                _painted = false;
                 if (Parent != null) Parent.Invalidate();
                 if (OnInvalidate != null) OnInvalidate(this);
             }
@@ -92,6 +92,14 @@ namespace Geb.Controls
         }
 
         protected internal virtual void OnMouseMove(MouseEventArgs e)
+        {
+        }
+
+        protected internal virtual void OnMouseWheel(MouseEventArgs e)
+        {
+        }
+
+        protected internal virtual void OnMouseDoubleClick(MouseEventArgs e)
         {
         }
 
@@ -159,8 +167,8 @@ namespace Geb.Controls
         {
             if (this.Visible == false) return;
 
-            if (_needDraw == true) return;
-            _needDraw = true;
+            if (_painted == true) return;
+            _painted = true;
             DrawBackground(g);
         }
 
