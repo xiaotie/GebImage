@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image", "src\Geb.Image\Geb.Image.csproj", "{F86CF18F-70F4-4491-9C1C-9F390A09E978}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "00_Introduce", "src\00_Introduce\00_Introduce.csproj", "{F72A40A6-8398-482A-AAB1-655C2884CFD1}"
@@ -10,10 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Test", "src\Geb.Image.Test\Geb.Image.Test.csproj", "{208408E2-559D-473D-B03F-B2D1FAD80339}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.OpenCV", "src\Geb.Image.OpenCV\Geb.Image.OpenCV.csproj", "{F85EBFC2-AB1C-407D-AD14-CE552F92EA98}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Controls", "src\Geb.Controls\Geb.Controls.csproj", "{704B7D32-B60E-44D7-8E3C-910DE73DF188}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Controls.Demo", "src\Geb.Controls.Demo\Geb.Controls.Demo.csproj", "{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,36 +101,6 @@ Global
 		{F85EBFC2-AB1C-407D-AD14-CE552F92EA98}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F85EBFC2-AB1C-407D-AD14-CE552F92EA98}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F85EBFC2-AB1C-407D-AD14-CE552F92EA98}.Release|x86.ActiveCfg = Release|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Demo|Any CPU.ActiveCfg = Debug|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Demo|Any CPU.Build.0 = Debug|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Demo|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Demo|Mixed Platforms.Build.0 = Debug|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Demo|x86.ActiveCfg = Debug|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Release|Any CPU.Build.0 = Release|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{704B7D32-B60E-44D7-8E3C-910DE73DF188}.Release|x86.ActiveCfg = Release|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Demo|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Demo|Any CPU.Build.0 = Debug|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Demo|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Demo|Mixed Platforms.Build.0 = Debug|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Demo|x86.ActiveCfg = Debug|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{3E5AD518-8AC2-4745-9F57-E6DFD6A0FA42}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

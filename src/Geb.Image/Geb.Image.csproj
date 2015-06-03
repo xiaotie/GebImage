@@ -103,6 +103,7 @@
     <Compile Include="Common\FourierTransform.cs" />
     <Compile Include="Common\GdiplusHelper.cs" />
     <Compile Include="Common\ImagePool.cs" />
+    <Compile Include="Common\MemoryStorage.cs" />
     <Compile Include="Common\Structs.cs" />
     <Compile Include="ManagedImage\ComplexImage.cs" />
     <Compile Include="UnmanagedImage\ImageCmyk.cs" />

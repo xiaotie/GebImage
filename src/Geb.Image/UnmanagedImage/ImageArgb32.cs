@@ -124,6 +124,32 @@ namespace Geb.Image
             return img;
         }
 
+        public enum Channel
+        {
+            Blue = 0, Green = 1, Red = 2, Alpha = 3
+        }
+
+        public unsafe ImageU8 ToGrayscaleImage(Channel channel)
+        {
+            int offset = (int)channel;
+            if (offset < 0) offset = 0;
+            else if (offset > 3) offset = 3;
+
+            ImageU8 img = new ImageU8(this.Width, this.Height);
+            Byte* p = (Byte*)Start + offset;
+            Byte* to = img.Start;
+            Byte* end = p + Length * 4;
+
+            while (p < end)
+            {
+                *to = *p;
+                p+=4;
+                to++;
+            }
+
+            return img;
+        }
+
         public unsafe ImageU8 ToGrayscaleImage(double rCoeff, double gCoeff, double bCoeff)
         {
             ImageU8 img = new ImageU8(this.Width, this.Height);
