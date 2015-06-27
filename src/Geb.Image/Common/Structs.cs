@@ -180,6 +180,11 @@ namespace Geb.Image
             X = (float)x; Y = (float)y;
         }
 
+        public PointF ToPointF()
+        {
+            return new PointF(X, Y);
+        }
+
         public static Boolean operator ==(PointD lhs, PointD rhs)
         {
             return lhs.Equals(rhs);
