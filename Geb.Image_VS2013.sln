@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
+# Visual Studio 2012
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image", "src\Geb.Image\Geb.Image.csproj", "{F86CF18F-70F4-4491-9C1C-9F390A09E978}"
@@ -8,8 +8,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Demo", "src\Geb.Image.Demo\Geb.Image.Demo.csproj", "{A45FC993-F853-4364-8FF6-B0CC54C01958}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.OpenCV", "src\Geb.Image.OpenCV\Geb.Image.OpenCV.csproj", "{F85EBFC2-AB1C-407D-AD14-CE552F92EA98}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Test", "src\Geb.Image.Test\Geb.Image.Test.csproj", "{208408E2-559D-473D-B03F-B2D1FAD80339}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,21 +22,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Demo|Any CPU.ActiveCfg = Demo|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Demo|Any CPU.Build.0 = Demo|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Demo|Mixed Platforms.ActiveCfg = Demo|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Demo|Mixed Platforms.Build.0 = Demo|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Demo|x86.ActiveCfg = Demo|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|x86.ActiveCfg = Release|Any CPU
 		{A45FC993-F853-4364-8FF6-B0CC54C01958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A45FC993-F853-4364-8FF6-B0CC54C01958}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A45FC993-F853-4364-8FF6-B0CC54C01958}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -69,6 +52,21 @@ Global
 		{F85EBFC2-AB1C-407D-AD14-CE552F92EA98}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F85EBFC2-AB1C-407D-AD14-CE552F92EA98}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F85EBFC2-AB1C-407D-AD14-CE552F92EA98}.Release|x86.ActiveCfg = Release|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Demo|Any CPU.ActiveCfg = Demo|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Demo|Any CPU.Build.0 = Demo|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Demo|Mixed Platforms.ActiveCfg = Demo|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Demo|Mixed Platforms.Build.0 = Demo|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Demo|x86.ActiveCfg = Demo|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F86CF18F-70F4-4491-9C1C-9F390A09E978}.Release|x86.ActiveCfg = Release|Any CPU
 		{208408E2-559D-473D-B03F-B2D1FAD80339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{208408E2-559D-473D-B03F-B2D1FAD80339}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{208408E2-559D-473D-B03F-B2D1FAD80339}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

@@ -39,7 +39,7 @@ namespace Geb.Image.Hidden
             TPixel* start = this.Start;
             TImage maskImage = CreatePaddingImage(extend);
 
-            if (scale == 1)
+			if (scale == 1)
             {
                 for (int h = 0; h < height; h++)
                 {

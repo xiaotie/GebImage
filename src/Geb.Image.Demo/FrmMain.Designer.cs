@@ -48,7 +48,7 @@
             this.btnPrimaryColor.Name = "btnPrimaryColor";
             this.btnPrimaryColor.Size = new System.Drawing.Size(144, 31);
             this.btnPrimaryColor.TabIndex = 1;
-            this.btnPrimaryColor.Text = "主色调测试";
+            this.btnPrimaryColor.Text = "Primary Color";
             this.btnPrimaryColor.UseVisualStyleBackColor = true;
             this.btnPrimaryColor.Click += new System.EventHandler(this.btnPrimaryColor_Click);
             // 

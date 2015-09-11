@@ -94,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Geb.Image\Geb.Image.csproj">
-      <Project>{f86cf18f-70f4-4491-9c1c-9f390a09e978}</Project>
+      <Project>{F86CF18F-70F4-4491-9C1C-9F390A09E978}</Project>
       <Name>Geb.Image</Name>
     </ProjectReference>
   </ItemGroup>
