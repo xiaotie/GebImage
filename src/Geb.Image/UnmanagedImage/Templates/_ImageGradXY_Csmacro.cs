@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 namespace Geb.Image
 {
     using TPixel = GradXY;
-    using TChannel = System.Single;
+    using TChannel = System.Int16;
     using TImage = Geb.Image.ImageGradXY;
 
     public static partial class ImageGradXYClassHelper

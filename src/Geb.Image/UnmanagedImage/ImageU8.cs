@@ -694,6 +694,207 @@ namespace Geb.Image
             return this;
         }
 
+        public unsafe ImageU8 ApplyCannyEdgeDetector(out ImageGradXY imgGradXY, double gaussianSiama = 1.4, int gaussianSize = 5, byte lowThreshold = 20, byte highThreshold = 100)
+        {
+            int startX = 1;
+            int startY = 1;
+            int width = this.Width;
+            int height = this.Height;
+
+            int stopX = width - 1;
+            int stopY = height - 1;
+            int ww = width - 2;
+            int hh = height - 2;
+
+            // 第一步，Gauss 平滑
+            this.ApplyGaussianBlur(gaussianSiama, gaussianSize);
+
+            // 初始化梯度场
+            imgGradXY = new ImageGradXY(this.Width, this.Height);
+            GradXY dftGrad = new GradXY();
+            for (int w = 0; w < Width; w++)
+            {
+                imgGradXY[0, w] = imgGradXY[Height - 1, w] = dftGrad;
+            }
+            for(int h = 0; h < Height; h++)
+            {
+                imgGradXY[h, 0] = imgGradXY[h, Width - 1] = dftGrad;
+            }
+
+            using (ImageU8 orients = new ImageU8(ww, hh))             // orientation array
+            using (ImageFloat gradients = new ImageFloat(this.Width, this.Height))                  // gradients array
+            {
+                float maxGradient = float.NegativeInfinity;
+                double gx, gy;
+                double orientation, toAngle = 180.0 / System.Math.PI;
+                float leftPixel = 0, rightPixel = 0;
+
+                byte* start = this.Start + startX;
+                byte* p;
+                int o = 0;
+                for (int y = startY; y < stopY; y++)
+                {
+                    p = start + y * width;
+                    for (int x = startX; x < stopX; x++, p++, o++)
+                    {
+                        gx = p[-width + 1] + p[width + 1]
+                            - p[-width - 1] - p[width - 1]
+                            + 2 * (p[1] - p[-1]);
+                        gy = p[-width - 1] + p[-width + 1]
+                            - p[width - 1] - p[width + 1]
+                            + 2 * (p[-width] - p[width]);
+
+                        imgGradXY[y, x] = new GradXY((Int16)gx, (Int16)gy);
+
+                        gradients[y, x] = (float)Math.Sqrt(gx * gx + gy * gy);
+                        if (gradients[y, x] > maxGradient)
+                            maxGradient = gradients[y, x];
+
+                        // get orientation
+                        if (gx == 0)
+                        {
+                            orientation = (gy == 0) ? 0 : 90;
+                        }
+                        else
+                        {
+                            double div = gy / gx;
+                            // handle angles of the 2nd and 4th quads
+                            if (div < 0)
+                            {
+                                orientation = 180 - System.Math.Atan(-div) * toAngle;
+                            }
+                            // handle angles of the 1st and 3rd quads
+                            else
+                            {
+                                orientation = System.Math.Atan(div) * toAngle;
+                            }
+
+                            // get closest angle from 0, 45, 90, 135 set
+                            if (orientation < 22.5)
+                                orientation = 0;
+                            else if (orientation < 67.5)
+                                orientation = 45;
+                            else if (orientation < 112.5)
+                                orientation = 90;
+                            else if (orientation < 157.5)
+                                orientation = 135;
+                            else orientation = 0;
+                        }
+
+                        // save orientation
+                        orients[o] = (byte)orientation;
+                    }
+                }
+
+                // STEP 3 - suppres non maximums
+                o = 0;
+                start = this.Start + startX;
+                for (int y = startY; y < stopY; y++)
+                {
+                    p = start + y * width;
+                    // for each pixel
+                    for (int x = startX; x < stopX; x++, p++, o++)
+                    {
+                        // get two adjacent pixels
+                        switch (orients[o])
+                        {
+                            case 0:
+                                leftPixel = gradients[y, x - 1];
+                                rightPixel = gradients[y, x + 1];
+                                break;
+                            case 45:
+                                leftPixel = gradients[y + 1, x - 1];
+                                rightPixel = gradients[y - 1, x + 1];
+                                break;
+                            case 90:
+                                leftPixel = gradients[y + 1, x];
+                                rightPixel = gradients[y - 1, x];
+                                break;
+                            case 135:
+                                leftPixel = gradients[y + 1, x + 1];
+                                rightPixel = gradients[y - 1, x - 1];
+                                break;
+                        }
+                        // compare current pixels value with adjacent pixels
+                        if ((gradients[y, x] < leftPixel) || (gradients[y, x] < rightPixel))
+                        {
+                            *p = 0;
+                        }
+                        else
+                        {
+                            *p = (byte)(gradients[y, x] / maxGradient * 255);
+                        }
+                    }
+                }
+
+                // STEP 4 - hysteresis
+                start = this.Start + startX;
+                byte* pUp;
+                byte* pDown;
+                for (int y = startY; y < stopY; y++)
+                {
+                    p = start + y * width;
+                    pUp = p - width;
+                    pDown = p + width;
+                    for (int x = startX; x < stopX; x++, p++, pUp++, pDown++)
+                    {
+                        if (*p < highThreshold)
+                        {
+                            if (*p < lowThreshold)
+                            {
+                                // non edge
+                                *p = 0;
+                            }
+                            else
+                            {
+                                // check 8 neighboring pixels
+                                if ((p[-1] < highThreshold) &&
+                                    (p[1] < highThreshold) &&
+                                    (pUp[-1] < highThreshold) &&
+                                    (pUp[0] < highThreshold) &&
+                                    (pUp[1] < highThreshold) &&
+                                    (pDown[-1] < highThreshold) &&
+                                    (pDown[0] < highThreshold) &&
+                                    (pDown[1] < highThreshold))
+                                {
+                                    *p = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // STEP 4 将第1行，最后一行，第0列，最后1列
+
+                // 第1行
+                start = this.Start;
+                byte* end = start + width;
+                while (start != end)
+                {
+                    *start = 0;
+                    start++;
+                }
+
+                // 最后一行
+                start = this.Start + width * height - width;
+                end = start + width;
+                while (start != end)
+                {
+                    *start = 0;
+                    start++;
+                }
+
+                // 第一列和最后一列
+                start = this.Start;
+                for (int y = 0; y < height; y++, start += width)
+                {
+                    start[0] = 0;
+                    start[width - 1] = 0;
+                }
+            }
+            return this;
+        }
+
         /// <summary>
         /// 进行中值滤波。
         /// </summary>

@@ -16,8 +16,13 @@ namespace Geb.Image
     /// </summary>
     public partial struct GradXY
     {
-        public Single DX;
-        public Single DY;
+        public Int16 DX;
+        public Int16 DY;
+        public GradXY(Int16 dx, Int16 dy)
+        {
+            DX = dx;
+            DY = dy;
+        }
     }
 
     /// <summary>
@@ -56,5 +61,44 @@ namespace Geb.Image
 
         #endregion
         
+        /// <summary>
+        /// 返回 X 方向的梯度图像，红色代表正值，蓝色代表负值
+        /// </summary>
+        /// <returns></returns>
+        public ImageRgb24 ToXGradImage(double scale = 1)
+        {
+            ImageRgb24 img = new ImageRgb24(this.Width, this.Height);
+            for(int i = 0; i < Length; i++)
+            {
+                int val = this[i].DX;
+                Rgb24 c = new Rgb24();
+                if (val >= 0)
+                    c.Red = (Byte)Math.Min(255, val * scale);
+                else
+                    c.Blue = (Byte)Math.Min(255, -val * scale);
+                img[i] = c;
+            }
+            return img;
+        }
+
+        /// <summary>
+        /// 返回 Y 方向的梯度图像，红色代表正值，蓝色代表负值
+        /// </summary>
+        /// <returns></returns>
+        public ImageRgb24 ToYGradImage(double scale = 1)
+        {
+            ImageRgb24 img = new ImageRgb24(this.Width, this.Height);
+            for (int i = 0; i < Length; i++)
+            {
+                int val = this[i].DY;
+                Rgb24 c = new Rgb24();
+                if (val >= 0)
+                    c.Red = (Byte)Math.Min(255, val * scale);
+                else
+                    c.Blue = (Byte)Math.Min(255, -val * scale);
+                img[i] = c;
+            }
+            return img;
+        }
     }
 }
