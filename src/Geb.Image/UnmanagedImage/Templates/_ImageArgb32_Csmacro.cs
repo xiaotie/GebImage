@@ -53,7 +53,7 @@ namespace Geb.Image
             TPixel* end = start + src.Length;
             while (start != end)
             {
-				handler(start);
+                handler(start);
                 ++start;
             }
             return src;

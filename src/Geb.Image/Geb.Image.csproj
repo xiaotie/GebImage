@@ -42,7 +42,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -79,6 +79,9 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>geb_image.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -105,6 +108,7 @@
     <Compile Include="ManagedImage\ComplexImage.cs" />
     <Compile Include="UnmanagedImage\ImageCmyk.cs" />
     <Compile Include="UnmanagedImage\ImageFloat.cs" />
+    <Compile Include="UnmanagedImage\ImageGradXY.cs" />
     <Compile Include="UnmanagedImage\ImageHsl.cs" />
     <Compile Include="UnmanagedImage\ImageRgbSingle96.cs" />
     <Compile Include="UnmanagedImage\ImageU8\ImageU8_Sobel.cs" />
@@ -112,7 +116,9 @@
     <Compile Include="UnmanagedImage\Templates\_ImageFloat.cs" />
     <Compile Include="UnmanagedImage\ImageGrad.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageFloat_Csmacro.cs" />
+    <Compile Include="UnmanagedImage\Templates\_ImageGradXY.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageGrad.cs" />
+    <Compile Include="UnmanagedImage\Templates\_ImageGradXY_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageGrad_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageHsl_Csmacro.cs" />
     <Compile Include="UnmanagedImage\Templates\_ImageInt32_Csmacro.cs" />
@@ -188,5 +194,8 @@
     <!--
     <PreBuildEvent>Csmacro.exe $(ProjectDir)</PreBuildEvent>
     -->
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>Csmacro.exe $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
 </Project>

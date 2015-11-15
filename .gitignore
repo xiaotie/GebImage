@@ -6,3 +6,6 @@ Release
 
 *.suo
 /TestResults
+*.pfx
+*.userprefs
+libs/
