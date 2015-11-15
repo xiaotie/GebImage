@@ -744,7 +744,7 @@ namespace Geb.Image
                             - p[width - 1] - p[width + 1]
                             + 2 * (p[-width] - p[width]);
 
-                        imgGradXY[y, x] = new GradXY((Int16)gx, (Int16)gy);
+                        imgGradXY[y, x] = new GradXY((Int16)gx, (Int16)(-gy));
 
                         gradients[y, x] = (float)Math.Sqrt(gx * gx + gy * gy);
                         if (gradients[y, x] > maxGradient)
