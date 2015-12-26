@@ -1119,9 +1119,9 @@ namespace Geb.Image
                 {
                     if (line1[w] > 0)
                     {
-                        val = Math.Min(line0[w + 1], line1[w + 1]);
-                        val = Math.Min(val, line2[w + 1]);
-                        val = Math.Min(val, line2[w]);
+                        val = Math.Min(line1[w + 1], line2[w + 1]);
+                        val = Math.Min(val, line0[w + 1]);
+                        val = Math.Min(val, line0[w]);
                         val = Math.Min(val + 1, line1[w]);
                         line1[w] = (byte)(Math.Min(val, 255)); ;
                     }
@@ -1159,9 +1159,9 @@ namespace Geb.Image
                 {
                     if (line1[1] > 0) // 当前像素
                     {
-                        val = Math.Min(line0[0], line0[1]);
+                        val = Math.Min(line2[0], line2[1]);
+                        val = Math.Min(val, line0[0]);
                         val = Math.Min(val, line1[0]);
-                        val = Math.Min(val, line2[0]);
                         val = Math.Min(val + 1, line1[1]);
                         line1[1] = (byte)(Math.Min(val, 255));
                     }
@@ -1171,6 +1171,125 @@ namespace Geb.Image
                 }
             }
             return this;
+        }
+
+        /// <summary>
+        /// 进行距离变换。距离变换之前，请保证前景像素的值为0。计算D8距离. 忽略第一行和最后一行，第一列和最后一列。返回 ImageInt32的图像结果
+        /// </summary>
+        public unsafe ImageInt32 ApplyDistanceTransformFast32()
+        {
+            ImageInt32 img = new ImageInt32(this.Width, this.Height);
+            int max = img.Length;
+            for(int i = 0; i < img.Length; i++)
+            {
+                if (this[i] == 0x00) img[i] = 0;
+                else img[i] = max;
+            }
+
+            Int32* start = img.Start;
+            int width = this.Width;
+            int height = this.Height;
+
+            Int32 val;
+
+            for(int w = 0; w < width; w++)
+                img[0, w] = 0;
+
+            for (int w = 0; w < width; w++)
+                img[height - 1, w] = 0;
+
+            for(int h = 0; h < height; h++)
+            {
+                img[h, 0] = img[h, width - 1] = 0;
+            }
+
+            // 从上向下，从左向右扫描
+            for (int h = 1; h < height - 1; h++)
+            {
+                // 位于每行的头部
+                Int32* line0 = start + (h - 1) * width;
+                Int32* line1 = start + (h) * width;
+                Int32* line2 = start + (h + 1) * width;
+                for (int w = 1; w < width; w++)
+                {
+                    if (line1[1] > 0) // 当前像素
+                    {
+                        val = Math.Min(line0[0], line0[1]);
+                        val = Math.Min(val, line1[0]);
+                        val = Math.Min(val, line2[0]);
+                        val = Math.Min(val + 1, line1[1]);
+                        line1[1] = val;
+                    }
+
+                    line0++;
+                    line1++;
+                    line2++;
+                }
+            }
+
+            // 从上向下，从右向左扫描
+            for (int h = 1; h < height - 1; h++)
+            {
+                // 位于每行的头部
+                Int32* line0 = start + (h - 1) * width;
+                Int32* line1 = start + (h) * width;
+                Int32* line2 = start + (h + 1) * width;
+                for (int w = width - 2; w >= 0; w--)
+                {
+                    if (line1[w] > 0)
+                    {
+                        val = Math.Min(line1[w + 1], line2[w + 1]);
+                        val = Math.Min(val, line0[w + 1]);
+                        val = Math.Min(val, line0[w]);
+                        val = Math.Min(val + 1, line1[w]);
+                        line1[w] = val;
+                    }
+                }
+            }
+
+            // 从下向上，从右向左扫描
+            for (int h = height - 2; h > 0; h--)
+            {
+                Int32* line0 = start + (h - 1) * width;
+                Int32* line1 = start + (h) * width;
+                Int32* line2 = start + (h + 1) * width;
+
+                for (int w = width - 2; w >= 0; w--)
+                {
+                    if (line1[w] > 0)
+                    {
+                        val = Math.Min(line0[w + 1], line1[w + 1]);
+                        val = Math.Min(val, line2[w + 1]);
+                        val = Math.Min(val, line2[w]);
+                        val = Math.Min(val + 1, line1[w]);
+                        line1[w] = val;
+                    }
+                }
+            }
+
+            // 从下向上，从左向右扫描
+            for (int h = height - 2; h > 0; h--)
+            {
+                Int32* line0 = start + (h - 1) * width;
+                Int32* line1 = start + (h) * width;
+                Int32* line2 = start + (h + 1) * width;
+
+                for (int w = 1; w < width; w++)
+                {
+                    if (line1[1] > 0) // 当前像素
+                    {
+                        val = Math.Min(line2[0], line2[1]);
+                        val = Math.Min(val, line0[0]);
+                        val = Math.Min(val, line1[0]);
+                        val = Math.Min(val + 1, line1[1]);
+                        line1[1] = val;
+                    }
+                    line0++;
+                    line1++;
+                    line2++;
+                }
+            }
+            return img;
         }
 
         /// <summary>

@@ -17,6 +17,7 @@ namespace Geb.Image.Demo.Tests
             img.Fill(500, 500, 200, 200, 0xFF);
             img.ShowDialog();
             img.ApplyDistanceTransformFast();
+            img.ApplyDistanceTransformFast32().ToImageU8().ShowDialog();
             img.ShowDialog();
         }
     }
