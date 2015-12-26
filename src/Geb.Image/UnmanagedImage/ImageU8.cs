@@ -1108,6 +1108,26 @@ namespace Geb.Image
                 }
             }
 
+            // 从上向下，从右向左扫描
+            for (int h = 1; h < height - 1; h++)
+            {
+                // 位于每行的头部
+                Byte* line0 = start + (h - 1) * width;
+                Byte* line1 = start + (h) * width;
+                Byte* line2 = start + (h + 1) * width;
+                for (int w = width - 2; w >= 0; w--)
+                {
+                    if (line1[w] > 0)
+                    {
+                        val = Math.Min(line0[w + 1], line1[w + 1]);
+                        val = Math.Min(val, line2[w + 1]);
+                        val = Math.Min(val, line2[w]);
+                        val = Math.Min(val + 1, line1[w]);
+                        line1[w] = (byte)(Math.Min(val, 255)); ;
+                    }
+                }
+            }
+
             // 从下向上，从右向左扫描
             for (int h = height - 2; h > 0; h--)
             {
@@ -1125,6 +1145,29 @@ namespace Geb.Image
                         val = Math.Min(val + 1, line1[w]);
                         line1[w] = (byte)(Math.Min(val, 255)); ;
                     }
+                }
+            }
+
+            // 从下向上，从左向右扫描
+            for (int h = height - 2; h > 0; h--)
+            {
+                Byte* line0 = start + (h - 1) * width;
+                Byte* line1 = start + (h) * width;
+                Byte* line2 = start + (h + 1) * width;
+
+                for (int w = 1; w < width; w++)
+                {
+                    if (line1[1] > 0) // 当前像素
+                    {
+                        val = Math.Min(line0[0], line0[1]);
+                        val = Math.Min(val, line1[0]);
+                        val = Math.Min(val, line2[0]);
+                        val = Math.Min(val + 1, line1[1]);
+                        line1[1] = (byte)(Math.Min(val, 255));
+                    }
+                    line0++;
+                    line1++;
+                    line2++;
                 }
             }
             return this;

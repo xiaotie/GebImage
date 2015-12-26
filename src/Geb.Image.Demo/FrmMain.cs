@@ -48,5 +48,10 @@ namespace Geb.Image.Demo
                     ImageRgb24 img = new ImageRgb24(path);
                 });
         }
+
+        private void btnDistanceTransformDemo_Click(object sender, EventArgs e)
+        {
+            new Tests.DistanceTransformTest().Run();
+        }
     }
 }

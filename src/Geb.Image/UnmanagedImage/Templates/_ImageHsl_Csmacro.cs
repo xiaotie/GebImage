@@ -1335,7 +1335,7 @@ namespace Geb.Image
             {
                 if (Math.Abs(deltaY) < 0.0001)
                 {
-                    SetColor(start.X, start.Y, color, radius, ww, hh);
+                    SetColor(start.X, start.Y, color, 0, radius, ww, hh);
                     return;
                 };
 
@@ -1355,7 +1355,7 @@ namespace Geb.Image
 
                 for (float y = yStart; y <= yEnd; y++)
                 {
-                    SetColor(x, y, color, radius, ww, hh);
+                    SetColor(x, y, color, 0, radius, ww, hh);
                 }
             }
             else
@@ -1382,14 +1382,14 @@ namespace Geb.Image
                     float deltaYY = deltaY * (deltaXX / deltaX);
                     float y = start.Y - deltaYY;
 
-                    SetColor(x, y, color, radius, ww, hh);
+                    SetColor(x, y, color, 0, radius, ww, hh);
                 }
             }
         }
 
         public void Draw(float x, float y, TPixel color, int radius)
         {
-            SetColor(x, y, color, radius, Width - 1, Height - 1);
+            SetColor(x, y, color, 0, radius, Width - 1, Height - 1);
         }
 
         /// <summary>
@@ -1459,15 +1459,27 @@ namespace Geb.Image
         /// <param name="radius">圆的半径</param>
         public void DrawCircle(float x, float y, TPixel color, int radius = 1)
         {
-            SetColor(x, y, color, radius, Width - 1, Height - 1);
+            SetColor(x, y, color, radius-1, radius + 1, Width - 1, Height - 1);
+        }
+
+        /// <summary>
+        /// 绘制圆
+        /// </summary>
+        /// <param name="x">圆心横坐标</param>
+        /// <param name="y">圆心纵坐标</param>
+        /// <param name="color">颜色</param>
+        /// <param name="radius">圆的半径</param>
+        public void FillCircle(float x, float y, TPixel color, int radius = 1)
+        {
+            SetColor(x, y, color, 0, radius, Width - 1, Height - 1);
         }
 
         public void SetColor(float x, float y, TPixel color, int radius = 1)
         {
-            SetColor(x, y, color, radius, Width - 1, Height - 1);
+            SetColor(x, y, color, 0, radius, Width - 1, Height - 1);
         }
 
-        private void SetColor(float x, float y, TPixel color, int radius, int ww, int hh)
+        private void SetColor(float x, float y, TPixel color, int innerRadius, int radius, int ww, int hh)
         {
             int xStart = (int)(x - radius - 1);
             int xEnd = (int)(x + radius + 1);
@@ -1475,6 +1487,7 @@ namespace Geb.Image
             int yEnd = (int)(y + radius + 1);
 
             int maxDistanceSquare = radius * radius;
+            int minDistanceSquare = innerRadius * innerRadius;
             for (int yy = yStart; yy < yEnd; yy++)
             {
                 for (int xx = xStart; xx < xEnd; xx++)
@@ -1482,7 +1495,8 @@ namespace Geb.Image
                     if (xx < 0 || yy < 0 || xx > ww || yy > hh) continue;
                     float deltaX = xx - x;
                     float deltaY = yy - y;
-                    if (deltaX * deltaX + deltaY * deltaY <= maxDistanceSquare)
+                    float distance = deltaX * deltaX + deltaY * deltaY;
+                    if (distance <= maxDistanceSquare && distance >= minDistanceSquare)
                         this[yy, xx] = color;
                 }
             }
