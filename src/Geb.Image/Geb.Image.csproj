@@ -1,201 +1,34 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F86CF18F-70F4-4491-9C1C-9F390A09E978}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Geb.Image</RootNamespace>
-    <AssemblyName>Geb.Image</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Demo|AnyCPU'">
-    <OutputPath>bin\Demo\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisLogFile>..\..\bin\Orc.SmartImage.Common.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>;D:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>;D:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
-    <Prefer32Bit>false</Prefer32Bit>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>geb_image.pfx</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="Csmacro.exe $(ProjectDir)" />
+  </Target>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="System.Memory" Version="4.5.0-rc1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Geb.Utils">
-      <HintPath>..\..\libs\Geb.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="Geb.Utils.WinForm">
-      <HintPath>..\..\libs\Geb.Utils.WinForm.dll</HintPath>
+      <HintPath>..\..\lib\Geb.Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Common\ClassHelper.cs" />
-    <Compile Include="Common\Complex.cs" />
-    <Compile Include="Common\Config.cs" />
-    <Compile Include="Common\Enums.cs" />
-    <Compile Include="Common\FourierTransform.cs" />
-    <Compile Include="Common\GdiplusHelper.cs" />
-    <Compile Include="Common\ImagePool.cs" />
-    <Compile Include="Common\Matrix.cs" />
-    <Compile Include="Common\MemoryStorage.cs" />
-    <Compile Include="Common\Structs.cs" />
-    <Compile Include="ManagedImage\ComplexImage.cs" />
-    <Compile Include="UnmanagedImage\ImageCmyk.cs" />
-    <Compile Include="UnmanagedImage\ImageFloat.cs" />
-    <Compile Include="UnmanagedImage\ImageGradXY.cs" />
-    <Compile Include="UnmanagedImage\ImageHsl.cs" />
-    <Compile Include="UnmanagedImage\ImageRgbSingle96.cs" />
-    <Compile Include="UnmanagedImage\ImageU8\ImageU8_Sobel.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageArgb32_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageFloat.cs" />
-    <Compile Include="UnmanagedImage\ImageGrad.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageFloat_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageGradXY.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageGrad.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageGradXY_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageGrad_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageHsl_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageInt32_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageLab24.cs" />
-    <Compile Include="UnmanagedImage\ImageSignedArgb64.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageLab24_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageRgb24_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageRgbSingle96.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageRgbSingle96_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageSignedArgb64.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageSignedArgb64_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageU8_Csmacro.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageHsl.cs" />
-    <Compile Include="UnmanagedImage\Templates\__Paramid_Templete.cs" />
-    <Compile Include="UnmanagedImage\Image.cs" />
-    <Compile Include="UnmanagedImage\Utils\HersheyGlyphs.cs" />
-    <Compile Include="UnmanagedImage\Utils\ImageConverter.cs" />
-    <Compile Include="UnmanagedImage\ImageLab24.cs" />
-    <Compile Include="UnmanagedImage\Utils\PixelHelper.cs" />
-    <Compile Include="Utils\AffineTransform.cs" />
-    <Compile Include="Utils\ImageSamplingAlgorithm.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageArgb32.cs" />
-    <Compile Include="UnmanagedImage\ImageCieLab.cs" />
-    <Compile Include="UnmanagedImage\ImageCieXyz.cs" />
-    <Compile Include="UnmanagedImage\ImageInt32.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageInt32.cs" />
-    <Compile Include="UnmanagedImage\ImageLAlphaBeta.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageU8.cs" />
-    <Compile Include="UnmanagedImage\FilterKernel.cs" />
-    <Compile Include="UnmanagedImage\Templates\__ImageClassHelper_Template.cs" />
-    <Compile Include="Common\ConvolutionKernel.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Common\Range.cs" />
-    <Compile Include="UnmanagedImage\ImageArgb32.cs" />
-    <Compile Include="UnmanagedImage\ImageRgb24.cs" />
-    <Compile Include="UnmanagedImage\ImageU8.cs" />
-    <Compile Include="UnmanagedImage\Templates\_ImageRgb24.cs" />
-    <Compile Include="UnmanagedImage\Templates\__Image_Template.cs" />
-    <Compile Include="UnmanagedImage\Templates\__ImageFilter_Template.cs" />
-    <Compile Include="UnmanagedImage\Templates\__Pixel_Template.cs" />
-    <Compile Include="Utils\Interpolate.cs" />
-    <Compile Include="Utils\ProjectionTransform.cs" />
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="geb_image.pfx" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <PropertyGroup>
-    <!--
-    <PreBuildEvent>Csmacro.exe $(ProjectDir)</PreBuildEvent>
-    -->
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>Csmacro.exe $(ProjectDir)</PreBuildEvent>
-  </PropertyGroup>
+
 </Project>

@@ -13,8 +13,6 @@ using System.Text;
 
 namespace Geb.Image
 {
-    using Geb.Utils;
-
     public class Image<T> : IDisposable
         where T:struct
     {

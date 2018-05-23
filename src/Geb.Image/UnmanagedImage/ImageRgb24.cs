@@ -146,9 +146,9 @@ namespace Geb.Image
             UnmanagedImageConverter.ToRgb24(from, (Rgb24*)to, length);
         }
 
-        private System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
+        private PixelFormat GetOutputBitmapPixelFormat()
         {
-            return System.Drawing.Imaging.PixelFormat.Format24bppRgb;
+            return PixelFormat.Format24bppRgb;
         }
 
         private unsafe void ToBitmapCore(byte* src, byte* dst, int width)

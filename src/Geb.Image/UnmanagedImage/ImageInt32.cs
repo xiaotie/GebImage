@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace Geb.Image
 {
@@ -86,42 +85,42 @@ namespace Geb.Image
             return img;
         }
 
-        /// <summary>
-        /// 直接将 int32 和 32bppArgb 一一对应的复制
-        /// </summary>
-        /// <param name="map"></param>
-        public unsafe Bitmap ToBitmapDirect()
-        {
-            Bitmap map = new Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            Int32* t = Start;
+        ///// <summary>
+        ///// 直接将 int32 和 32bppArgb 一一对应的复制
+        ///// </summary>
+        ///// <param name="map"></param>
+        //public unsafe Bitmap ToBitmapDirect()
+        //{
+        //    Bitmap map = new Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        //    Int32* t = Start;
 
-            BitmapData data = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, map.PixelFormat);
-            try
-            {
-                int width = map.Width;
-                int height = map.Height;
+        //    BitmapData data = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, map.PixelFormat);
+        //    try
+        //    {
+        //        int width = map.Width;
+        //        int height = map.Height;
 
-                Byte* line = (Byte*)data.Scan0;
+        //        Byte* line = (Byte*)data.Scan0;
 
-                for (int h = 0; h < height; h++)
-                {
-                    Int32* p = (Int32*)line;
-                    Int32* pEnd = p + width;
-                    while(p != pEnd)
-                    {
-                        *p = *t;
-                        p++;
-                        t++;
-                    }
-                    line += data.Stride;
-                }
-            }
-            finally
-            {
-                map.UnlockBits(data);
-            }
-            return map;
-        }
+        //        for (int h = 0; h < height; h++)
+        //        {
+        //            Int32* p = (Int32*)line;
+        //            Int32* pEnd = p + width;
+        //            while(p != pEnd)
+        //            {
+        //                *p = *t;
+        //                p++;
+        //                t++;
+        //            }
+        //            line += data.Stride;
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        map.UnlockBits(data);
+        //    }
+        //    return map;
+        //}
 
         /// <summary>
         /// 生成地势图。原理：将参数空间->HSV空间->RGB空间。

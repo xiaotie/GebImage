@@ -5,13 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace Geb.Image
 {
-    using Geb.Utils;
-
     public partial struct Lab24
     {
         public byte L;

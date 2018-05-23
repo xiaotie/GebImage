@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Drawing.Imaging;
 
 namespace Geb.Image
 {
@@ -50,7 +49,7 @@ namespace Geb.Image
             throw new NotImplementedException();
         }
 
-        private System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
+        private PixelFormat GetOutputBitmapPixelFormat()
         {
             throw new NotImplementedException();
         }

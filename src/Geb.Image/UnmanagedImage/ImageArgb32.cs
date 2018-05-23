@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Drawing.Imaging;
 
 namespace Geb.Image
 {

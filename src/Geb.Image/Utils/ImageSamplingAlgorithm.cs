@@ -48,8 +48,8 @@ namespace Geb.Image.Sampling
                 return resultList;
             }
 
-            // 将序列随机打乱。RandomPermute是扩展方法。
-            srcList.RandomPermute();
+            // 将序列随机打乱。
+            srcList.Shuffle();
 
             // 如果srcList的数量巨大，则随机抽取部分点。由于上面已经随机大乱了，使用GetRange方法便可。
             if (srcList.Count > count * 3)

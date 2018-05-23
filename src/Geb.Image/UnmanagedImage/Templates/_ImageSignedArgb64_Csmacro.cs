@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace Geb.Image
@@ -358,29 +357,29 @@ namespace Geb.Image
             Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
         }
 
-        public void Save(String path)
-        {
-            using (Bitmap bmp = this.ToBitmap())
-            {
-                bmp.Save(path);
-            }
-        }
+        //public void Save(String path)
+        //{
+        //    using (Bitmap bmp = this.ToBitmap())
+        //    {
+        //        bmp.Save(path);
+        //    }
+        //}
 
         public unsafe ImageSignedArgb64(String path)
         {
-            using (Bitmap bmp = new Bitmap(path))
-            {
-                AllocMemory(bmp.Width, bmp.Height);
-                this.CreateFromBitmap(bmp);
-            }
+            //using (Bitmap bmp = new Bitmap(path))
+            //{
+            //    AllocMemory(bmp.Width, bmp.Height);
+            //    this.CreateFromBitmap(bmp);
+            //}
         }
 
-        public ImageSignedArgb64(Bitmap map)
-        {
-            if (map == null) throw new ArgumentNullException("map");
-            AllocMemory(map.Width, map.Height);
-            this.CreateFromBitmap(map);
-        }
+        //public ImageSignedArgb64(Bitmap map)
+        //{
+        //    if (map == null) throw new ArgumentNullException("map");
+        //    AllocMemory(map.Width, map.Height);
+        //    this.CreateFromBitmap(map);
+        //}
 
         public unsafe virtual void Dispose()
         {
@@ -405,130 +404,137 @@ namespace Geb.Image
             return Marshal.SizeOf(typeof(TPixel));
         }
 
-        protected virtual unsafe void CreateFromBitmap(Bitmap map)
-        {
-            int height = map.Height;
-            int width = map.Width;
+        //protected virtual unsafe void CreateFromBitmap(Bitmap map)
+        //{
+        //    int height = map.Height;
+        //    int width = map.Width;
 
-            const int PixelFormat32bppCMYK = 8207;
+        //    const int PixelFormat32bppCMYK = 8207;
 
-            PixelFormat format = map.PixelFormat;
+        //    PixelFormat format = map.PixelFormat;
 
-            this.Width = width;
-            this.Height = height;
+        //    this.Width = width;
+        //    this.Height = height;
 
-            Bitmap newMap = map;
-            Int32 step = SizeOfT();
+        //    Bitmap newMap = map;
+        //    Int32 step = SizeOfT();
 
-            switch (format)
-            {
-                case PixelFormat.Format24bppRgb:
-                    break;
-                case PixelFormat.Format32bppArgb:
-                    break;
-                default:
-                    if ((int)format == PixelFormat32bppCMYK)
-                    {
-                        format = PixelFormat.Format24bppRgb;
-                        newMap = new Bitmap(width, height, format);
-                        using (Graphics g = Graphics.FromImage(newMap))
-                        {
-                            g.DrawImage(map, new Point());
-                        }
-                    }
-                    else
-                    {
-                        format = PixelFormat.Format32bppArgb;
-                        newMap = map.Clone(new Rectangle(0, 0, width, height), PixelFormat.Format32bppArgb);
-                    }
-                    break;
-            }
+        //    switch (format)
+        //    {
+        //        case PixelFormat.Format24bppRgb:
+        //            break;
+        //        case PixelFormat.Format32bppArgb:
+        //            break;
+        //        default:
+        //            if ((int)format == PixelFormat32bppCMYK)
+        //            {
+        //                format = PixelFormat.Format24bppRgb;
+        //                newMap = new Bitmap(width, height, format);
+        //                using (Graphics g = Graphics.FromImage(newMap))
+        //                {
+        //                    g.DrawImage(map, new Point());
+        //                }
+        //            }
+        //            else
+        //            {
+        //                format = PixelFormat.Format32bppArgb;
+        //                newMap = map.Clone(new Rectangle(0, 0, width, height), PixelFormat.Format32bppArgb);
+        //            }
+        //            break;
+        //    }
 
-            BitmapData data = newMap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, format);
-            Byte* line = (Byte*)data.Scan0;
-            Byte* dstLine = (Byte*)Start;
-            try
-            {
-                if (format == PixelFormat.Format24bppRgb)
-                {
-                    for (int h = 0; h < height; h++)
-                    {
-                        Copy((Rgb24*)line, (void*)dstLine, width);
-                        line += data.Stride;
-                        dstLine += step * width;
-                    }
-                }
-                else
-                {
-                    for (int h = 0; h < height; h++)
-                    {
-                        Copy((Argb32*)line, (void*)dstLine, width);
+        //    BitmapData data = newMap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, format);
+        //    Byte* line = (Byte*)data.Scan0;
+        //    Byte* dstLine = (Byte*)Start;
+        //    try
+        //    {
+        //        if (format == PixelFormat.Format24bppRgb)
+        //        {
+        //            for (int h = 0; h < height; h++)
+        //            {
+        //                Copy((Rgb24*)line, (void*)dstLine, width);
+        //                line += data.Stride;
+        //                dstLine += step * width;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            for (int h = 0; h < height; h++)
+        //            {
+        //                Copy((Argb32*)line, (void*)dstLine, width);
 
-                        line += data.Stride;
-                        dstLine += step * width;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                newMap.UnlockBits(data);
-                if (newMap != map)
-                {
-                    newMap.Dispose();
-                }
-            }
-        }
+        //                line += data.Stride;
+        //                dstLine += step * width;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        newMap.UnlockBits(data);
+        //        if (newMap != map)
+        //        {
+        //            newMap.Dispose();
+        //        }
+        //    }
+        //}
 
-        public virtual unsafe Bitmap ToBitmap()
-        {
-            Bitmap map = new Bitmap(this.Width, this.Height, GetOutputBitmapPixelFormat());
-            ToBitmap(map);
-            return map;
-        }
+        //public virtual unsafe SixLabors.ImageSharp.Image<Bgra32> ToCoreImage()
+        //{
 
-        public virtual unsafe void ToBitmap(Bitmap map)
-        {
-            if (map == null) throw new ArgumentNullException("map");
-            if (map.Width != this.Width || map.Height != this.Height)
-            {
-                throw new ArgumentException("尺寸不匹配.");
-            }
+        //    // SkImage<Rgba32> image = new Image<Rgba32>(this.Width, this.Height);
+           
+        //    SixLabors.ImageSharp.Image<Bgra32> image = new SixLabors.ImageSharp.Image<Bgra32>(this.Width, this.Height);
+        //    image.Frames.RootFrame.MemoryManager.
+        //    // TODO
+            
+        //    return image;
+        //}
 
-            if (map.PixelFormat != GetOutputBitmapPixelFormat())
-            {
-                throw new ArgumentException("只支持 " + GetOutputBitmapPixelFormat().ToString() + " 格式。 ");
-            }
+ 
 
-            if (map.PixelFormat == PixelFormat.Format8bppIndexed)
-            {
-                map.InitGrayscalePalette();
-            }
+        //public virtual unsafe void ToBitmap(Bitmap map)
+        //{
+        //    if (map == null) throw new ArgumentNullException("map");
+        //    if (map.Width != this.Width || map.Height != this.Height)
+        //    {
+        //        throw new ArgumentException("尺寸不匹配.");
+        //    }
 
-            Int32 step = SizeOfT();
-            Byte* srcLine = (Byte*)Start;
+        //    if (map.PixelFormat != GetOutputBitmapPixelFormat())
+        //    {
+        //        throw new ArgumentException("只支持 " + GetOutputBitmapPixelFormat().ToString() + " 格式。 ");
+        //    }
 
-            BitmapData data = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, map.PixelFormat);
-            try
-            {
-                int width = map.Width;
-                int height = map.Height;
-                Byte* dstLine = (Byte*)data.Scan0;
-                for (int h = 0; h < height; h++)
-                {
-                    ToBitmapCore(srcLine, dstLine, width);
-                    dstLine += data.Stride;
-                    srcLine += step * width;
-                }
-            }
-            finally
-            {
-                map.UnlockBits(data);
-            }
-        }
+        //    if (map.PixelFormat == PixelFormat.Format8bppIndexed)
+        //    {
+        //        map.InitGrayscalePalette();
+        //    }
+
+        //    Int32 step = SizeOfT();
+        //    Byte* srcLine = (Byte*)Start;
+
+        //    BitmapData data = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, map.PixelFormat);
+        //    try
+        //    {
+        //        int width = map.Width;
+        //        int height = map.Height;
+        //        Byte* dstLine = (Byte*)data.Scan0;
+        //        for (int h = 0; h < height; h++)
+        //        {
+        //            ToBitmapCore(srcLine, dstLine, width);
+        //            dstLine += data.Stride;
+        //            srcLine += step * width;
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        map.UnlockBits(data);
+        //    }
+        //}
 
         public void ApplyMatrix(float a, float b, float c, float d, float e, float f)
         {
@@ -594,19 +600,19 @@ namespace Geb.Image
             return this;
         }
 
-        /// <summary>
-        /// 弹出模态窗口，显示图像。安静模式下不弹出窗口，直接返回。
-        /// </summary>
-        /// <param name="title">弹出模式窗体的标题</param>
-        /// <returns>当前图像</returns>
-        public TImage ShowDialog(String title = null, Boolean zoom = true)
-        {
-            if (Config.SilentMode == false) // 非安静模式不弹出窗体
-            {
-                this.ToBitmap().ShowDialog(title,zoom);
-            }
-            return this;
-        }
+        ///// <summary>
+        ///// 弹出模态窗口，显示图像。安静模式下不弹出窗口，直接返回。
+        ///// </summary>
+        ///// <param name="title">弹出模式窗体的标题</param>
+        ///// <returns>当前图像</returns>
+        //public TImage ShowDialog(String title = null, Boolean zoom = true)
+        //{
+        //    if (Config.SilentMode == false) // 非安静模式不弹出窗体
+        //    {
+        //        this.ToBitmap().ShowDialog(title,zoom);
+        //    }
+        //    return this;
+        //}
 
         /// <summary>
         /// 对图像进行转置，行变成列，列变成行。转置结果直接存在当前的图像中。
@@ -1683,34 +1689,34 @@ namespace Geb.Image
 
         #region 转换为JPG、PNG流数据
         
-        /// <summary>
-        /// 将图像转换为PNG图像数据
-        /// </summary>
-        /// <returns>PNG图像的二进制数据</returns>
-        public Byte[] ToPngData()
-        {
-            Bitmap bmp = this.ToBitmap();
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-            {
-                bmp.Save(ms, GdiplusHelper.GetPngEncoder(), null);
-                return ms.ToArray();
-            }
-        }
+        ///// <summary>
+        ///// 将图像转换为PNG图像数据
+        ///// </summary>
+        ///// <returns>PNG图像的二进制数据</returns>
+        //public Byte[] ToPngData()
+        //{
+        //    Bitmap bmp = this.ToBitmap();
+        //    using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+        //    {
+        //        bmp.Save(ms, GdiplusHelper.GetPngEncoder(), null);
+        //        return ms.ToArray();
+        //    }
+        //}
 
-        /// <summary>
-        /// 将图像转换为 JPEG 图像数据
-        /// </summary>
-        /// <param name="quality">图像质量，0-100 之间</param>
-        /// <returns>JPEG 图像的二进制数据</returns>
-        public Byte[] ToJpegData(int quality)
-        {
-            Bitmap bmp = this.ToBitmap();
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-            {
-                bmp.Save(ms, GdiplusHelper.GetJpegEncoder(), GdiplusHelper.GetJpegEncoderParameters(quality));
-                return ms.ToArray();
-            }
-        }
+        ///// <summary>
+        ///// 将图像转换为 JPEG 图像数据
+        ///// </summary>
+        ///// <param name="quality">图像质量，0-100 之间</param>
+        ///// <returns>JPEG 图像的二进制数据</returns>
+        //public Byte[] ToJpegData(int quality)
+        //{
+        //    Bitmap bmp = this.ToBitmap();
+        //    using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+        //    {
+        //        bmp.Save(ms, GdiplusHelper.GetJpegEncoder(), GdiplusHelper.GetJpegEncoderParameters(quality));
+        //        return ms.ToArray();
+        //    }
+        //}
 
         #endregion
 

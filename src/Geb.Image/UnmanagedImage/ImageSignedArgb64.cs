@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Drawing.Imaging;
 
 namespace Geb.Image
 {
@@ -110,9 +109,9 @@ namespace Geb.Image
             UnmanagedImageConverter.ToSignedArgb64(from, (SignedArgb64*)to, length);
         }
 
-        private System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
+        private PixelFormat GetOutputBitmapPixelFormat()
         {
-            return System.Drawing.Imaging.PixelFormat.Format32bppArgb;
+            return PixelFormat.Format32bppArgb;
         }
 
         private unsafe void ToBitmapCore(byte* src, byte* dst, int width)

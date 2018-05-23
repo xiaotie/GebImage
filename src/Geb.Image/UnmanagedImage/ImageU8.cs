@@ -30,9 +30,9 @@ namespace Geb.Image
             UnmanagedImageConverter.Copy(from, (byte*)to, length);
         }
 
-        private System.Drawing.Imaging.PixelFormat GetOutputBitmapPixelFormat()
+        private PixelFormat GetOutputBitmapPixelFormat()
         {
-            return System.Drawing.Imaging.PixelFormat.Format8bppIndexed;
+            return PixelFormat.Format8bppIndexed;
         }
 
         private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
