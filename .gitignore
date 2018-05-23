@@ -3,9 +3,13 @@
 Debug
 Release
 /bin
-
+obj
+old
+Publish
 *.suo
 /TestResults
 *.pfx
 *.userprefs
 libs/
+src/bin/
+.vs/
