@@ -52,26 +52,14 @@ namespace Geb.Image.Formats.Jpeg.Components
             set => this[(y * 8) + x] = value;
         }
 
-        //public void LoadAndStretchEdges<TPixel>(IPixelSource<TPixel> source, int sourceX, int sourceY)
-        //    where TPixel : struct, IPixel<TPixel>
-        //{
-        //    var buffer = source.PixelBuffer as Buffer2D<T>;
-        //    if (buffer == null)
-        //    {
-        //        throw new InvalidOperationException("LoadAndStretchEdges<TPixels>() is only valid for TPixel == T !");
-        //    }
-
-        //    this.LoadAndStretchEdges(buffer, sourceX, sourceY);
-        //}
-
         /// <summary>
         /// Load a 8x8 region of an image into the block.
         /// The "outlying" area of the block will be stretched out with pixels on the right and bottom edge of the image.
         /// </summary>
-        public void LoadAndStretchEdges(Buffer2D<T> source, int sourceX, int sourceY)
+        public void LoadAndStretchEdges(ref T source, int imageWidth, int imageHeight, int sourceX, int sourceY)
         {
-            int width = Math.Min(8, source.Width - sourceX);
-            int height = Math.Min(8, source.Height - sourceY);
+            int width = Math.Min(8, imageWidth - sourceX);
+            int height = Math.Min(8, imageHeight - sourceY);
 
             if (width <= 0 || height <= 0)
             {
@@ -83,10 +71,11 @@ namespace Geb.Image.Formats.Jpeg.Components
 
             ref byte blockStart = ref Unsafe.As<GenericBlock8x8<T>, byte>(ref this);
             ref byte imageStart = ref Unsafe.As<T, byte>(
-                                      ref Unsafe.Add(ref MemoryMarshal.GetReference(source.GetRowSpan(sourceY)), sourceX));
+                                      ref Unsafe.Add(ref source, imageWidth * sourceY + sourceX));
+            //ref byte imageStart = ref Unsafe.As<T, byte>(ref source);
 
             int blockRowSizeInBytes = 8 * Unsafe.SizeOf<T>();
-            int imageRowSizeInBytes = source.Width * Unsafe.SizeOf<T>();
+            int imageRowSizeInBytes = imageWidth * Unsafe.SizeOf<T>();
 
             for (int y = 0; y < height; y++)
             {

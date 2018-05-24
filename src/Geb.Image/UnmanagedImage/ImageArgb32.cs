@@ -52,11 +52,14 @@ namespace Geb.Image
 
         public void SaveBmp(String imagePath)
         {
-            using (FileStream fs = new FileStream(imagePath, FileMode.CreateNew))
-            {
-                var encoder = new Formats.Bmp.BmpEncoder();
-                encoder.Encode(this, fs);
-            }
+            new Formats.Bmp.BmpEncoder().Encode(this, imagePath);
+        }
+
+        public void SaveJpeg(String imagePath,int quality = 70)
+        {
+            var encoder = new Formats.Jpeg.JpegEncoder();
+            encoder.Quality = 70;
+            encoder.Encode(this, imagePath);
         }
 
         public ImageU8 ToGrayscaleImage(byte transparentColor)

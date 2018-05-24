@@ -9,10 +9,10 @@ namespace Geb.Image.Formats
     /// </summary>
     public static class ImageFormats
     {
-        ///// <summary>
-        ///// The format details for the jpegs.
-        ///// </summary>
-        //public static readonly IImageFormat Jpeg = new JpegFormat();
+        /// <summary>
+        /// The format details for the jpegs.
+        /// </summary>
+        public static readonly IImageFormat Jpeg = new Jpeg.JpegFormat();
 
         ///// <summary>
         ///// The format details for the pngs.
