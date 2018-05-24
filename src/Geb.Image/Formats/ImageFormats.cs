@@ -14,10 +14,10 @@ namespace Geb.Image.Formats
         /// </summary>
         public static readonly IImageFormat Jpeg = new Jpeg.JpegFormat();
 
-        ///// <summary>
-        ///// The format details for the pngs.
-        ///// </summary>
-        //public static readonly IImageFormat Png = new PngFormat();
+        /// <summary>
+        /// The format details for the pngs.
+        /// </summary>
+        public static readonly IImageFormat Png = new Png.PngFormat();
 
         ///// <summary>
         ///// The format details for the gifs.

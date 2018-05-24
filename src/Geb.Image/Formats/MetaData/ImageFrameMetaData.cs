@@ -2,7 +2,7 @@
 //// Licensed under the Apache License, Version 2.0.
 
 //using Geb.Image.Formats;
-//using SixLabors.ImageSharp.Formats.Gif;
+//using Geb.Image.Formats.Gif;
 
 //namespace Geb.Image.Formats.MetaData
 //{
