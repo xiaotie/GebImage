@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -7,9 +8,6 @@ namespace Geb.Image
 {
     public unsafe class MemoryStorage : IDisposable
     {
-        [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        internal static extern IntPtr memcpy(byte* dest, byte* src, uint count);
-
         public int _bytes;
         public int Bytes
         {
@@ -38,7 +36,7 @@ namespace Geb.Image
             if(_start != null)
             {
                 int size = Math.Min(_bytes, newSize);
-                MemoryStorage.memcpy(newStart, _start, (uint)size);
+                Unsafe.CopyBlockUnaligned(newStart, _start, (uint)size);
                 Marshal.FreeHGlobal((IntPtr)_start);
             }
             _start = newStart;
