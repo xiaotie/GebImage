@@ -46,17 +46,17 @@ namespace Geb.Image.Formats.Jpeg.Components.Decoder
         /// </summary>
         /// <param name="memoryManager">The <see cref="MemoryManager"/> to use for buffer allocations.</param>
         /// <param name="rawJpeg">The <see cref="IRawJpegData"/> representing the uncompressed spectral Jpeg data</param>
-        //public JpegImagePostProcessor(MemoryManager memoryManager, IRawJpegData rawJpeg)
-        //{
-        //    this.RawJpeg = rawJpeg;
-        //    IJpegComponent c0 = rawJpeg.Components.First();
-        //    this.NumberOfPostProcessorSteps = c0.SizeInBlocks.Height / BlockRowsPerStep;
-        //    this.PostProcessorBufferSize = new Size(c0.SizeInBlocks.Width * 8, PixelRowsPerStep);
+        public JpegImagePostProcessor(MemoryManager memoryManager, IRawJpegData rawJpeg)
+        {
+            this.RawJpeg = rawJpeg;
+            IJpegComponent c0 = rawJpeg.Components.First();
+            this.NumberOfPostProcessorSteps = c0.SizeInBlocks.Height / BlockRowsPerStep;
+            this.PostProcessorBufferSize = new Size(c0.SizeInBlocks.Width * 8, PixelRowsPerStep);
 
-        //    this.ComponentProcessors = rawJpeg.Components.Select(c => new JpegComponentPostProcessor(memoryManager, this, c)).ToArray();
-        //    this.rgbaBuffer = memoryManager.Allocate<Vector4>(rawJpeg.ImageSizeInPixels.Width);
-        //    this.colorConverter = JpegColorConverter.GetConverter(rawJpeg.ColorSpace);
-        //}
+            this.ComponentProcessors = rawJpeg.Components.Select(c => new JpegComponentPostProcessor(memoryManager, this, c)).ToArray();
+            this.rgbaBuffer = memoryManager.Allocate<Vector4>(rawJpeg.ImageSizeInPixels.Width);
+            this.colorConverter = JpegColorConverter.GetConverter(rawJpeg.ColorSpace);
+        }
 
         /// <summary>
         /// Gets the <see cref="JpegComponentPostProcessor"/> instances.

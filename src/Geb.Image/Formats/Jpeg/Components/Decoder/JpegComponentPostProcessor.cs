@@ -23,17 +23,17 @@ namespace Geb.Image.Formats.Jpeg.Components.Decoder
         /// <summary>
         /// Initializes a new instance of the <see cref="JpegComponentPostProcessor"/> class.
         /// </summary>
-        //public JpegComponentPostProcessor(MemoryManager memoryManager, JpegImagePostProcessor imagePostProcessor, IJpegComponent component)
-        //{
-        //    this.Component = component;
-        //    this.ImagePostProcessor = imagePostProcessor;
-        //    this.ColorBuffer = memoryManager.Allocate2D<float>(
-        //        imagePostProcessor.PostProcessorBufferSize.Width,
-        //        imagePostProcessor.PostProcessorBufferSize.Height);
+        public JpegComponentPostProcessor(MemoryManager memoryManager, JpegImagePostProcessor imagePostProcessor, IJpegComponent component)
+        {
+            this.Component = component;
+            this.ImagePostProcessor = imagePostProcessor;
+            this.ColorBuffer = memoryManager.Allocate2D<float>(
+                imagePostProcessor.PostProcessorBufferSize.Width,
+                imagePostProcessor.PostProcessorBufferSize.Height);
 
-        //    this.BlockRowsPerStep = JpegImagePostProcessor.BlockRowsPerStep / this.Component.SubSamplingDivisors.Height;
-        //    this.blockAreaSize = this.Component.SubSamplingDivisors * 8;
-        //}
+            this.BlockRowsPerStep = JpegImagePostProcessor.BlockRowsPerStep / this.Component.SubSamplingDivisors.Height;
+            this.blockAreaSize = new Size(this.Component.SubSamplingDivisors.Width * 8,   this.Component.SubSamplingDivisors.Height * 8);
+        }
 
         /// <summary>
         /// Gets the <see cref="JpegImagePostProcessor"/>

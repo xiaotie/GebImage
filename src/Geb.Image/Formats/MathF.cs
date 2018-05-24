@@ -19,5 +19,12 @@ namespace Geb.Image.Formats
         {
             return (float)Math.Round(val, midpointRounding);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Ceiling(float val)
+        {
+
+            return (float)Math.Ceiling(val);
+        }
     }
 }
