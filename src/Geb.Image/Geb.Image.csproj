@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.0-rc1" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0-rc1" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.0-rc1" />
   </ItemGroup>
 
@@ -30,6 +31,30 @@
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Formats\Jpeg\Components\Block8x8F.Generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Block8x8F.Generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Formats\Jpeg\Components\GenericBlock8x8.Generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GenericBlock8x8.Generated.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Formats\Jpeg\Components\Block8x8F.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Block8x8F.Generated.cs</LastGenOutput>
+    </None>
+    <None Update="Formats\Jpeg\Components\GenericBlock8x8.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GenericBlock8x8.Generated.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>
