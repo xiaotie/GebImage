@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.IO;
 
 namespace Geb.Image
 {
@@ -47,6 +48,15 @@ namespace Geb.Image
         public ImageU8 ToGrayscaleImage()
         {
             return ToGrayscaleImage(0.299, 0.587, 0.114);
+        }
+
+        public void SaveBmp(String imagePath)
+        {
+            using (FileStream fs = new FileStream(imagePath, FileMode.CreateNew))
+            {
+                var encoder = new Formats.Bmp.BmpEncoder();
+                encoder.Encode(this, fs);
+            }
         }
 
         public ImageU8 ToGrayscaleImage(byte transparentColor)

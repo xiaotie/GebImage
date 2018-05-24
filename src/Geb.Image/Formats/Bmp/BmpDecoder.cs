@@ -28,6 +28,14 @@ namespace Geb.Image.Formats.Bmp
             return new BmpDecoderCore().Decode(stream);
         }
 
+        public ImageArgb32 Decode(String path)
+        {
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                return new BmpDecoderCore().Decode(fs);
+            }
+        }
+
         /// <inheritdoc/>
         public IImageInfo Identify(Stream stream)
         {
