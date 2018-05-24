@@ -18,11 +18,10 @@ namespace Geb.Image.Test
         }
 
         [TestMethod]
-        public void TestEncode()
+        public void TestEncodeBmp()
         {
             string path = @"./img/demo-bmp-24.bmp";
-            string enPath = path + "_out_tmp.bmp";
-            string enJpgPath = path + "_out_tmp.jpg";
+            string enPath = GetTempFilePath("TestEncode_out.bmp");
             var decoder = new Formats.Bmp.BmpDecoder();
             var img = decoder.Decode(path);
             if (File.Exists(enPath) == true) File.Delete(enPath);
@@ -33,10 +32,37 @@ namespace Geb.Image.Test
             Assert.AreEqual(0, img[0].Red);
             Assert.AreEqual(255, img[img.Length - 1].Red);
             if (File.Exists(enPath) == true) File.Delete(enPath);
+        }
 
-            if (File.Exists(enJpgPath) == true) File.Delete(enJpgPath);
-            img.SaveJpeg(enJpgPath);
-            // if (File.Exists(enJpgPath) == true) File.Delete(enJpgPath);
+        protected string GetTempFilePath(string filePath)
+        {
+            DirectoryInfo dirTmpImfo = new DirectoryInfo("./temp");
+            if (dirTmpImfo.Exists == false) dirTmpImfo.Create();
+            return Path.Combine(dirTmpImfo.FullName, filePath);
+        }
+
+        [TestMethod]
+        public void TestEncodeJpg()
+        {
+            string path = @"./img/demo-bmp-big-01.bmp";
+            var decoder = new Formats.Bmp.BmpDecoder();
+            var image = decoder.Decode(path);
+            Assert.AreEqual(true, SaveJpeg(image, 5));
+            Assert.AreEqual(true, SaveJpeg(image, 30));
+            Assert.AreEqual(true, SaveJpeg(image, 60));
+            Assert.AreEqual(true, SaveJpeg(image, 90));
+            Assert.AreEqual(true, SaveJpeg(image, 95));
+        }
+
+        protected bool SaveJpeg(ImageArgb32 image, int quality)
+        {
+            string path = GetTempFilePath("TestEncodeJpg_" + quality + ".jpg");
+            if (File.Exists(path) == true) File.Delete(path);
+            image.SaveJpeg(path, quality);
+            if (File.Exists(path) == false) return false;
+            var bytes = File.ReadAllBytes(path);
+            if (bytes.Length == 0) return false;
+            return true;
         }
     }
 }

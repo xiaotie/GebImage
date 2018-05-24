@@ -124,7 +124,7 @@ namespace Geb.Image.Formats.Jpeg
         /// <summary>
         /// Gets or sets the subsampling method to use.
         /// </summary>
-        private readonly JpegSubsample? subsample;
+        private readonly JpegSubsample? subsample = JpegSubsample.Ratio420;
 
         /// <summary>
         /// The accumulated bits to write to the stream.
@@ -159,8 +159,7 @@ namespace Geb.Image.Formats.Jpeg
         {
             // System.Drawing produces identical output for jpegs with a quality parameter of 0 and 1.
             this.quality = options.Quality.Clamp(1, 100);
-            // this.subsample = options.Subsample ?? (this.quality >= 91 ? JpegSubsample.Ratio444 : JpegSubsample.Ratio420);
-            this.subsample = JpegSubsample.Ratio444;
+            this.subsample = options.Subsample ?? (this.quality >= 91 ? JpegSubsample.Ratio444 : JpegSubsample.Ratio420);
             this.ignoreMetadata = options.IgnoreMetadata;
         }
 
@@ -786,87 +785,94 @@ namespace Geb.Image.Formats.Jpeg
         private void WriteStartOfScan(ImageArgb32 image)
         {
             this.outputStream.Write(SosHeaderYCbCr, 0, SosHeaderYCbCr.Length);
-            this.Encode444(image);
+            switch (this.subsample)
+            {
+                case JpegSubsample.Ratio444:
+                    this.Encode444(image);
+                    break;
+                case JpegSubsample.Ratio420:
+                    this.Encode420(image);
+                    break;
+            }
             // Pad the last byte with 1's.
             this.Emit(0x7f, 7);
         }
 
-        ///// <summary>
-        ///// Encodes the image with subsampling. The Cb and Cr components are each subsampled
-        ///// at a factor of 2 both horizontally and vertically.
-        ///// </summary>
-        ///// <typeparam name="TPixel">The pixel format.</typeparam>
-        ///// <param name="pixels">The pixel accessor providing access to the image pixels.</param>
-        //private void Encode420<TPixel>(Image<TPixel> pixels)
-        //    where TPixel : struct, IPixel<TPixel>
-        //{
-        //    // TODO: Need a JpegScanEncoder<TPixel> class or struct that encapsulates the scan-encoding implementation. (Similar to JpegScanDecoder.)
-        //    Block8x8F b = default;
+        /// <summary>
+        /// Encodes the image with subsampling. The Cb and Cr components are each subsampled
+        /// at a factor of 2 both horizontally and vertically.
+        /// </summary>
+        /// <typeparam name="TPixel">The pixel format.</typeparam>
+        /// <param name="pixels">The pixel accessor providing access to the image pixels.</param>
+        private void Encode420(ImageArgb32 pixels)
+        {
+            // TODO: Need a JpegScanEncoder<TPixel> class or struct that encapsulates the scan-encoding implementation. (Similar to JpegScanDecoder.)
+            Block8x8F b = default;
 
-        //    BlockQuad cb = default;
-        //    BlockQuad cr = default;
-        //    var cbPtr = (Block8x8F*)cb.Data;
-        //    var crPtr = (Block8x8F*)cr.Data;
+            BlockQuad cb = default;
+            BlockQuad cr = default;
+            var cbPtr = (Block8x8F*)cb.Data;
+            var crPtr = (Block8x8F*)cr.Data;
 
-        //    Block8x8F temp1 = default;
-        //    Block8x8F temp2 = default;
+            Block8x8F temp1 = default;
+            Block8x8F temp2 = default;
 
-        //    Block8x8F onStackLuminanceQuantTable = this.luminanceQuantTable;
-        //    Block8x8F onStackChrominanceQuantTable = this.chrominanceQuantTable;
+            Block8x8F onStackLuminanceQuantTable = this.luminanceQuantTable;
+            Block8x8F onStackChrominanceQuantTable = this.chrominanceQuantTable;
 
-        //    var unzig = ZigZag.CreateUnzigTable();
+            var unzig = ZigZag.CreateUnzigTable();
 
-        //    var pixelConverter = YCbCrForwardConverter<TPixel>.Create();
+            var pixelConverter = YCbCrForwardConverter.Create();
 
-        //    // ReSharper disable once InconsistentNaming
-        //    int prevDCY = 0, prevDCCb = 0, prevDCCr = 0;
+            // ReSharper disable once InconsistentNaming
+            int prevDCY = 0, prevDCCb = 0, prevDCCr = 0;
 
-        //    for (int y = 0; y < pixels.Height; y += 16)
-        //    {
-        //        for (int x = 0; x < pixels.Width; x += 16)
-        //        {
-        //            for (int i = 0; i < 4; i++)
-        //            {
-        //                int xOff = (i & 1) * 8;
-        //                int yOff = (i & 2) * 4;
+            for (int y = 0; y < pixels.Height; y += 16)
+            {
+                for (int x = 0; x < pixels.Width; x += 16)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int xOff = (i & 1) * 8;
+                        int yOff = (i & 2) * 4;
 
-        //                pixelConverter.Convert(pixels.Frames.RootFrame, x + xOff, y + yOff);
+                        pixelConverter.Convert(pixels, x + xOff, y + yOff);
 
-        //                cbPtr[i] = pixelConverter.Cb;
-        //                crPtr[i] = pixelConverter.Cr;
+                        cbPtr[i] = pixelConverter.Cb;
+                        crPtr[i] = pixelConverter.Cr;
 
-        //                prevDCY = this.WriteBlock(
-        //                    QuantIndex.Luminance,
-        //                    prevDCY,
-        //                    &pixelConverter.Y,
-        //                    &temp1,
-        //                    &temp2,
-        //                    &onStackLuminanceQuantTable,
-        //                    unzig.Data);
-        //            }
+                        prevDCY = this.WriteBlock(
+                            QuantIndex.Luminance,
+                            prevDCY,
+                            &pixelConverter.Y,
+                            &temp1,
+                            &temp2,
+                            &onStackLuminanceQuantTable,
+                            unzig.Data);
+                    }
 
-        //            Block8x8F.Scale16X16To8X8(&b, cbPtr);
-        //            prevDCCb = this.WriteBlock(
-        //                QuantIndex.Chrominance,
-        //                prevDCCb,
-        //                &b,
-        //                &temp1,
-        //                &temp2,
-        //                &onStackChrominanceQuantTable,
-        //                unzig.Data);
+                    Block8x8F.Scale16X16To8X8(&b, cbPtr);
+                    prevDCCb = this.WriteBlock(
+                        QuantIndex.Chrominance,
+                        prevDCCb,
+                        &b,
+                        &temp1,
+                        &temp2,
+                        &onStackChrominanceQuantTable,
+                        unzig.Data);
 
-        //            Block8x8F.Scale16X16To8X8(&b, crPtr);
-        //            prevDCCr = this.WriteBlock(
-        //                QuantIndex.Chrominance,
-        //                prevDCCr,
-        //                &b,
-        //                &temp1,
-        //                &temp2,
-        //                &onStackChrominanceQuantTable,
-        //                unzig.Data);
-        //        }
-        //    }
-        //}
+                    Block8x8F.Scale16X16To8X8(&b, crPtr);
+                    prevDCCr = this.WriteBlock(
+                        QuantIndex.Chrominance,
+                        prevDCCr,
+                        &b,
+                        &temp1,
+                        &temp2,
+                        &onStackChrominanceQuantTable,
+                        unzig.Data);
+                }
+            }
+        }
 
         /// <summary>
         /// Writes the header for a marker with the given length.

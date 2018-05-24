@@ -58,7 +58,7 @@ namespace Geb.Image
         public void SaveJpeg(String imagePath,int quality = 70)
         {
             var encoder = new Formats.Jpeg.JpegEncoder();
-            encoder.Quality = 70;
+            encoder.Quality = quality;
             encoder.Encode(this, imagePath);
         }
 
