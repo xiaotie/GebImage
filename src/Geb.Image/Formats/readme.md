@@ -1,0 +1,1 @@
+﻿Translate from SixLabors.ImageSharp
