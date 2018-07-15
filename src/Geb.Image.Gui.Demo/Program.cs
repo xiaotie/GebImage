@@ -41,7 +41,7 @@ namespace Geb.Image.Gui.Demo
             var app = BuildAvaloniaApp();
             MainWindow wd = new MainWindow();
             app.Start(wd);
-            app.Instance.Run()
+            //app.Instance.Run();
             app.Instance.Exit();
 
         }

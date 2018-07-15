@@ -99,63 +99,67 @@ namespace Geb.Image.Formats.Jpeg.Components.Decoder
         /// </summary>
         /// <typeparam name="TPixel">The pixel type</typeparam>
         /// <param name="destination">The destination image</param>
-        //public void PostProcess<TPixel>(ImageFrame<TPixel> destination)
-        //    where TPixel : struct, IPixel<TPixel>
-        //{
-        //    this.PixelRowCounter = 0;
+        public void PostProcess(ImageArgb32 destination)
+        {
+            this.PixelRowCounter = 0;
 
-        //    if (this.RawJpeg.ImageSizeInPixels != destination.Size())
-        //    {
-        //        throw new ArgumentException("Input image is not of the size of the processed one!");
-        //    }
+            if (this.RawJpeg.ImageSizeInPixels != destination.ImageSize)
+            {
+                throw new ArgumentException("Input image is not of the size of the processed one!");
+            }
 
-        //    while (this.PixelRowCounter < this.RawJpeg.ImageSizeInPixels.Height)
-        //    {
-        //        this.DoPostProcessorStep(destination);
-        //    }
-        //}
+            while (this.PixelRowCounter < this.RawJpeg.ImageSizeInPixels.Height)
+            {
+                this.DoPostProcessorStep(destination);
+            }
+        }
 
         /// <summary>
         /// Execute one step processing <see cref="PixelRowsPerStep"/> pixel rows into 'destination'.
         /// </summary>
         /// <typeparam name="TPixel">The pixel type</typeparam>
         /// <param name="destination">The destination image.</param>
-        //public void DoPostProcessorStep<TPixel>(ImageFrame<TPixel> destination)
-        //    where TPixel : struct, IPixel<TPixel>
-        //{
-        //    foreach (JpegComponentPostProcessor cpp in this.ComponentProcessors)
-        //    {
-        //        cpp.CopyBlocksToColorBuffer();
-        //    }
+        public void DoPostProcessorStep(ImageArgb32 destination)
+        {
+            foreach (JpegComponentPostProcessor cpp in this.ComponentProcessors)
+            {
+                cpp.CopyBlocksToColorBuffer();
+            }
 
-        //    this.ConvertColorsInto(destination);
+            this.ConvertColorsInto(destination);
 
-        //    this.PixelRowCounter += PixelRowsPerStep;
-        //}
+            this.PixelRowCounter += PixelRowsPerStep;
+        }
 
         /// <summary>
         /// Convert and copy <see cref="PixelRowsPerStep"/> row of colors into 'destination' starting at row <see cref="PixelRowCounter"/>.
         /// </summary>
         /// <typeparam name="TPixel">The pixel type</typeparam>
         /// <param name="destination">The destination image</param>
-        //private void ConvertColorsInto<TPixel>(ImageFrame<TPixel> destination)
-        //    where TPixel : struct, IPixel<TPixel>
-        //{
-        //    int maxY = Math.Min(destination.Height, this.PixelRowCounter + PixelRowsPerStep);
+        private void ConvertColorsInto(ImageArgb32 destination)
+        {
+            int maxY = Math.Min(destination.Height, this.PixelRowCounter + PixelRowsPerStep);
 
-        //    Buffer2D<float>[] buffers = this.ComponentProcessors.Select(cp => cp.ColorBuffer).ToArray();
+            Buffer2D<float>[] buffers = this.ComponentProcessors.Select(cp => cp.ColorBuffer).ToArray();
 
-        //    for (int yy = this.PixelRowCounter; yy < maxY; yy++)
-        //    {
-        //        int y = yy - this.PixelRowCounter;
+            for (int yy = this.PixelRowCounter; yy < maxY; yy++)
+            {
+                int y = yy - this.PixelRowCounter;
 
-        //        var values = new JpegColorConverter.ComponentValues(buffers, y);
-        //        this.colorConverter.ConvertToRgba(values, this.rgbaBuffer.Span);
-
-        //        Span<TPixel> destRow = destination.GetPixelRowSpan(yy);
-
-        //        PixelOperations<TPixel>.Instance.PackFromVector4(this.rgbaBuffer.Span, destRow, destination.Width);
-        //    }
-        //}
+                var values = new JpegColorConverter.ComponentValues(buffers, y);
+                this.colorConverter.ConvertToRgba(values, this.rgbaBuffer.Span);
+                var span = this.rgbaBuffer.Span;
+                for(int w = 0; w < destination.Width; w++)
+                {
+                    Argb32 c = new Argb32();
+                    var v = span[w];
+                    c.Red = (byte)Math.Max(0,Math.Min(255,(v.X * 255)));
+                    c.Green = (byte)Math.Max(0, Math.Min(255, (v.Y * 255)));
+                    c.Blue = (byte)Math.Max(0, Math.Min(255, (v.Z * 255)));
+                    c.Alpha = 255;
+                    destination[yy, w] = c;
+                }
+            }
+        }
     }
 }

@@ -52,17 +52,28 @@ namespace Geb.Image.Test
             Assert.AreEqual(true, SaveJpeg(image, 60));
             Assert.AreEqual(true, SaveJpeg(image, 90));
             Assert.AreEqual(true, SaveJpeg(image, 95));
+
+            string jpeg = GetTempJpegFilePath(95);
+            Formats.Jpeg.JpegDecoder jpegDecoder = new Formats.Jpeg.JpegDecoder();
+            var img = jpegDecoder.Decode(jpeg);
+            Assert.AreEqual(true, img.Width > 0);
+            Assert.AreEqual(true, SaveJpeg(img, 50));
         }
 
         protected bool SaveJpeg(ImageArgb32 image, int quality)
         {
-            string path = GetTempFilePath("TestEncodeJpg_" + quality + ".jpg");
+            string path = GetTempJpegFilePath(quality);
             if (File.Exists(path) == true) File.Delete(path);
             image.SaveJpeg(path, quality);
             if (File.Exists(path) == false) return false;
             var bytes = File.ReadAllBytes(path);
             if (bytes.Length == 0) return false;
             return true;
+        }
+
+        protected string GetTempJpegFilePath(int quality)
+        {
+            return GetTempFilePath("TestEncodeJpg_" + quality + ".jpg");
         }
     }
 }

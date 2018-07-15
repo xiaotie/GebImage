@@ -190,10 +190,9 @@ namespace Geb.Image.Formats.Jpeg.PdfJsPort
         /// <returns>The decoded image.</returns>
         public ImageArgb32 Decode(Stream stream)
         {
-            //this.ParseStream(stream);
-            //this.AssignResolution();
-            //return this.PostProcessIntoImage<TPixel>();
-            return null;
+            this.ParseStream(stream);
+            this.AssignResolution();
+            return this.PostProcessIntoImage();
         }
 
         /// <summary>
@@ -827,7 +826,7 @@ namespace Geb.Image.Formats.Jpeg.PdfJsPort
             using (var postProcessor = new JpegImagePostProcessor(this.configuration.MemoryManager, this))
             {
                 var image = new ImageArgb32(this.ImageWidth, this.ImageHeight);
-                //postProcessor.PostProcess(image.Frames.RootFrame);
+                postProcessor.PostProcess(image);
                 return image;
             }
         }
