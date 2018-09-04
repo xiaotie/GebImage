@@ -158,6 +158,23 @@ namespace Geb.Image
 
         #endregion
 
+        public unsafe ImageRgb24(int width, int height, Rgb24* p0, int stride) 
+            : this(width,height)
+        {
+            for(int h = 0; h < height; h++)
+            {
+                Rgb24* pDst = Start + h * width;
+                Rgb24* pSrc = (Rgb24*)((Byte*)p0 + stride * width);
+                Rgb24* pDstEnd = pDst + width;
+                while(pDst < pDstEnd)
+                {
+                    *pDst = *pSrc;
+                    pDst++;
+                    pSrc++;
+                }
+            }
+        }
+
         public ImageU8 ToGrayscaleImage()
         {
             return ToGrayscaleImage(0.299, 0.587, 0.114);

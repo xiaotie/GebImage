@@ -7,9 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image", "src\Geb.Image\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.Test", "src\Geb.Image.Test\Geb.Image.Test.csproj", "{A8CAA1FC-7A48-4598-8BF6-5B6640919E28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Gui", "src\Geb.Image.Gui\Geb.Image.Gui.csproj", "{46E8BE7E-D2A6-4BAB-85D6-A0BFFCE4805C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.Gui", "src\Geb.Image.Gui\Geb.Image.Gui.csproj", "{46E8BE7E-D2A6-4BAB-85D6-A0BFFCE4805C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Gui.Demo", "src\Geb.Image.Gui.Demo\Geb.Image.Gui.Demo.csproj", "{7875902F-BAE8-4E06-9B5D-51FEB0B444FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.Gui.Demo", "src\Geb.Image.Gui.Demo\Geb.Image.Gui.Demo.csproj", "{7875902F-BAE8-4E06-9B5D-51FEB0B444FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.WinEx", "src\Geb.Image.WinEx\Geb.Image.WinEx.csproj", "{F84F308D-E24A-431E-B16A-E0B57A29910E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.WinEx.Demo", "src\Geb.Image.WinEx.Demo\Geb.Image.WinEx.Demo.csproj", "{8136D9F1-DE02-4175-B69C-FBAD0768925B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{7875902F-BAE8-4E06-9B5D-51FEB0B444FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7875902F-BAE8-4E06-9B5D-51FEB0B444FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7875902F-BAE8-4E06-9B5D-51FEB0B444FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F84F308D-E24A-431E-B16A-E0B57A29910E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F84F308D-E24A-431E-B16A-E0B57A29910E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F84F308D-E24A-431E-B16A-E0B57A29910E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F84F308D-E24A-431E-B16A-E0B57A29910E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8136D9F1-DE02-4175-B69C-FBAD0768925B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8136D9F1-DE02-4175-B69C-FBAD0768925B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8136D9F1-DE02-4175-B69C-FBAD0768925B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8136D9F1-DE02-4175-B69C-FBAD0768925B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
