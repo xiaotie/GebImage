@@ -218,10 +218,29 @@ namespace Geb.Image
         /// </summary>
         public Int32 Height { get; protected set; }
 
+        public Int32 Cols {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return Width;}
+        }
+
+        public Int32 Rows {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return Height; }
+        }
+
+
         /// <summary>
         /// 图像的起始指针。
         /// </summary>
         public unsafe TPixel* Start { get; private set; }
+
+        public unsafe IntPtr StartIntPtr
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return (IntPtr)Start; }
+        }
+
+        public Int32 Stride { get; private set; }
 
         public Size ImageSize
         {
@@ -351,23 +370,25 @@ namespace Geb.Image
         {
             if (width <= 0) throw new ArgumentOutOfRangeException("width");
             else if (height <= 0) throw new ArgumentOutOfRangeException("height");
+            _isOwner = false;
             Width = width;
             Height = height;
-            _isOwner = false;
-            Start = (TPixel*) data;
             Length = Width * Height;
             SizeOfType = SizeOfT();
+            Stride = SizeOfType * Width;
             ByteCount = SizeOfType * Length;
+            Start = (TPixel*)data;
         }
 
         private unsafe void AllocMemory(int width, int height)
         {
+            _isOwner = true;
             Height = height;
             Width = width;
             Length = Width * Height;
             SizeOfType = SizeOfT();
+            Stride = SizeOfType * Width;
             ByteCount = SizeOfType * Length;
-            _isOwner = true;
             Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
         }
 
