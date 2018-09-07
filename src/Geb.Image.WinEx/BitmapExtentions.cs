@@ -86,5 +86,9 @@ namespace Geb.Image
 
             return img;
         }
+
+        public static void ShowDialog(this Bitmap bmp)
+        {
+        }
     }
 }
