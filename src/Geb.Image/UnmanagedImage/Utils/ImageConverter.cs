@@ -114,13 +114,13 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToLab24(Rgb24* from, Lab24* to, int length=1)
+        public static unsafe void ToLab24(Bgr24* from, Lab24* to, int length=1)
         {
             // 使用 OpenCV 中的算法实现
 
             if (length < 1) return;
 
-            Rgb24* end = from + length;
+            Bgr24* end = from + length;
 
             int x, y, z;
             int l, a, b;
@@ -185,13 +185,13 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToLab24(Argb32* from, Lab24* to, int length = 1)
+        public static unsafe void ToLab24(Bgra32* from, Lab24* to, int length = 1)
         {
             // 使用 OpenCV 中的算法实现
 
             if (length < 1) return;
 
-            Argb32* end = from + length;
+            Bgra32* end = from + length;
 
             int x, y, z;
             int l, a, b;
@@ -324,7 +324,7 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToRgb24(Lab24* from, Rgb24* to, int length=1)
+        public static unsafe void ToRgb24(Lab24* from, Bgr24* to, int length=1)
         {
             if (length < 1) return;
 
@@ -371,19 +371,19 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToRgb24(Argb32* from, Rgb24* to, int length = 1)
+        public static unsafe void ToRgb24(Bgra32* from, Bgr24* to, int length = 1)
         {
             if (length < 1) return;
-            Argb32* end = from + length;
+            Bgra32* end = from + length;
             while (from != end)
             {
-                *to = *((Rgb24*)from);
+                *to = *((Bgr24*)from);
                 from++;
                 to++;
             }
         }
 
-        public static unsafe void ToRgb24(byte* from, Rgb24* to, int length = 1)
+        public static unsafe void ToRgb24(byte* from, Bgr24* to, int length = 1)
         {
             if (length < 1) return;
 
@@ -399,11 +399,11 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToArgb32(Rgb24* from, Argb32* to, int length = 1)
+        public static unsafe void ToArgb32(Bgr24* from, Bgra32* to, int length = 1)
         {
             if (length < 1) return;
             
-            Rgb24* end = from + length;
+            Bgr24* end = from + length;
             while (from != end)
             {
                 to->Blue = from->Blue;
@@ -415,11 +415,11 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToArgb32(SignedArgb64* from, Argb32* to, int length = 1)
+        public static unsafe void ToArgb32(SBgra64* from, Bgra32* to, int length = 1)
         {
             if (length < 1) return;
 
-            SignedArgb64* end = from + length;
+            SBgra64* end = from + length;
             while (from != end)
             {
                 to->Blue = (byte)from->Blue;
@@ -431,11 +431,11 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToSignedArgb64(Rgb24* from, SignedArgb64* to, int length = 1)
+        public static unsafe void ToSignedArgb64(Bgr24* from, SBgra64* to, int length = 1)
         {
             if (length < 1) return;
 
-            Rgb24* end = from + length;
+            Bgr24* end = from + length;
             while (from != end)
             {
                 to->Blue = from->Blue;
@@ -447,11 +447,11 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToSignedArgb64(Argb32* from, SignedArgb64* to, int length = 1)
+        public static unsafe void ToSignedArgb64(Bgra32* from, SBgra64* to, int length = 1)
         {
             if (length < 1) return;
 
-            Argb32* end = from + length;
+            Bgra32* end = from + length;
             while (from != end)
             {
                 to->Blue = from->Blue;
@@ -463,11 +463,11 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToByte(Rgb24* from, byte* to, int length = 1)
+        public static unsafe void ToByte(Bgr24* from, byte* to, int length = 1)
         {
             if (length < 1) return;
 
-            Rgb24* end = from + length;
+            Bgr24* end = from + length;
             while (from != end)
             {
                 *to = (Byte)(from->Blue * 0.114 + from->Green * 0.587 + from->Red * 0.299);
@@ -476,11 +476,11 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToByte(Argb32* from, byte* to, int length = 1)
+        public static unsafe void ToByte(Bgra32* from, byte* to, int length = 1)
         {
             if (length < 1) return;
 
-            Argb32* end = from + length;
+            Bgra32* end = from + length;
             while (from != end)
             {
                 *to = (Byte)(from->Blue * 0.114 + from->Green * 0.587 + from->Red * 0.299);
@@ -489,7 +489,7 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToArgb32(Byte* from, Argb32* to, int length = 1)
+        public static unsafe void ToArgb32(Byte* from, Bgra32* to, int length = 1)
         {
             if (length < 1) return;
 
@@ -506,7 +506,7 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToSignedArgb64(Byte* from, SignedArgb64* to, int length = 1)
+        public static unsafe void ToSignedArgb64(Byte* from, SBgra64* to, int length = 1)
         {
             if (length < 1) return;
 
@@ -523,9 +523,9 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToHsl(Rgb24* from, Hsl* to, int length = 1)
+        public static unsafe void ToHsl(Bgr24* from, Hsl* to, int length = 1)
         {
-            Rgb24* end = from + length;
+            Bgr24* end = from + length;
             while (from != end)
             {
                 float r = (from->Red / 255f);
@@ -580,9 +580,9 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToHsl(Argb32* from, Hsl* to, int length = 1)
+        public static unsafe void ToHsl(Bgra32* from, Hsl* to, int length = 1)
         {
-            Argb32* end = from + length;
+            Bgra32* end = from + length;
             while (from != end)
             {
                 float r = (from->Red / 255f);
@@ -650,7 +650,7 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToRgb24(Hsl* from, Rgb24* to, int length = 1)
+        public static unsafe void ToRgb24(Hsl* from, Bgr24* to, int length = 1)
         {
             Hsl* end = from + length;
             Byte r, g, b;
@@ -693,7 +693,7 @@ namespace Geb.Image
             return (v1);
         }
 
-        public static unsafe void YV12ToRgb24(Byte* yv12, Rgb24* rgb, int width, int height)
+        public static unsafe void YV12ToRgb24(Byte* yv12, Bgr24* rgb, int width, int height)
         {
             // 构建转换表
             byte* map = stackalloc byte[256*3];
@@ -726,9 +726,9 @@ namespace Geb.Image
             Byte* y0 = yv12;
             byte* v0 = y0 + width * height;
             byte* u0 = v0 + width * height / 4;
-            Rgb24* c0 = rgb;
+            Bgr24* c0 = rgb;
             int y, u, v;
-            Rgb24* pVal;
+            Bgr24* pVal;
             for (int h = 0; h < height; h++)
             {
                 byte* yLine = y0 + h * width;
@@ -736,7 +736,7 @@ namespace Geb.Image
                 int wStrideHalf = width >> 1;
                 byte* uLine = u0 + ((hHalf * wStrideHalf));
                 byte* vLine = v0 + ((hHalf * wStrideHalf));
-                Rgb24* pLine = c0 + h * width;
+                Bgr24* pLine = c0 + h * width;
                 for (int w = 0; w < width; w++)
                 {
                     pVal = pLine + w;

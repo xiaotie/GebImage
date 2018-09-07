@@ -32,12 +32,12 @@ namespace Geb.Image.Formats.Jpeg.Components.Encoder
         /// <summary>
         /// Temporal 8x8 block to hold TPixel data
         /// </summary>
-        private GenericBlock8x8<Argb32> pixelBlock;
+        private GenericBlock8x8<Bgra32> pixelBlock;
 
         /// <summary>
         /// Temporal RGB block
         /// </summary>
-        private GenericBlock8x8<Rgb24> rgbBlock;
+        private GenericBlock8x8<Bgr24> rgbBlock;
 
         public static YCbCrForwardConverter Create()
         {
@@ -49,11 +49,11 @@ namespace Geb.Image.Formats.Jpeg.Components.Encoder
         /// <summary>
         /// Converts a 8x8 image area inside 'pixels' at position (x,y) placing the result members of the structure (<see cref="Y"/>, <see cref="Cb"/>, <see cref="Cr"/>)
         /// </summary>
-        public void Convert(ImageArgb32 pixels, int x, int y)
+        public void Convert(ImageBgra32 pixels, int x, int y)
         {
-            this.pixelBlock.LoadAndStretchEdges(ref Unsafe.AsRef<Argb32>((void*)pixels.Start), pixels.Width, pixels.Height, x, y);
+            this.pixelBlock.LoadAndStretchEdges(ref Unsafe.AsRef<Bgra32>((void*)pixels.Start), pixels.Width, pixels.Height, x, y);
 
-            Span<Rgb24> rgbSpan = this.rgbBlock.AsSpanUnsafe();
+            Span<Bgr24> rgbSpan = this.rgbBlock.AsSpanUnsafe();
             var pixelSpan = this.pixelBlock.AsSpanUnsafe();
             
             for(int i = 0; i < 64; i++)
@@ -66,11 +66,11 @@ namespace Geb.Image.Formats.Jpeg.Components.Encoder
             ref float yBlockStart = ref Unsafe.As<Block8x8F, float>(ref this.Y);
             ref float cbBlockStart = ref Unsafe.As<Block8x8F, float>(ref this.Cb);
             ref float crBlockStart = ref Unsafe.As<Block8x8F, float>(ref this.Cr);
-            ref Rgb24 rgbStart = ref rgbSpan[0];
+            ref Bgr24 rgbStart = ref rgbSpan[0];
 
             for (int i = 0; i < 64; i++)
             {
-                ref Rgb24 c = ref Unsafe.Add(ref rgbStart, i);
+                ref Bgr24 c = ref Unsafe.Add(ref rgbStart, i);
 
                 this.colorTables.ConvertPixelInto(
                     c.Red,

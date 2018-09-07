@@ -15,12 +15,12 @@ namespace Geb.Image
 
         #region Image <-> Bitmap 所需的方法
 
-        private unsafe void Copy(Rgb24* from, void* to, int length)
+        private unsafe void Copy(Bgr24* from, void* to, int length)
         {
             UnmanagedImageConverter.ToByte(from, (byte*)to, length);
         }
 
-        private unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Bgra32* from, void* to, int length)
         {
             UnmanagedImageConverter.ToByte(from, (byte*)to, length);
         }
@@ -104,12 +104,12 @@ namespace Geb.Image
             return this;
         }
 
-        public unsafe ImageArgb32 ToImageArgb32()
+        public unsafe ImageBgra32 ToImageArgb32()
         {
-            ImageArgb32 img = new ImageArgb32(this.Width, this.Height);
-            Argb32* p = img.Start;
+            ImageBgra32 img = new ImageBgra32(this.Width, this.Height);
+            Bgra32* p = img.Start;
             Byte* to = Start;
-            Argb32* end = p + Length;
+            Bgra32* end = p + Length;
             while (p != end)
             {
                 p->Alpha = 255;
@@ -123,12 +123,12 @@ namespace Geb.Image
             return img;
         }
 
-        public unsafe ImageRgb24 ToImageRgb24()
+        public unsafe ImageBgr24 ToImageRgb24()
         {
-            ImageRgb24 img = new ImageRgb24(this.Width, this.Height);
-            Rgb24* p = img.Start;
+            ImageBgr24 img = new ImageBgr24(this.Width, this.Height);
+            Bgr24* p = img.Start;
             Byte* to = Start;
-            Rgb24* end = p + Length;
+            Bgr24* end = p + Length;
             while (p != end)
             {
                 p->Red = *to;

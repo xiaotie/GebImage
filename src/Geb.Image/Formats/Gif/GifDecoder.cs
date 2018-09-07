@@ -27,7 +27,7 @@ namespace Geb.Image.Formats.Gif
         public FrameDecodingMode DecodingMode { get; set; } = FrameDecodingMode.All;
 
         /// <inheritdoc/>
-        public ImageArgb32 Decode<TPixel>(Configuration configuration, Stream stream)
+        public ImageBgra32 Decode<TPixel>(Configuration configuration, Stream stream)
         {
             //var decoder = new GifDecoderCore(configuration, this);
             //return decoder.Decode<TPixel>(stream);

@@ -19,7 +19,7 @@ namespace Geb.Image
             return "Lab [L=" + L + ", Alpha=" + Alpha + ", Beta=" + Beta + "]";
         }
 
-        public Rgb24 ToRgb24()
+        public Bgr24 ToRgb24()
         {
             const double c00 = 0.57735;
             const double c01 = 0.408248;
@@ -45,7 +45,7 @@ namespace Geb.Image
             if (r < 0) r = 0; else if (r > 255) r = 255;
             if (g < 0) g = 0; else if (g > 255) g = 255;
             if (b < 0) b = 0; else if (b > 255) b = 255;
-            Rgb24 rgb = new Rgb24();
+            Bgr24 rgb = new Bgr24();
             rgb.Red = (Byte)r;
             rgb.Green = (Byte)g;
             rgb.Blue = (Byte)b;

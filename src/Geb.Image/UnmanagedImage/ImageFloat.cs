@@ -15,12 +15,12 @@ namespace Geb.Image
 
         #region Image <-> Bitmap 所需的方法
 
-        private unsafe void Copy(Rgb24* from, void* to, int length)
+        private unsafe void Copy(Bgr24* from, void* to, int length)
         {
             throw new NotImplementedException();
         }
 
-        private unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Bgra32* from, void* to, int length)
         {
             throw new NotImplementedException();
         }

@@ -19,12 +19,12 @@ namespace Geb.Image.Hidden
     {
         public const int ChannelCount = 1;
 
-        private unsafe void Copy(Rgb24* from, void* to, int length)
+        private unsafe void Copy(Bgr24* from, void* to, int length)
         {
             UnmanagedImageConverter.ToByte(from, (byte*)to, length);
         }
 
-        private unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Bgra32* from, void* to, int length)
         {
             UnmanagedImageConverter.ToByte(from, (byte*)to, length);
         }
@@ -603,14 +603,14 @@ namespace Geb.Image.Hidden
             TPixel* dstLine = this.Start + dstWidth * startDstY + startDstX;
             TPixel* endSrcLine = srcLine + srcWidth * copyHeight;
             int alpha1, alpha2, blendAlpha,alpha;
-            if (srcLine[0] is Argb32)
+            if (srcLine[0] is Bgra32)
             {
                 int beta;
                 while (srcLine < endSrcLine)
                 {
-                    Argb32* pSrc = (Argb32*)srcLine;
-                    Argb32* endPSrc = pSrc + copyWidth;
-                    Argb32* pDst = (Argb32*)dstLine;
+                    Bgra32* pSrc = (Bgra32*)srcLine;
+                    Bgra32* endPSrc = pSrc + copyWidth;
+                    Bgra32* pDst = (Bgra32*)dstLine;
                     while (pSrc < endPSrc)
                     {
                         if (pSrc->Alpha == 255 || pDst->Alpha == 0)

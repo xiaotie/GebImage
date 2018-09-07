@@ -63,7 +63,7 @@ namespace Geb.Image.Formats.Gif
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The <see cref="Image{TPixel}"/> to encode from.</param>
         /// <param name="stream">The <see cref="Stream"/> to encode the image data to.</param>
-        public void Encode(ImageArgb32 image, Stream stream)
+        public void Encode(ImageBgra32 image, Stream stream)
         {
             //Guard.NotNull(image, nameof(image));
             //Guard.NotNull(stream, nameof(stream));
@@ -158,7 +158,7 @@ namespace Geb.Image.Formats.Gif
         /// <param name="image">The image to encode.</param>
         /// <param name="stream">The stream to write to.</param>
         /// <param name="transparencyIndex">The transparency index to set the default background index to.</param>
-        private void WriteLogicalScreenDescriptor(ImageArgb32 image, Stream stream, int transparencyIndex)
+        private void WriteLogicalScreenDescriptor(ImageBgra32 image, Stream stream, int transparencyIndex)
         {
             byte packedValue = GifLogicalScreenDescriptor.GetPackedValue(false, this.bitDepth - 1, false, this.bitDepth - 1);
 
@@ -278,7 +278,7 @@ namespace Geb.Image.Formats.Gif
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The <see cref="ImageFrame{TPixel}"/> to be encoded.</param>
         /// <param name="stream">The stream to write to.</param>
-        private void WriteImageDescriptor(ImageArgb32 image, Stream stream)
+        private void WriteImageDescriptor(ImageBgra32 image, Stream stream)
         {
             byte packedValue = GifImageDescriptor.GetPackedValue(
                 localColorTableFlag: true,

@@ -46,7 +46,7 @@ namespace Geb.Image.Formats.Png
         /// <param name="configuration">The configuration for the image.</param>
         /// <param name="stream">The <see cref="Stream"/> containing image data.</param>
         /// <returns>The decoded image.</returns>
-        public ImageArgb32 Decode(Configuration configuration, Stream stream)
+        public ImageBgra32 Decode(Configuration configuration, Stream stream)
         {
             //var decoder = new PngDecoderCore(configuration, this);
             //return decoder.Decode<TPixel>(stream);

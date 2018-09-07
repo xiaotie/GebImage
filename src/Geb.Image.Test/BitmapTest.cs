@@ -60,7 +60,7 @@ namespace Geb.Image.Test
             Assert.AreEqual(true, SaveJpeg(img, 50));
         }
 
-        protected bool SaveJpeg(ImageArgb32 image, int quality)
+        protected bool SaveJpeg(ImageBgra32 image, int quality)
         {
             string path = GetTempJpegFilePath(quality);
             if (File.Exists(path) == true) File.Delete(path);

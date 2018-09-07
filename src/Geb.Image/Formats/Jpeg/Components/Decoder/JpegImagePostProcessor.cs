@@ -99,7 +99,7 @@ namespace Geb.Image.Formats.Jpeg.Components.Decoder
         /// </summary>
         /// <typeparam name="TPixel">The pixel type</typeparam>
         /// <param name="destination">The destination image</param>
-        public void PostProcess(ImageArgb32 destination)
+        public void PostProcess(ImageBgra32 destination)
         {
             this.PixelRowCounter = 0;
 
@@ -119,7 +119,7 @@ namespace Geb.Image.Formats.Jpeg.Components.Decoder
         /// </summary>
         /// <typeparam name="TPixel">The pixel type</typeparam>
         /// <param name="destination">The destination image.</param>
-        public void DoPostProcessorStep(ImageArgb32 destination)
+        public void DoPostProcessorStep(ImageBgra32 destination)
         {
             foreach (JpegComponentPostProcessor cpp in this.ComponentProcessors)
             {
@@ -136,7 +136,7 @@ namespace Geb.Image.Formats.Jpeg.Components.Decoder
         /// </summary>
         /// <typeparam name="TPixel">The pixel type</typeparam>
         /// <param name="destination">The destination image</param>
-        private void ConvertColorsInto(ImageArgb32 destination)
+        private void ConvertColorsInto(ImageBgra32 destination)
         {
             int maxY = Math.Min(destination.Height, this.PixelRowCounter + PixelRowsPerStep);
 
@@ -151,7 +151,7 @@ namespace Geb.Image.Formats.Jpeg.Components.Decoder
                 var span = this.rgbaBuffer.Span;
                 for(int w = 0; w < destination.Width; w++)
                 {
-                    Argb32 c = new Argb32();
+                    Bgra32 c = new Bgra32();
                     var v = span[w];
                     c.Red = (byte)Math.Max(0,Math.Min(255,(v.X * 255)));
                     c.Green = (byte)Math.Max(0, Math.Min(255, (v.Y * 255)));

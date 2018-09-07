@@ -171,7 +171,7 @@ namespace Geb.Image.Formats.Jpeg
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The image to write from.</param>
         /// <param name="stream">The stream to write to.</param>
-        public void Encode(ImageArgb32 image, Stream stream)
+        public void Encode(ImageBgra32 image, Stream stream)
         {
             Guard.NotNull(image, nameof(image));
             Guard.NotNull(stream, nameof(stream));
@@ -364,7 +364,7 @@ namespace Geb.Image.Formats.Jpeg
         /// </summary>
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="pixels">The pixel accessor providing access to the image pixels.</param>
-        private void Encode444(ImageArgb32 pixels)
+        private void Encode444(ImageBgra32 pixels)
         {
             // TODO: Need a JpegScanEncoder<TPixel> class or struct that encapsulates the scan-encoding implementation. (Similar to JpegScanDecoder.)
             // (Partially done with YCbCrForwardConverter<TPixel>)
@@ -782,7 +782,7 @@ namespace Geb.Image.Formats.Jpeg
         /// </summary>
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The pixel accessor providing access to the image pixels.</param>
-        private void WriteStartOfScan(ImageArgb32 image)
+        private void WriteStartOfScan(ImageBgra32 image)
         {
             this.outputStream.Write(SosHeaderYCbCr, 0, SosHeaderYCbCr.Length);
             switch (this.subsample)
@@ -804,7 +804,7 @@ namespace Geb.Image.Formats.Jpeg
         /// </summary>
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="pixels">The pixel accessor providing access to the image pixels.</param>
-        private void Encode420(ImageArgb32 pixels)
+        private void Encode420(ImageBgra32 pixels)
         {
             // TODO: Need a JpegScanEncoder<TPixel> class or struct that encapsulates the scan-encoding implementation. (Similar to JpegScanDecoder.)
             Block8x8F b = default;

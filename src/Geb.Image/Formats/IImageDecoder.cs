@@ -17,6 +17,6 @@ namespace Geb.Image.Formats
         /// <param name="configuration">The configuration for the image.</param>
         /// <param name="stream">The <see cref="Stream"/> containing image data.</param>
         /// <returns>The decoded image</returns>
-        ImageArgb32 Decode(Stream stream);
+        ImageBgra32 Decode(Stream stream);
     }
 }

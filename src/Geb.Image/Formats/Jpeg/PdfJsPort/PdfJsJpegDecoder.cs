@@ -16,7 +16,7 @@ namespace Geb.Image.Formats.Jpeg.PdfJsPort
         public bool IgnoreMetadata { get; set; }
 
         /// <inheritdoc/>
-        public ImageArgb32 Decode(Configuration configuration, Stream stream)
+        public ImageBgra32 Decode(Configuration configuration, Stream stream)
         {
             Guard.NotNull(stream, nameof(stream));
 

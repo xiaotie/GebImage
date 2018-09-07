@@ -117,7 +117,7 @@ namespace Geb.Image.Formats.MetaData.Profiles.Exif
         /// <returns>
         /// The <see cref="Image{TPixel}"/>.
         /// </returns>
-        public ImageArgb32 CreateThumbnail()
+        public ImageBgra32 CreateThumbnail()
         {
             this.InitializeValues();
 

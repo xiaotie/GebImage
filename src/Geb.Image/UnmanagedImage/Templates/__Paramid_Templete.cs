@@ -4,8 +4,8 @@
 
 using TCache = System.Int32;
 using TKernel = System.Int32;
-using TImage = Geb.Image.ImageArgb32;
-using TPixel = Geb.Image.Argb32;
+using TImage = Geb.Image.ImageBgra32;
+using TPixel = Geb.Image.Bgra32;
 using TChannel = System.Byte;
 
 using System;
@@ -14,7 +14,7 @@ using System.Text;
 
 namespace Geb.Image.Hidden
 {
-    public partial class Image_Paramid_Argb_Templete : ImageArgb32
+    public partial class Image_Paramid_Argb_Templete : ImageBgra32
     {
         public Image_Paramid_Argb_Templete()
             :base(1,1)

@@ -29,7 +29,7 @@ namespace Geb.Image.Formats.Gif
         public IQuantizer Quantizer { get; set; } /*= new OctreeQuantizer();*/
 
         /// <inheritdoc/>
-        public void Encode(ImageArgb32 image, Stream stream)
+        public void Encode(ImageBgra32 image, Stream stream)
         {
             //var encoder = new GifEncoderCore(image.GetConfiguration().MemoryManager, this);
             //encoder.Encode(image, stream);

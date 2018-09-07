@@ -92,7 +92,7 @@ namespace Geb.Image.Formats.Gif
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="stream">The stream containing image data. </param>
         /// <returns>The decoded image</returns>
-        public ImageArgb32 Decode<TPixel>(Stream stream)
+        public ImageBgra32 Decode<TPixel>(Stream stream)
         {
             //Image<TPixel> image = null;
             //ImageFrame<TPixel> previousFrame = null;
@@ -305,7 +305,7 @@ namespace Geb.Image.Formats.Gif
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The image to decode the information to.</param>
         /// <param name="previousFrame">The previous frame.</param>
-        private void ReadFrame(ref ImageArgb32 image, ref ImageArgb32 previousFrame)
+        private void ReadFrame(ref ImageBgra32 image, ref ImageBgra32 previousFrame)
         {
             GifImageDescriptor imageDescriptor = this.ReadImageDescriptor();
 
@@ -324,7 +324,7 @@ namespace Geb.Image.Formats.Gif
                 indices = this.configuration.MemoryManager.AllocateManagedByteBuffer(imageDescriptor.Width * imageDescriptor.Height, true);
 
                 this.ReadFrameIndices(imageDescriptor, indices.Span);
-                ReadOnlySpan<Rgb24> colorTable = MemoryMarshal.Cast<byte, Rgb24>((localColorTable ?? this.globalColorTable).Span);
+                ReadOnlySpan<Bgr24> colorTable = MemoryMarshal.Cast<byte, Bgr24>((localColorTable ?? this.globalColorTable).Span);
                 this.ReadFrameColors(ref image, ref previousFrame, indices.Span, colorTable, imageDescriptor);
 
                 // Skip any remaining blocks
@@ -361,7 +361,7 @@ namespace Geb.Image.Formats.Gif
         /// <param name="indices">The indexed pixels.</param>
         /// <param name="colorTable">The color table containing the available colors.</param>
         /// <param name="descriptor">The <see cref="GifImageDescriptor"/></param>
-        private void ReadFrameColors(ref ImageArgb32 image, ref ImageArgb32 previousFrame, Span<byte> indices, ReadOnlySpan<Rgb24> colorTable, in GifImageDescriptor descriptor)
+        private void ReadFrameColors(ref ImageBgra32 image, ref ImageBgra32 previousFrame, Span<byte> indices, ReadOnlySpan<Bgr24> colorTable, in GifImageDescriptor descriptor)
         {
             //ref byte indicesRef = ref MemoryMarshal.GetReference(indices);
             //int imageWidth = this.logicalScreenDescriptor.Width;
@@ -476,7 +476,7 @@ namespace Geb.Image.Formats.Gif
         /// </summary>
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="frame">The frame.</param>
-        private void RestoreToBackground(ImageArgb32 frame)
+        private void RestoreToBackground(ImageBgra32 frame)
         {
             //if (this.restoreArea == null)
             //{

@@ -20,7 +20,7 @@ namespace Geb.Image.Formats.Jpeg.Components
 
         /// <summary>
         /// FOR TESTING ONLY!
-        /// Gets or sets a <see cref="Rgb24"/> value at the given index
+        /// Gets or sets a <see cref="Bgr24"/> value at the given index
         /// </summary>
         /// <param name="idx">The index</param>
         /// <returns>The value</returns>

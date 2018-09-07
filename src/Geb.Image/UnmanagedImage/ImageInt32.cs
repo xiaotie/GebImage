@@ -15,12 +15,12 @@ namespace Geb.Image
 
         #region Image <-> Bitmap 所需的方法
 
-        private unsafe void Copy(Rgb24* from, void* to, int length)
+        private unsafe void Copy(Bgr24* from, void* to, int length)
         {
-            UnmanagedImageConverter.ToArgb32(from, (Argb32*)to, length);
+            UnmanagedImageConverter.ToArgb32(from, (Bgra32*)to, length);
         }
 
-        private unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Bgra32* from, void* to, int length)
         {
             UnmanagedImageConverter.Copy((Byte*)from, (Byte*)to, length * 4);
         }
@@ -59,12 +59,12 @@ namespace Geb.Image
 
         #endregion
 
-        public unsafe ImageRgb24 ToImageRgb24WithRamdomColorMap()
+        public unsafe ImageBgr24 ToImageRgb24WithRamdomColorMap()
         {
-            ImageRgb24 img = new ImageRgb24(this.Width, this.Height);
+            ImageBgr24 img = new ImageBgr24(this.Width, this.Height);
             Random r = new Random();
             int length = this.Length;
-            Dictionary<int, Rgb24> map = new Dictionary<int, Rgb24>();
+            Dictionary<int, Bgr24> map = new Dictionary<int, Bgr24>();
             for (int i = 0; i < length; i++)
             {
                 int val = this[i];
@@ -74,7 +74,7 @@ namespace Geb.Image
                 }
                 else
                 {
-                    Rgb24 newRgb = new Rgb24();
+                    Bgr24 newRgb = new Bgr24();
                     newRgb.Red = (byte)(r.Next(256));
                     newRgb.Green = (byte)(r.Next(256));
                     newRgb.Blue = (byte)(r.Next(256));
@@ -132,7 +132,7 @@ namespace Geb.Image
         /// <param name="bgVal">背景参数值（只有当useBgVal为true时才有效）</param>
         /// <param name="bgColor">背景参数值所对应的背景色</param>
         /// <returns>所生成的地势图</returns>
-        public unsafe ImageRgb24 ToHypsometricMap(double hueOfMinVal, double hueOfMaxVal, bool useBgVal, Int32 bgVal, Rgb24 bgColor)
+        public unsafe ImageBgr24 ToHypsometricMap(double hueOfMinVal, double hueOfMaxVal, bool useBgVal, Int32 bgVal, Bgr24 bgColor)
         {
             int min = int.MaxValue;
             int max = int.MinValue;
@@ -147,8 +147,8 @@ namespace Geb.Image
             double hueDiff = hueOfMaxVal - hueOfMinVal;
             double valDiff = max - min;
             double step = valDiff > 0 ? (hueDiff / valDiff) : 0;
-            ImageRgb24 img = new ImageRgb24(Width, Height);
-            Rgb24* rgb0 = img.Start;
+            ImageBgr24 img = new ImageBgr24(Width, Height);
+            Bgr24* rgb0 = img.Start;
             for (int i = 0; i < length; i++)
             {
                 Int32 val = start[i];
@@ -226,7 +226,7 @@ namespace Geb.Image
                     red = Math.Min(255, Math.Max(0, red));
                     green = Math.Min(255, Math.Max(0, green));
                     blue = Math.Min(255, Math.Max(0, blue));
-                    rgb0[i] = new Rgb24(red, green, blue);
+                    rgb0[i] = new Bgr24(red, green, blue);
                 }
             }
             return img;

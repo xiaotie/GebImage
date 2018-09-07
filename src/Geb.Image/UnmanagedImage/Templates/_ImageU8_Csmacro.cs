@@ -748,14 +748,14 @@ namespace Geb.Image
             TPixel* dstLine = this.Start + dstWidth * startDstY + startDstX;
             TPixel* endSrcLine = srcLine + srcWidth * copyHeight;
             int alpha1, alpha2, blendAlpha,alpha;
-            if (srcLine[0] is Argb32)
+            if (srcLine[0] is Bgra32)
             {
                 int beta;
                 while (srcLine < endSrcLine)
                 {
-                    Argb32* pSrc = (Argb32*)srcLine;
-                    Argb32* endPSrc = pSrc + copyWidth;
-                    Argb32* pDst = (Argb32*)dstLine;
+                    Bgra32* pSrc = (Bgra32*)srcLine;
+                    Bgra32* endPSrc = pSrc + copyWidth;
+                    Bgra32* pDst = (Bgra32*)dstLine;
                     while (pSrc < endPSrc)
                     {
                         if (pSrc->Alpha == 255 || pDst->Alpha == 0)

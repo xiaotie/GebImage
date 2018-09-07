@@ -32,13 +32,13 @@ namespace Geb.Image.Formats.Jpeg
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The <see cref="Image{TPixel}"/> to encode from.</param>
         /// <param name="stream">The <see cref="Stream"/> to encode the image data to.</param>
-        public void Encode(ImageArgb32 image, Stream stream)
+        public void Encode(ImageBgra32 image, Stream stream)
         {
             var encoder = new JpegEncoderCore(this);
             encoder.Encode(image, stream);
         }
 
-        public void Encode(ImageArgb32 image, string path)
+        public void Encode(ImageBgra32 image, string path)
         {
             using (FileStream fs = new FileStream(path, FileMode.CreateNew))
             {

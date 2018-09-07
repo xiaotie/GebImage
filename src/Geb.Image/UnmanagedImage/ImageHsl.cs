@@ -31,12 +31,12 @@ namespace Geb.Image
 
         #region Image <-> Bitmap 所需的方法
 
-        private unsafe void Copy(Rgb24* from, void* to, int length)
+        private unsafe void Copy(Bgr24* from, void* to, int length)
         {
             UnmanagedImageConverter.ToHsl(from, (Hsl*)to, length);
         }
 
-        private unsafe void Copy(Argb32* from, void* to, int length)
+        private unsafe void Copy(Bgra32* from, void* to, int length)
         {
             UnmanagedImageConverter.ToHsl(from, (Hsl*)to, length);
         }
@@ -48,7 +48,7 @@ namespace Geb.Image
 
         private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
-            UnmanagedImageConverter.ToRgb24((Hsl*)src, (Rgb24*)dst, width);
+            UnmanagedImageConverter.ToRgb24((Hsl*)src, (Bgr24*)dst, width);
         }
 
         private PixelFormat GetOutputBitmapPixelFormat()
@@ -58,16 +58,16 @@ namespace Geb.Image
 
         #endregion
 
-        public unsafe ImageHsl(ImageRgb24 img)
+        public unsafe ImageHsl(ImageBgr24 img)
             : this(img.Width, img.Height)
         {
             int length = img.Length;
             UnmanagedImageConverter.ToLab24(img.Start, (Lab24*)this.Start, length);
         }
 
-        public unsafe ImageRgb24 ToImageRgb24()
+        public unsafe ImageBgr24 ToImageRgb24()
         {
-            ImageRgb24 img = new ImageRgb24(this.Width, this.Height);
+            ImageBgr24 img = new ImageBgr24(this.Width, this.Height);
             UnmanagedImageConverter.ToRgb24((Lab24*)this.Start, img.Start, img.Length);
             return img;
         }

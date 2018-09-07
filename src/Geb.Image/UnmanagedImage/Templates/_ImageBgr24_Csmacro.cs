@@ -1,5 +1,5 @@
 /*************************************************************************
- *  Copyright (c) 2015 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
+ *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
 using System;
@@ -9,11 +9,13 @@ using System.Runtime.InteropServices;
 
 namespace Geb.Image
 {
-    using TPixel = GradXY;
-    using TChannel = System.Int16;
-    using TImage = Geb.Image.ImageGradXY;
+    using TPixel = Bgr24;
+    using TChannel = System.Byte;
+    using TCache = System.Int32;
+    using TKernel = System.Int32;
+    using TImage = Geb.Image.ImageBgr24;
 
-    public static partial class ImageGradXYClassHelper
+    public static partial class ImageBgr24ClassHelper
     {
         /// <summary>
         /// 对每个像素进行操作
@@ -187,7 +189,7 @@ namespace Geb.Image
         }
     }
 
-    public partial class ImageGradXY
+    public partial class ImageBgr24
     {
         /// <summary>
         /// 图像所占字节数。
@@ -317,7 +319,7 @@ namespace Geb.Image
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public unsafe ImageGradXY(Int32 width, Int32 height)
+        public unsafe ImageBgr24(Int32 width, Int32 height)
         {
             if (width <= 0) throw new ArgumentOutOfRangeException("width");
             else if (height <= 0) throw new ArgumentOutOfRangeException("height");
@@ -331,7 +333,7 @@ namespace Geb.Image
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="data"></param>
-        public unsafe ImageGradXY(Int32 width, Int32 height, void* data)
+        public unsafe ImageBgr24(Int32 width, Int32 height, void* data)
         {
             if (width <= 0) throw new ArgumentOutOfRangeException("width");
             else if (height <= 0) throw new ArgumentOutOfRangeException("height");
@@ -363,7 +365,7 @@ namespace Geb.Image
         //    }
         //}
 
-        public unsafe ImageGradXY(String path)
+        public unsafe ImageBgr24(String path)
         {
             //using (Bitmap bmp = new Bitmap(path))
             //{
@@ -372,7 +374,7 @@ namespace Geb.Image
             //}
         }
 
-        //public ImageGradXY(Bitmap map)
+        //public ImageBgr24(Bitmap map)
         //{
         //    if (map == null) throw new ArgumentNullException("map");
         //    AllocMemory(map.Width, map.Height);
@@ -392,7 +394,7 @@ namespace Geb.Image
             }
         }
 
-        ~ImageGradXY()
+        ~ImageBgr24()
         {
             Dispose();
         }
@@ -869,7 +871,7 @@ namespace Geb.Image
             int* vals = stackalloc int[size * size + 1];
             TPixel* keys = stackalloc TPixel[size * size + 1];
 
-            ImageGradXY mask = this.Clone();
+            ImageBgr24 mask = this.Clone();
             int height = this.Height;
             int width = this.Width;
 
@@ -1479,7 +1481,7 @@ namespace Geb.Image
 
             // 计算 channel 数量
             int nChannel = sizeof(TPixel) / sizeof(TChannel);
-            TImage imgDst = new ImageGradXY(width, height);
+            TImage imgDst = new ImageBgr24(width, height);
             TChannel* rootSrc = (TChannel*)this.Start;
             TChannel* rootDst = (TChannel*)imgDst.Start;
 
@@ -2001,7 +2003,7 @@ namespace Geb.Image
         #endregion
     }
 
-    public partial struct GradXY
+    public partial struct Bgr24
     {
         public static Boolean operator ==(TPixel lhs, int rhs)
         {

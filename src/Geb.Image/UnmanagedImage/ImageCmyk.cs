@@ -15,7 +15,7 @@ namespace Geb.Image
         public byte Y;
         public byte K;
 
-        public Rgb24 ToRgb24()
+        public Bgr24 ToRgb24()
         {
             //return new Rgb24(255 - C - K, 255 - M - K, 255 - Y - K);
 
@@ -34,7 +34,7 @@ namespace Geb.Image
             if (R > 255) R = 255;
             if (G > 255) G = 255;
             if (B > 255) B = 255;
-            return new Rgb24(R, G, B);
+            return new Bgr24(R, G, B);
         }
 
         public override string ToString()
@@ -69,7 +69,7 @@ namespace Geb.Image
             return cmyk;
         }
 
-        public static Cmyk CreateFrom(Rgb24 rgb)
+        public static Cmyk CreateFrom(Bgr24 rgb)
         {
             return CreateFrom(rgb.Red, rgb.Green, rgb.Blue);
         }

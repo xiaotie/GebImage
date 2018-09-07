@@ -18,7 +18,7 @@ namespace Geb.Image.Formats.Jpeg
         public bool IgnoreMetadata { get; set; }
 
         /// <inheritdoc/>
-        public ImageArgb32 Decode(Stream stream)
+        public ImageBgra32 Decode(Stream stream)
         {
             using (var decoder = new PdfJsJpegDecoderCore(null, this))
             {
@@ -26,7 +26,7 @@ namespace Geb.Image.Formats.Jpeg
             }
         }
 
-        public ImageArgb32 Decode(String filePath)
+        public ImageBgra32 Decode(String filePath)
         {
             using (var decoder = new PdfJsJpegDecoderCore(null, this))
             using (FileStream fs = new FileStream(filePath, FileMode.Open))

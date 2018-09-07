@@ -55,7 +55,7 @@ namespace Geb.Image
                 {
                     for (int h = 0; h < height; h++)
                     {
-                        UnmanagedImageConverter.ToByte((Rgb24*)line, dstLine, width);
+                        UnmanagedImageConverter.ToByte((Bgr24*)line, dstLine, width);
                         line += data.Stride;
                         dstLine += step * width;
                     }
@@ -64,7 +64,7 @@ namespace Geb.Image
                 {
                     for (int h = 0; h < height; h++)
                     {
-                        UnmanagedImageConverter.ToByte((Argb32*)line, dstLine, width);
+                        UnmanagedImageConverter.ToByte((Bgra32*)line, dstLine, width);
 
                         line += data.Stride;
                         dstLine += step * width;

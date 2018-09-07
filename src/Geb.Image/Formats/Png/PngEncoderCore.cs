@@ -161,7 +161,7 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The <see cref="ImageFrame{TPixel}"/> to encode from.</param>
         /// <param name="stream">The <see cref="Stream"/> to encode the image data to.</param>
-        public void Encode(ImageArgb32 image, Stream stream)
+        public void Encode(ImageBgra32 image, Stream stream)
         {
             //Guard.NotNull(image, nameof(image));
             //Guard.NotNull(stream, nameof(stream));
@@ -239,7 +239,7 @@ namespace Geb.Image.Formats.Png
         /// </summary>
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="rowSpan">The image row span.</param>
-        private void CollectGrayscaleBytes(ReadOnlySpan<Argb32> rowSpan)
+        private void CollectGrayscaleBytes(ReadOnlySpan<Bgra32> rowSpan)
         {
             //byte[] rawScanlineArray = this.rawScanline.Array;
             //var rgba = default(Rgba32);
@@ -499,7 +499,7 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="stream">The <see cref="Stream"/> containing image data.</param>
         /// <param name="image">The image.</param>
-        private void WritePhysicalChunk(Stream stream, ImageArgb32 image)
+        private void WritePhysicalChunk(Stream stream, ImageBgra32 image)
         {
             //if (image.MetaData.HorizontalResolution > 0 && image.MetaData.VerticalResolution > 0)
             //{
@@ -539,7 +539,7 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="pixels">The image.</param>
         /// <param name="stream">The stream.</param>
-        private void WriteDataChunks(ImageArgb32 pixels, Stream stream)
+        private void WriteDataChunks(ImageBgra32 pixels, Stream stream)
         {
             //this.bytesPerScanline = this.width * this.bytesPerPixel;
             //int resultLength = this.bytesPerScanline + 1;

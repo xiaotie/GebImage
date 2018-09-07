@@ -85,13 +85,13 @@ namespace Geb.Image.Formats.Bmp
         ///    <para><paramref name="stream"/> is null.</para>
         /// </exception>
         /// <returns>The decoded image.</returns>
-        public ImageArgb32 Decode(Stream stream)
+        public ImageBgra32 Decode(Stream stream)
         {
             try
             {
                 this.ReadImageHeaders(stream, out bool inverted, out byte[] palette);
 
-                var image = new ImageArgb32(this.infoHeader.Width, this.infoHeader.Height);
+                var image = new ImageBgra32(this.infoHeader.Width, this.infoHeader.Height);
                 
                 switch (this.infoHeader.Compression)
                 {
@@ -264,11 +264,11 @@ namespace Geb.Image.Formats.Bmp
         /// <param name="width">The width of the bitmap.</param>
         /// <param name="height">The height of the bitmap.</param>
         /// <param name="inverted">Whether the bitmap is inverted.</param>
-        private void ReadRgb16(Argb32* p0, int width, int height, bool inverted)
+        private void ReadRgb16(Bgra32* p0, int width, int height, bool inverted)
         {
             int padding = CalculatePadding(width, 2);
             int stride = (width * 2) + padding;
-            var rgba = new Argb32(0, 0, 0, 255);
+            var rgba = new Bgra32(0, 0, 0, 255);
             Byte[] row = new byte[stride];
             fixed (Byte* pRow0 = row)
             {
@@ -277,7 +277,7 @@ namespace Geb.Image.Formats.Bmp
                     this.stream.Read(row, 0, row.Length);
                     int newY = Invert(y, height, inverted);
                     short* pRow = (short*)pRow0;
-                    Argb32* pDst = p0 + width * newY;
+                    Bgra32* pDst = p0 + width * newY;
                     for (int w = 0; w < width; w++)
                     {
                         short temp = pRow[w];
@@ -298,7 +298,7 @@ namespace Geb.Image.Formats.Bmp
         /// <param name="width">The width of the bitmap.</param>
         /// <param name="height">The height of the bitmap.</param>
         /// <param name="inverted">Whether the bitmap is inverted.</param>
-        private void ReadRgb24(Argb32* p0, int width, int height, bool inverted)
+        private void ReadRgb24(Bgra32* p0, int width, int height, bool inverted)
         {
             int padding = CalculatePadding(width, 3);
 
@@ -309,8 +309,8 @@ namespace Geb.Image.Formats.Bmp
                 {
                     this.stream.Read(row, 0, row.Length);
                     int newY = Invert(y, height, inverted);
-                    Rgb24* pRow = (Rgb24*)pRow0;
-                    Argb32* pDst = p0 + width * newY;
+                    Bgr24* pRow = (Bgr24*)pRow0;
+                    Bgra32* pDst = p0 + width * newY;
                     for(int w = 0; w < width; w++ )
                     {
                         pDst[w].From(pRow[w]);
@@ -327,7 +327,7 @@ namespace Geb.Image.Formats.Bmp
         /// <param name="width">The width of the bitmap.</param>
         /// <param name="height">The height of the bitmap.</param>
         /// <param name="inverted">Whether the bitmap is inverted.</param>
-        private void ReadRgb32(Argb32* p0, int width, int height, bool inverted)
+        private void ReadRgb32(Bgra32* p0, int width, int height, bool inverted)
         {
             int padding = CalculatePadding(width, 4);
 
@@ -337,7 +337,7 @@ namespace Geb.Image.Formats.Bmp
             {
                 this.stream.Read(row, 0, row.Length);
                 int newY = Invert(y, height, inverted);
-                Argb32* pLine = p0 + width * newY;
+                Bgra32* pLine = p0 + width * newY;
                 Unsafe.CopyBlock((void*)pLine, (void*)pRow, (uint)width * 4);
             }
         }

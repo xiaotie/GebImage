@@ -14,13 +14,13 @@ namespace Geb.Image.Formats.Bmp
         public BmpBitsPerPixel BitsPerPixel { get; set; } = BmpBitsPerPixel.Pixel24;
 
         /// <inheritdoc/>
-        public void Encode(ImageArgb32 image, Stream stream)
+        public void Encode(ImageBgra32 image, Stream stream)
         {
             var encoder = new BmpEncoderCore(BmpBitsPerPixel.Pixel32);
             encoder.Encode(image, stream);
         }
 
-        public void Encode(ImageArgb32 image, string path)
+        public void Encode(ImageBgra32 image, string path)
         {
             using (FileStream fs = new FileStream(path, FileMode.CreateNew))
             {

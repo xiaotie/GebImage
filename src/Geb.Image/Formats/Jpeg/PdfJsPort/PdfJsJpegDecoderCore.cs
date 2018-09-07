@@ -188,7 +188,7 @@ namespace Geb.Image.Formats.Jpeg.PdfJsPort
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="stream">The stream, where the image should be.</param>
         /// <returns>The decoded image.</returns>
-        public ImageArgb32 Decode(Stream stream)
+        public ImageBgra32 Decode(Stream stream)
         {
             this.ParseStream(stream);
             this.AssignResolution();
@@ -821,11 +821,11 @@ namespace Geb.Image.Formats.Jpeg.PdfJsPort
             return BinaryPrimitives.ReadUInt16BigEndian(this.markerBuffer);
         }
 
-        private ImageArgb32 PostProcessIntoImage()
+        private ImageBgra32 PostProcessIntoImage()
         {
             using (var postProcessor = new JpegImagePostProcessor(this.configuration.MemoryManager, this))
             {
-                var image = new ImageArgb32(this.ImageWidth, this.ImageHeight);
+                var image = new ImageBgra32(this.ImageWidth, this.ImageHeight);
                 postProcessor.PostProcess(image);
                 return image;
             }

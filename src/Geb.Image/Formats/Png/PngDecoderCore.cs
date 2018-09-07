@@ -161,7 +161,7 @@ namespace Geb.Image.Formats.Png
         /// <summary>
         /// Represents any color in an Rgb24 encoded png that should be transparent
         /// </summary>
-        private Rgb24 rgb24Trans;
+        private Bgr24 rgb24Trans;
 
         /// <summary>
         /// Represents any color in a grayscale encoded png that should be transparent
@@ -199,7 +199,7 @@ namespace Geb.Image.Formats.Png
         /// Thrown if the image is larger than the maximum allowable size.
         /// </exception>
         /// <returns>The decoded image</returns>
-        public ImageArgb32 Decode<TPixel>(Stream stream)
+        public ImageBgra32 Decode<TPixel>(Stream stream)
         {
             //var metadata = new ImageMetaData();
             //this.currentStream = stream;
@@ -395,9 +395,9 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The type the pixels will be</typeparam>
         /// <param name="metadata">The metadata information for the image</param>
         /// <param name="image">The image that we will populate</param>
-        private void InitializeImage(ImageMetaData metadata, out ImageArgb32 image)
+        private void InitializeImage(ImageMetaData metadata, out ImageBgra32 image)
         {
-            image = new ImageArgb32(this.header.Width, this.header.Height);
+            image = new ImageBgra32(this.header.Width, this.header.Height);
             this.bytesPerPixel = this.CalculateBytesPerPixel();
             this.bytesPerScanline = this.CalculateScanlineLength(this.header.Width) + 1;
             this.bytesPerSample = 1;
@@ -495,7 +495,7 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="dataStream">The <see cref="MemoryStream"/> containing data.</param>
         /// <param name="image"> The pixel data.</param>
-        private void ReadScanlines(Stream dataStream, ImageArgb32 image)
+        private void ReadScanlines(Stream dataStream, ImageBgra32 image)
         {
             //if (this.header.InterlaceMethod == PngInterlaceMode.Adam7)
             //{
@@ -513,7 +513,7 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="compressedStream">The compressed pixel data stream.</param>
         /// <param name="image">The image to decode to.</param>
-        private void DecodePixelData(Stream compressedStream, ImageArgb32 image)
+        private void DecodePixelData(Stream compressedStream, ImageBgra32 image)
         {
             while (this.currentRow < this.header.Height)
             {
@@ -571,7 +571,7 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="compressedStream">The compressed pixel data stream.</param>
         /// <param name="image">The current image.</param>
-        private void DecodeInterlacedPixelData(Stream compressedStream, ImageArgb32 image)
+        private void DecodeInterlacedPixelData(Stream compressedStream, ImageBgra32 image)
         {
             //while (true)
             //{
@@ -660,7 +660,7 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="defilteredScanline">The de-filtered scanline</param>
         /// <param name="pixels">The image</param>
-        private void ProcessDefilteredScanline(ReadOnlySpan<byte> defilteredScanline,ImageArgb32 pixels)
+        private void ProcessDefilteredScanline(ReadOnlySpan<byte> defilteredScanline,ImageBgra32 pixels)
         {
             //var color = default(TPixel);
             //Span<TPixel> rowSpan = pixels.GetPixelRowSpan(this.currentRow);
@@ -821,7 +821,7 @@ namespace Geb.Image.Formats.Png
                     byte r = (byte)ReadIntFrom2Bytes(alpha, 0);
                     byte g = (byte)ReadIntFrom2Bytes(alpha, 2);
                     byte b = (byte)ReadIntFrom2Bytes(alpha, 4);
-                    this.rgb24Trans = new Rgb24(r, g, b);
+                    this.rgb24Trans = new Bgr24(r, g, b);
                     this.hasTrans = true;
                 }
             }
@@ -841,7 +841,7 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The type of pixel we are expanding to</typeparam>
         /// <param name="defilteredScanline">The scanline</param>
         /// <param name="row">Thecurrent  output image row</param>
-        private void ProcessScanlineFromPalette(ReadOnlySpan<byte> defilteredScanline, Span<Argb32> row)
+        private void ProcessScanlineFromPalette(ReadOnlySpan<byte> defilteredScanline, Span<Bgra32> row)
         {
             //ReadOnlySpan<byte> newScanline = ToArrayByBitsLength(defilteredScanline, this.bytesPerScanline, this.header.BitDepth);
             //ReadOnlySpan<Rgb24> pal = MemoryMarshal.Cast<byte, Rgb24>(this.palette);
@@ -888,7 +888,7 @@ namespace Geb.Image.Formats.Png
         /// <param name="rowSpan">The current image row.</param>
         /// <param name="pixelOffset">The column start index. Always 0 for none interlaced images.</param>
         /// <param name="increment">The column increment. Always 1 for none interlaced images.</param>
-        private void ProcessInterlacedDefilteredScanline(ReadOnlySpan<byte> defilteredScanline, Span<Argb32> rowSpan, int pixelOffset = 0, int increment = 1)
+        private void ProcessInterlacedDefilteredScanline(ReadOnlySpan<byte> defilteredScanline, Span<Bgra32> rowSpan, int pixelOffset = 0, int increment = 1)
         {
             //var color = default(Argb32);
 

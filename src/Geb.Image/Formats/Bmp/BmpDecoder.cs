@@ -23,12 +23,12 @@ namespace Geb.Image.Formats.Bmp
     public sealed class BmpDecoder : IImageDecoder
     {
         /// <inheritdoc/>
-        public ImageArgb32 Decode(Stream stream)
+        public ImageBgra32 Decode(Stream stream)
         {
             return new BmpDecoderCore().Decode(stream);
         }
 
-        public ImageArgb32 Decode(String path)
+        public ImageBgra32 Decode(String path)
         {
             using (FileStream fs = new FileStream(path, FileMode.Open))
             {

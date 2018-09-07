@@ -32,7 +32,7 @@ namespace Geb.Image.Formats.Bmp
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The <see cref="ImageFrame{TPixel}"/> to encode from.</param>
         /// <param name="stream">The <see cref="Stream"/> to encode the image data to.</param>
-        public void Encode(ImageArgb32 image, Stream stream)
+        public void Encode(ImageBgra32 image, Stream stream)
         {
             // Cast to int will get the bytes per pixel
             short bpp = (short)(8 * (int)this.bitsPerPixel);
@@ -86,13 +86,13 @@ namespace Geb.Image.Formats.Bmp
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="stream">The <see cref="Stream"/> to write to.</param>
         /// <param name="pixels">The <see cref="PixelAccessor{TPixel}"/> containing pixel data.</param>
-        private void WriteImage(Stream stream, ImageArgb32 pixels)
+        private void WriteImage(Stream stream, ImageBgra32 pixels)
         {
             Byte[] row = this.AllocateRow(pixels.Width, 4);
             fixed(Byte* pRow = row)
             for (int y = pixels.Height - 1; y >= 0; y--)
             {
-                Argb32* pSrc = pixels.Start + y * pixels.Width;
+                Bgra32* pSrc = pixels.Start + y * pixels.Width;
                 Unsafe.CopyBlock((void*)pRow, (void*)pSrc, (uint)pixels.Width * 4);
                 stream.Write(row, 0, row.Length);
             }
