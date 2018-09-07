@@ -3,6 +3,8 @@
 Debug
 Release
 /bin
-
+obj
+.vs
 *.suo
 /TestResults
+lib/
