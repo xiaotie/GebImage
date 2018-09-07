@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Geb.Image
@@ -266,15 +267,18 @@ namespace Geb.Image
 
         public Size ImageSize
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get { return new Size(Width, Height); }
         }
 
         public unsafe TPixel this[int index]
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return Start[index];
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 Start[index] = value;
@@ -283,10 +287,12 @@ namespace Geb.Image
 
         public unsafe TPixel this[int row, int col]
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return Start[row * this.Width + col];
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 Start[row * this.Width + col] = value;
@@ -295,10 +301,12 @@ namespace Geb.Image
 
         public unsafe TPixel this[System.Drawing.Point location]
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return Start[location.Y * this.Width + location.X];
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 Start[location.Y * this.Width + location.X] = value;
@@ -307,16 +315,19 @@ namespace Geb.Image
 
         public unsafe TPixel this[PointS location]
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return Start[location.Y * this.Width + location.X];
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 Start[location.Y * this.Width + location.X] = value;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe TPixel* Row(Int32 row)
         {
             if (row < 0 || row >= this.Height) throw new ArgumentOutOfRangeException("row");
@@ -325,6 +336,7 @@ namespace Geb.Image
 
         public Rect Rect
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get { return new Rect(0, 0, Width, Height); }
         }
 
@@ -335,6 +347,7 @@ namespace Geb.Image
         /// </summary>
         public Boolean IsOwner
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get { return _isOwner; }
         }
 
@@ -642,20 +655,6 @@ namespace Geb.Image
             }
             return this;
         }
-
-        ///// <summary>
-        ///// 弹出模态窗口，显示图像。安静模式下不弹出窗口，直接返回。
-        ///// </summary>
-        ///// <param name="title">弹出模式窗体的标题</param>
-        ///// <returns>当前图像</returns>
-        //public TImage ShowDialog(String title = null, Boolean zoom = true)
-        //{
-        //    if (Config.SilentMode == false) // 非安静模式不弹出窗体
-        //    {
-        //        this.ToBitmap().ShowDialog(title,zoom);
-        //    }
-        //    return this;
-        //}
 
         /// <summary>
         /// 对图像进行转置，行变成列，列变成行。转置结果直接存在当前的图像中。
@@ -1729,39 +1728,6 @@ namespace Geb.Image
                 p0++;
             }
         }
-
-        #region 转换为JPG、PNG流数据
-        
-        ///// <summary>
-        ///// 将图像转换为PNG图像数据
-        ///// </summary>
-        ///// <returns>PNG图像的二进制数据</returns>
-        //public Byte[] ToPngData()
-        //{
-        //    Bitmap bmp = this.ToBitmap();
-        //    using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-        //    {
-        //        bmp.Save(ms, GdiplusHelper.GetPngEncoder(), null);
-        //        return ms.ToArray();
-        //    }
-        //}
-
-        ///// <summary>
-        ///// 将图像转换为 JPEG 图像数据
-        ///// </summary>
-        ///// <param name="quality">图像质量，0-100 之间</param>
-        ///// <returns>JPEG 图像的二进制数据</returns>
-        //public Byte[] ToJpegData(int quality)
-        //{
-        //    Bitmap bmp = this.ToBitmap();
-        //    using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-        //    {
-        //        bmp.Save(ms, GdiplusHelper.GetJpegEncoder(), GdiplusHelper.GetJpegEncoderParameters(quality));
-        //        return ms.ToArray();
-        //    }
-        //}
-
-        #endregion
 
         #region BiExponentialEdgePreservingSmooth 的具体实现类
 
