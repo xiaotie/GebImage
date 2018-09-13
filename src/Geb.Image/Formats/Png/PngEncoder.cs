@@ -10,7 +10,7 @@ namespace Geb.Image.Formats.Png
     /// <summary>
     /// Image encoder for writing image data to a stream in png format.
     /// </summary>
-    public sealed class PngEncoder
+    public sealed class PngEncoder : IPngEncoderOptions
     {
         /// <summary>
         /// Gets or sets the png color type.
@@ -61,10 +61,18 @@ namespace Geb.Image.Formats.Png
         /// <param name="stream">The <see cref="Stream"/> to encode the image data to.</param>
         public void Encode(ImageBgra32 image, Stream stream)
         {
-            //using (var encoder = new PngEncoderCore(image.GetMemoryManager(), this))
-            //{
-            //    encoder.Encode(image, stream);
-            //}
+            using (var encoder = new PngEncoderCore(Configuration.Default.MemoryManager, this))
+            {
+                encoder.Encode(image, stream);
+            }
+        }
+
+        public void Encode(ImageBgra32 image, string path)
+        {
+            using (FileStream fs = new FileStream(path, FileMode.CreateNew))
+            {
+                Encode(image, fs);
+            }
         }
     }
 }

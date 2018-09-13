@@ -60,6 +60,26 @@ namespace Geb.Image.Test
             Assert.AreEqual(true, SaveJpeg(img, 50));
         }
 
+        [TestMethod]
+        public void TestEncodePng()
+        {
+            string path = @"./img/demo-bmp-big-01.bmp";
+            var decoder = new Formats.Bmp.BmpDecoder();
+            var image = decoder.Decode(path);
+            Assert.AreEqual(true, SavePng(image));
+        }
+
+        protected bool SavePng(ImageBgra32 image)
+        {
+            string path = "TestEncodePng.png";
+            if (File.Exists(path) == true) File.Delete(path);
+            image.SavePng(path);
+            if (File.Exists(path) == false) return false;
+            var bytes = File.ReadAllBytes(path);
+            if (bytes.Length == 0) return false;
+            return true;
+        }
+
         protected bool SaveJpeg(ImageBgra32 image, int quality)
         {
             string path = GetTempJpegFilePath(quality);

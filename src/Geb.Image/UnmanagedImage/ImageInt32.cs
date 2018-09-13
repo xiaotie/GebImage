@@ -17,7 +17,7 @@ namespace Geb.Image
 
         private unsafe void Copy(Bgr24* from, void* to, int length)
         {
-            UnmanagedImageConverter.ToArgb32(from, (Bgra32*)to, length);
+            UnmanagedImageConverter.ToBgra32(from, (Bgra32*)to, length);
         }
 
         private unsafe void Copy(Bgra32* from, void* to, int length)
@@ -40,7 +40,7 @@ namespace Geb.Image
 
         private PixelFormat GetOutputBitmapPixelFormat()
         {
-            return PixelFormat.Format32bppArgb;
+            return PixelFormat.Format32bppBgra;
         }
 
         private unsafe void ToBitmapCore(byte* src, byte* dst, int width)

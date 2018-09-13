@@ -19,7 +19,7 @@ namespace Geb.Image.Formats.Png
     /// <summary>
     /// Performs the png decoding operation.
     /// </summary>
-    internal sealed class PngDecoderCore
+    internal unsafe sealed class PngDecoderCore
     {
         /// <summary>
         /// The dictionary of available color types.
@@ -199,78 +199,77 @@ namespace Geb.Image.Formats.Png
         /// Thrown if the image is larger than the maximum allowable size.
         /// </exception>
         /// <returns>The decoded image</returns>
-        public ImageBgra32 Decode<TPixel>(Stream stream)
+        public ImageBgra32 Decode(Stream stream)
         {
-            //var metadata = new ImageMetaData();
-            //this.currentStream = stream;
-            //this.currentStream.Skip(8);
-            //Image<TPixel> image = null;
-            //try
-            //{
-            //    using (var deframeStream = new ZlibInflateStream(this.currentStream))
-            //    {
-            //        while (!this.isEndChunkReached && this.TryReadChunk(out PngChunk chunk))
-            //        {
-            //            try
-            //            {
-            //                switch (chunk.Type)
-            //                {
-            //                    case PngChunkType.Header:
-            //                        this.ReadHeaderChunk(chunk.Data.Array);
-            //                        this.ValidateHeader();
-            //                        break;
-            //                    case PngChunkType.Physical:
-            //                        this.ReadPhysicalChunk(metadata, chunk.Data.Array);
-            //                        break;
-            //                    case PngChunkType.Data:
-            //                        if (image == null)
-            //                        {
-            //                            this.InitializeImage(metadata, out image);
-            //                        }
+            var metadata = new ImageMetaData();
+            this.currentStream = stream;
+            this.currentStream.Skip(8);
+            ImageBgra32 image = null;
+            try
+            {
+                using (var deframeStream = new ZlibInflateStream(this.currentStream))
+                {
+                    while (!this.isEndChunkReached && this.TryReadChunk(out PngChunk chunk))
+                    {
+                        try
+                        {
+                            switch (chunk.Type)
+                            {
+                                case PngChunkType.Header:
+                                    this.ReadHeaderChunk(chunk.Data.Array);
+                                    this.ValidateHeader();
+                                    break;
+                                case PngChunkType.Physical:
+                                    this.ReadPhysicalChunk(metadata, chunk.Data.Array);
+                                    break;
+                                case PngChunkType.Data:
+                                    if (image == null)
+                                    {
+                                        this.InitializeImage(metadata, out image);
+                                    }
 
-            //                        deframeStream.AllocateNewBytes(chunk.Length);
-            //                        this.ReadScanlines(deframeStream.CompressedStream, image.Frames.RootFrame);
-            //                        this.currentStream.Read(this.crcBuffer, 0, 4);
-            //                        break;
-            //                    case PngChunkType.Palette:
-            //                        byte[] pal = new byte[chunk.Length];
-            //                        Buffer.BlockCopy(chunk.Data.Array, 0, pal, 0, chunk.Length);
-            //                        this.palette = pal;
-            //                        break;
-            //                    case PngChunkType.PaletteAlpha:
-            //                        byte[] alpha = new byte[chunk.Length];
-            //                        Buffer.BlockCopy(chunk.Data.Array, 0, alpha, 0, chunk.Length);
-            //                        this.paletteAlpha = alpha;
-            //                        this.AssignTransparentMarkers(alpha);
-            //                        break;
-            //                    case PngChunkType.Text:
-            //                        this.ReadTextChunk(metadata, chunk.Data.Array, chunk.Length);
-            //                        break;
-            //                    case PngChunkType.End:
-            //                        this.isEndChunkReached = true;
-            //                        break;
-            //                }
-            //            }
-            //            finally
-            //            {
-            //                chunk.Data?.Dispose(); // Data is rented in ReadChunkData()
-            //            }
-            //        }
-            //    }
+                                    deframeStream.AllocateNewBytes(chunk.Length);
+                                    this.ReadScanlines(deframeStream.CompressedStream, image);
+                                    this.currentStream.Read(this.crcBuffer, 0, 4);
+                                    break;
+                                case PngChunkType.Palette:
+                                    byte[] pal = new byte[chunk.Length];
+                                    Buffer.BlockCopy(chunk.Data.Array, 0, pal, 0, chunk.Length);
+                                    this.palette = pal;
+                                    break;
+                                case PngChunkType.PaletteAlpha:
+                                    byte[] alpha = new byte[chunk.Length];
+                                    Buffer.BlockCopy(chunk.Data.Array, 0, alpha, 0, chunk.Length);
+                                    this.paletteAlpha = alpha;
+                                    this.AssignTransparentMarkers(alpha);
+                                    break;
+                                case PngChunkType.Text:
+                                    this.ReadTextChunk(metadata, chunk.Data.Array, chunk.Length);
+                                    break;
+                                case PngChunkType.End:
+                                    this.isEndChunkReached = true;
+                                    break;
+                            }
+                        }
+                        finally
+                        {
+                            chunk.Data?.Dispose(); // Data is rented in ReadChunkData()
+                        }
+                    }
+                }
 
-            //    if (image == null)
-            //    {
-            //        throw new ImageFormatException("PNG Image does not contain a data chunk");
-            //    }
+                if (image == null)
+                {
+                    throw new ImageFormatException("PNG Image does not contain a data chunk");
+                }
 
-            //    return image;
-            //}
-            //finally
-            //{
-            //    this.scanline?.Dispose();
-            //    this.previousScanline?.Dispose();
-            //}
-            throw new NotImplementedException();
+                return image;
+            }
+            finally
+            {
+                this.scanline?.Dispose();
+                this.previousScanline?.Dispose();
+            }
         }
 
         /// <summary>
@@ -497,14 +496,14 @@ namespace Geb.Image.Formats.Png
         /// <param name="image"> The pixel data.</param>
         private void ReadScanlines(Stream dataStream, ImageBgra32 image)
         {
-            //if (this.header.InterlaceMethod == PngInterlaceMode.Adam7)
-            //{
-            //    this.DecodeInterlacedPixelData(dataStream, image);
-            //}
-            //else
-            //{
-            //    this.DecodePixelData(dataStream, image);
-            //}
+            if (this.header.InterlaceMethod == PngInterlaceMode.Adam7)
+            {
+                this.DecodeInterlacedPixelData(dataStream, image);
+            }
+            else
+            {
+                this.DecodePixelData(dataStream, image);
+            }
         }
 
         /// <summary>
@@ -573,85 +572,85 @@ namespace Geb.Image.Formats.Png
         /// <param name="image">The current image.</param>
         private void DecodeInterlacedPixelData(Stream compressedStream, ImageBgra32 image)
         {
-            //while (true)
-            //{
-            //    int numColumns = this.ComputeColumnsAdam7(this.pass);
+            while (true)
+            {
+                int numColumns = this.ComputeColumnsAdam7(this.pass);
 
-            //    if (numColumns == 0)
-            //    {
-            //        this.pass++;
+                if (numColumns == 0)
+                {
+                    this.pass++;
 
-            //        // This pass contains no data; skip to next pass
-            //        continue;
-            //    }
+                    // This pass contains no data; skip to next pass
+                    continue;
+                }
 
-            //    int bytesPerInterlaceScanline = this.CalculateScanlineLength(numColumns) + 1;
+                int bytesPerInterlaceScanline = this.CalculateScanlineLength(numColumns) + 1;
 
-            //    while (this.currentRow < this.header.Height)
-            //    {
-            //        int bytesRead = compressedStream.Read(this.scanline.Array, this.currentRowBytesRead, bytesPerInterlaceScanline - this.currentRowBytesRead);
-            //        this.currentRowBytesRead += bytesRead;
-            //        if (this.currentRowBytesRead < bytesPerInterlaceScanline)
-            //        {
-            //            return;
-            //        }
+                while (this.currentRow < this.header.Height)
+                {
+                    int bytesRead = compressedStream.Read(this.scanline.Array, this.currentRowBytesRead, bytesPerInterlaceScanline - this.currentRowBytesRead);
+                    this.currentRowBytesRead += bytesRead;
+                    if (this.currentRowBytesRead < bytesPerInterlaceScanline)
+                    {
+                        return;
+                    }
 
-            //        this.currentRowBytesRead = 0;
+                    this.currentRowBytesRead = 0;
 
-            //        Span<byte> scanSpan = this.scanline.Slice(0, bytesPerInterlaceScanline);
-            //        Span<byte> prevSpan = this.previousScanline.Slice(0, bytesPerInterlaceScanline);
-            //        var filterType = (FilterType)scanSpan[0];
+                    Span<byte> scanSpan = this.scanline.Slice(0, bytesPerInterlaceScanline);
+                    Span<byte> prevSpan = this.previousScanline.Slice(0, bytesPerInterlaceScanline);
+                    var filterType = (FilterType)scanSpan[0];
 
-            //        switch (filterType)
-            //        {
-            //            case FilterType.None:
-            //                break;
+                    switch (filterType)
+                    {
+                        case FilterType.None:
+                            break;
 
-            //            case FilterType.Sub:
+                        case FilterType.Sub:
 
-            //                SubFilter.Decode(scanSpan, this.bytesPerPixel);
-            //                break;
+                            SubFilter.Decode(scanSpan, this.bytesPerPixel);
+                            break;
 
-            //            case FilterType.Up:
+                        case FilterType.Up:
 
-            //                UpFilter.Decode(scanSpan, prevSpan);
-            //                break;
+                            UpFilter.Decode(scanSpan, prevSpan);
+                            break;
 
-            //            case FilterType.Average:
+                        case FilterType.Average:
 
-            //                AverageFilter.Decode(scanSpan, prevSpan, this.bytesPerPixel);
-            //                break;
+                            AverageFilter.Decode(scanSpan, prevSpan, this.bytesPerPixel);
+                            break;
 
-            //            case FilterType.Paeth:
+                        case FilterType.Paeth:
 
-            //                PaethFilter.Decode(scanSpan, prevSpan, this.bytesPerPixel);
-            //                break;
+                            PaethFilter.Decode(scanSpan, prevSpan, this.bytesPerPixel);
+                            break;
 
-            //            default:
-            //                throw new ImageFormatException("Unknown filter type.");
-            //        }
+                        default:
+                            throw new ImageFormatException("Unknown filter type.");
+                    }
 
-            //        Span<TPixel> rowSpan = image.GetPixelRowSpan(this.currentRow);
-            //        this.ProcessInterlacedDefilteredScanline(this.scanline.Span, rowSpan, Adam7FirstColumn[this.pass], Adam7ColumnIncrement[this.pass]);
+                    Span<Bgra32> rowSpan = image.GetPixelRowSpan(this.currentRow);
+                    this.ProcessInterlacedDefilteredScanline(this.scanline.Span, rowSpan, Adam7FirstColumn[this.pass], Adam7ColumnIncrement[this.pass]);
 
-            //        this.SwapBuffers();
+                    this.SwapBuffers();
 
-            //        this.currentRow += Adam7RowIncrement[this.pass];
-            //    }
+                    this.currentRow += Adam7RowIncrement[this.pass];
+                }
 
-            //    this.pass++;
-            //    this.previousScanline.Clear();
+                this.pass++;
+                this.previousScanline.Clear();
 
-            //    if (this.pass < 7)
-            //    {
-            //        this.currentRow = Adam7FirstRow[this.pass];
-            //    }
-            //    else
-            //    {
-            //        this.pass = 0;
-            //        break;
-            //    }
-            //}
+                if (this.pass < 7)
+                {
+                    this.currentRow = Adam7FirstRow[this.pass];
+                }
+                else
+                {
+                    this.pass = 0;
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -662,11 +661,11 @@ namespace Geb.Image.Formats.Png
         /// <param name="pixels">The image</param>
         private void ProcessDefilteredScanline(ReadOnlySpan<byte> defilteredScanline,ImageBgra32 pixels)
         {
-            //var color = default(TPixel);
-            //Span<TPixel> rowSpan = pixels.GetPixelRowSpan(this.currentRow);
+            var color = default(Bgra32);
+            Span<Bgra32> rowSpan = pixels.GetPixelRowSpan(this.currentRow);
 
-            //// Trim the first marker byte from the buffer
-            //ReadOnlySpan<byte> scanlineBuffer = defilteredScanline.Slice(1, defilteredScanline.Length - 1);
+            // Trim the first marker byte from the buffer
+            ReadOnlySpan<byte> scanlineBuffer = defilteredScanline.Slice(1, defilteredScanline.Length - 1);
 
             //switch (this.pngColorType)
             //{
@@ -679,11 +678,11 @@ namespace Geb.Image.Formats.Png
             //            byte intensity = (byte)(newScanline1[x] * factor);
             //            if (this.hasTrans && intensity == this.intensityTrans)
             //            {
-            //                color.PackFromRgba32(new Rgba32(intensity, intensity, intensity, 0));
+            //                color = new Bgra32(intensity, intensity, intensity, (byte)0);
             //            }
             //            else
             //            {
-            //                color.PackFromRgba32(new Rgba32(intensity, intensity, intensity));
+            //                color = new Bgra32(intensity, intensity, intensity, (byte)255);
             //            }
 
             //            rowSpan[x] = color;
@@ -699,8 +698,7 @@ namespace Geb.Image.Formats.Png
 
             //            byte intensity = scanlineBuffer[offset];
             //            byte alpha = scanlineBuffer[offset + this.bytesPerSample];
-
-            //            color.PackFromRgba32(new Rgba32(intensity, intensity, intensity, alpha));
+            //            color = new Bgra32(intensity, intensity, intensity, alpha);
             //            rowSpan[x] = color;
             //        }
 
@@ -723,12 +721,12 @@ namespace Geb.Image.Formats.Png
             //                {
             //                    // TODO: Should we use pack from vector here instead?
             //                    this.From16BitTo8Bit(scanlineBuffer, compressed.Span, length);
-            //                    PixelOperations<TPixel>.Instance.PackFromRgb24Bytes(compressed.Span, rowSpan, this.header.Width);
+            //                    PackFromRgb24Bytes(compressed.Span, rowSpan, this.header.Width);
             //                }
             //            }
             //            else
             //            {
-            //                PixelOperations<TPixel>.Instance.PackFromRgb24Bytes(scanlineBuffer, rowSpan, this.header.Width);
+            //                PackFromRgb24Bytes(scanlineBuffer, rowSpan, this.header.Width);
             //            }
             //        }
             //        else
@@ -781,16 +779,26 @@ namespace Geb.Image.Formats.Png
             //            {
             //                // TODO: Should we use pack from vector here instead?
             //                this.From16BitTo8Bit(scanlineBuffer, compressed.Span, length);
-            //                PixelOperations<TPixel>.Instance.PackFromRgba32Bytes(compressed.Span, rowSpan, this.header.Width);
+            //                PackFromRgba32Bytes(compressed.Span, rowSpan, this.header.Width);
             //            }
             //        }
             //        else
             //        {
-            //            PixelOperations<TPixel>.Instance.PackFromRgba32Bytes(scanlineBuffer, rowSpan, this.header.Width);
+            //            PackFromRgba32Bytes(scanlineBuffer, rowSpan, this.header.Width);
             //        }
 
             //        break;
             //}
+        }
+
+        private void PackFromRgba32Bytes(ReadOnlySpan<Byte> span, Span<Bgra32> rowSpan, int width)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PackFromRgb24Bytes(ReadOnlySpan<Byte> span, Span<Bgra32> rowSpan, int width)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -845,7 +853,7 @@ namespace Geb.Image.Formats.Png
         {
             //ReadOnlySpan<byte> newScanline = ToArrayByBitsLength(defilteredScanline, this.bytesPerScanline, this.header.BitDepth);
             //ReadOnlySpan<Rgb24> pal = MemoryMarshal.Cast<byte, Rgb24>(this.palette);
-            //var color = default(TPixel);
+            //var color = default(Bgra32);
 
             //var rgba = default(Rgba32);
 

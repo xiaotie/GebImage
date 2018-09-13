@@ -32,7 +32,7 @@ namespace Geb.Image
 
         private PixelFormat GetOutputBitmapPixelFormat()
         {
-            return PixelFormat.Format8bppIndexed;
+            return PixelFormat.Format8bpp;
         }
 
         private unsafe void ToBitmapCore(byte* src, byte* dst, int width)

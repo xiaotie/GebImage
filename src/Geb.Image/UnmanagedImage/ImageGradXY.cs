@@ -55,7 +55,7 @@ namespace Geb.Image
 
         private PixelFormat GetOutputBitmapPixelFormat()
         {
-            return PixelFormat.Format32bppArgb;
+            return PixelFormat.Format32bppBgra;
         }
 
         #endregion

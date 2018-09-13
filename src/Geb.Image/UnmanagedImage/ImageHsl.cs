@@ -53,7 +53,7 @@ namespace Geb.Image
 
         private PixelFormat GetOutputBitmapPixelFormat()
         {
-            return PixelFormat.Format24bppRgb;
+            return PixelFormat.Format24bppBgr;
         }
 
         #endregion
@@ -68,7 +68,7 @@ namespace Geb.Image
         public unsafe ImageBgr24 ToImageRgb24()
         {
             ImageBgr24 img = new ImageBgr24(this.Width, this.Height);
-            UnmanagedImageConverter.ToRgb24((Lab24*)this.Start, img.Start, img.Length);
+            UnmanagedImageConverter.ToBgr24((Lab24*)this.Start, img.Start, img.Length);
             return img;
         }
     }

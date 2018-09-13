@@ -62,7 +62,7 @@ namespace Geb.Image
             Bgr24 dst = new Bgr24();
             fixed (Lab24* l = &this)
             {
-                UnmanagedImageConverter.ToRgb24(l, &dst, 1);
+                UnmanagedImageConverter.ToBgr24(l, &dst, 1);
             }
             return dst;
         }
@@ -122,12 +122,12 @@ namespace Geb.Image
 
         private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
-            UnmanagedImageConverter.ToRgb24((Lab24*)src, (Bgr24*)dst, width);
+            UnmanagedImageConverter.ToBgr24((Lab24*)src, (Bgr24*)dst, width);
         }
 
         private PixelFormat GetOutputBitmapPixelFormat()
         {
-            return PixelFormat.Format24bppRgb;
+            return PixelFormat.Format24bppBgr;
         }
 
         #endregion
@@ -139,10 +139,10 @@ namespace Geb.Image
             UnmanagedImageConverter.ToLab24(img.Start, (Lab24*)this.Start, length);
         }
 
-        public unsafe ImageBgr24 ToImageRgb24()
+        public unsafe ImageBgr24 ToImageBgr24()
         {
             ImageBgr24 img = new ImageBgr24(this.Width, this.Height);
-            UnmanagedImageConverter.ToRgb24((Lab24*)this.Start, img.Start, img.Length);
+            UnmanagedImageConverter.ToBgr24((Lab24*)this.Start, img.Start, img.Length);
             return img;
         }
     }

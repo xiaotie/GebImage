@@ -10,7 +10,6 @@ namespace Geb.Image
         public unsafe static Mat ToCVMat(this ImageU8 img)
         {
             Mat mat = new Mat(new OpenCvSharp.Size(img.Width, img.Height), MatType.CV_8U);
-            new Mat(img.Height, img.Width, MatType.CV_8U, img.StartIntPtr, img.Width);
             return mat;
         }
     }

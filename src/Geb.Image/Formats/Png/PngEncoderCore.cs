@@ -163,13 +163,13 @@ namespace Geb.Image.Formats.Png
         /// <param name="stream">The <see cref="Stream"/> to encode the image data to.</param>
         public void Encode(ImageBgra32 image, Stream stream)
         {
-            //Guard.NotNull(image, nameof(image));
-            //Guard.NotNull(stream, nameof(stream));
+            Guard.NotNull(image, nameof(image));
+            Guard.NotNull(stream, nameof(stream));
 
-            //this.width = image.Width;
-            //this.height = image.Height;
+            this.width = image.Width;
+            this.height = image.Height;
 
-            //stream.Write(PngConstants.HeaderBytes, 0, PngConstants.HeaderBytes.Length);
+            stream.Write(PngConstants.HeaderBytes, 0, PngConstants.HeaderBytes.Length);
 
             //QuantizedFrame<TPixel> quantized = null;
             //if (this.pngColorType == PngColorType.Palette)
@@ -196,30 +196,31 @@ namespace Geb.Image.Formats.Png
             //    this.bitDepth = 8;
             //}
 
-            //this.bytesPerPixel = this.CalculateBytesPerPixel();
+            this.bitDepth = 8;
+            this.bytesPerPixel = this.CalculateBytesPerPixel();
 
-            //var header = new PngHeader(
-            //    width: image.Width,
-            //    height: image.Height,
-            //    colorType: this.pngColorType,
-            //    bitDepth: this.bitDepth,
-            //    filterMethod: 0, // None
-            //    compressionMethod: 0,
-            //    interlaceMethod: 0);
+            var header = new PngHeader(
+                width: image.Width,
+                height: image.Height,
+                colorType: this.pngColorType,
+                bitDepth: this.bitDepth,
+                filterMethod: 0, // None
+                compressionMethod: 0,
+                interlaceMethod: 0);
 
-            //this.WriteHeaderChunk(stream, header);
+            this.WriteHeaderChunk(stream, header);
 
-            //// Collect the indexed pixel data
+            // Collect the indexed pixel data
             //if (quantized != null)
             //{
             //    this.WritePaletteChunk(stream, header, quantized);
             //}
 
-            //this.WritePhysicalChunk(stream, image);
-            //this.WriteGammaChunk(stream);
-            //this.WriteDataChunks(image.Frames.RootFrame, stream);
-            //this.WriteEndChunk(stream);
-            //stream.Flush();
+            this.WritePhysicalChunk(stream, image);
+            this.WriteGammaChunk(stream);
+            this.WriteDataChunks(image, stream);
+            this.WriteEndChunk(stream);
+            stream.Flush();
         }
 
         /// <inheritdoc />
@@ -241,31 +242,30 @@ namespace Geb.Image.Formats.Png
         /// <param name="rowSpan">The image row span.</param>
         private void CollectGrayscaleBytes(ReadOnlySpan<Bgra32> rowSpan)
         {
-            //byte[] rawScanlineArray = this.rawScanline.Array;
-            //var rgba = default(Rgba32);
+            byte[] rawScanlineArray = this.rawScanline.Array;
 
-            //// Copy the pixels across from the image.
-            //// Reuse the chunk type buffer.
-            //for (int x = 0; x < this.width; x++)
-            //{
-            //    // Convert the color to YCbCr and store the luminance
-            //    // Optionally store the original color alpha.
-            //    int offset = x * this.bytesPerPixel;
-            //    rowSpan[x].ToRgba32(ref rgba);
-            //    byte luminance = (byte)((0.299F * rgba.R) + (0.587F * rgba.G) + (0.114F * rgba.B));
+            // Copy the pixels across from the image.
+            // Reuse the chunk type buffer.
+            for (int x = 0; x < this.width; x++)
+            {
+                // Convert the color to YCbCr and store the luminance
+                // Optionally store the original color alpha.
+                int offset = x * this.bytesPerPixel;
+                Bgra32 bgra = rowSpan[x];
+                byte luminance = (byte)((0.299F * bgra.Red) + (0.587F * bgra.Green) + (0.114F * bgra.Blue));
 
-            //    for (int i = 0; i < this.bytesPerPixel; i++)
-            //    {
-            //        if (i == 0)
-            //        {
-            //            rawScanlineArray[offset] = luminance;
-            //        }
-            //        else
-            //        {
-            //            rawScanlineArray[offset + i] = rgba.A;
-            //        }
-            //    }
-            //}
+                for (int i = 0; i < this.bytesPerPixel; i++)
+                {
+                    if (i == 0)
+                    {
+                        rawScanlineArray[offset] = luminance;
+                    }
+                    else
+                    {
+                        rawScanlineArray[offset + i] = bgra.Alpha;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -273,16 +273,16 @@ namespace Geb.Image.Formats.Png
         /// </summary>
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="rowSpan">The row span.</param>
-        private void CollectTPixelBytes<TPixel>(ReadOnlySpan<TPixel> rowSpan)
+        private void CollectTPixelBytes(ReadOnlySpan<Bgra32> rowSpan)
         {
-            //if (this.bytesPerPixel == 4)
-            //{
-            //    PixelOperations<TPixel>.Instance.ToRgba32Bytes(rowSpan, this.rawScanline.Span, this.width);
-            //}
-            //else
-            //{
-            //    PixelOperations<TPixel>.Instance.ToRgb24Bytes(rowSpan, this.rawScanline.Span, this.width);
-            //}
+            if (this.bytesPerPixel == 4)
+            {
+                rowSpan.ToRgba32Bytes(rawScanline.Span, this.width);
+            }
+            else
+            {
+                rowSpan.ToRgb24Bytes(rawScanline.Span, this.width);
+            }
         }
 
         /// <summary>
@@ -293,48 +293,48 @@ namespace Geb.Image.Formats.Png
         /// <param name="rowSpan">The row span.</param>
         /// <param name="row">The row.</param>
         /// <returns>The <see cref="IManagedByteBuffer"/></returns>
-        private IManagedByteBuffer EncodePixelRow<TPixel>(ReadOnlySpan<TPixel> rowSpan, int row)
+        private IManagedByteBuffer EncodePixelRow(ReadOnlySpan<Bgra32> rowSpan, int row)
         {
-            //switch (this.pngColorType)
-            //{
-            //    case PngColorType.Palette:
-            //        // TODO: Use Span copy!
-            //        Buffer.BlockCopy(this.palettePixelData, row * this.rawScanline.Length(), this.rawScanline.Array, 0, this.rawScanline.Length());
-            //        break;
-            //    case PngColorType.Grayscale:
-            //    case PngColorType.GrayscaleWithAlpha:
-            //        this.CollectGrayscaleBytes(rowSpan);
-            //        break;
-            //    default:
-            //        this.CollectTPixelBytes(rowSpan);
-            //        break;
-            //}
+            switch (this.pngColorType)
+            {
+                case PngColorType.Palette:
+                    // TODO: Use Span copy!
+                    Buffer.BlockCopy(this.palettePixelData, row * this.rawScanline.Length(), this.rawScanline.Array, 0, this.rawScanline.Length());
+                    break;
+                case PngColorType.Grayscale:
+                case PngColorType.GrayscaleWithAlpha:
+                    this.CollectGrayscaleBytes(rowSpan);
+                    break;
+                default:
+                    this.CollectTPixelBytes(rowSpan);
+                    break;
+            }
 
-            //switch (this.pngFilterMethod)
-            //{
-            //    case PngFilterMethod.None:
-            //        NoneFilter.Encode(this.rawScanline.Span, this.result.Span);
-            //        return this.result;
+            switch (this.pngFilterMethod)
+            {
+                case PngFilterMethod.None:
+                    NoneFilter.Encode(this.rawScanline.Span, this.result.Span);
+                    return this.result;
 
-            //    case PngFilterMethod.Sub:
-            //        SubFilter.Encode(this.rawScanline.Span, this.sub.Span, this.bytesPerPixel, out int _);
-            //        return this.sub;
+                case PngFilterMethod.Sub:
+                    SubFilter.Encode(this.rawScanline.Span, this.sub.Span, this.bytesPerPixel, out int _);
+                    return this.sub;
 
-            //    case PngFilterMethod.Up:
-            //        UpFilter.Encode(this.rawScanline.Span, this.previousScanline.Span, this.up.Span, out int _);
-            //        return this.up;
+                case PngFilterMethod.Up:
+                    UpFilter.Encode(this.rawScanline.Span, this.previousScanline.Span, this.up.Span, out int _);
+                    return this.up;
 
-            //    case PngFilterMethod.Average:
-            //        AverageFilter.Encode(this.rawScanline.Span, this.previousScanline.Span, this.average.Span, this.bytesPerPixel, out int _);
-            //        return this.average;
+                case PngFilterMethod.Average:
+                    AverageFilter.Encode(this.rawScanline.Span, this.previousScanline.Span, this.average.Span, this.bytesPerPixel, out int _);
+                    return this.average;
 
-            //    case PngFilterMethod.Paeth:
-            //        PaethFilter.Encode(this.rawScanline.Span, this.previousScanline.Span, this.paeth.Span, this.bytesPerPixel, out int _);
-            //        return this.paeth;
+                case PngFilterMethod.Paeth:
+                    PaethFilter.Encode(this.rawScanline.Span, this.previousScanline.Span, this.paeth.Span, this.bytesPerPixel, out int _);
+                    return this.paeth;
 
-            //    default:
-            //        return this.GetOptimalFilteredScanline();
-            //}
+                default:
+                    return this.GetOptimalFilteredScanline();
+            }
 
             return this.GetOptimalFilteredScanline();
         }
@@ -436,21 +436,22 @@ namespace Geb.Image.Formats.Png
             this.WriteChunk(stream, PngChunkType.Header, this.chunkDataBuffer, 0, 13);
         }
 
-        ///// <summary>
-        ///// Writes the palette chunk to the stream.
-        ///// </summary>
-        ///// <typeparam name="TPixel">The pixel format.</typeparam>
-        ///// <param name="stream">The <see cref="Stream"/> containing image data.</param>
-        ///// <param name="header">The <see cref="PngHeader"/>.</param>
-        ///// <param name="quantized">The quantized frame.</param>
+        /// <summary>
+        /// Writes the palette chunk to the stream.
+        /// </summary>
+        /// <typeparam name="TPixel">The pixel format.</typeparam>
+        /// <param name="stream">The <see cref="Stream"/> containing image data.</param>
+        /// <param name="header">The <see cref="PngHeader"/>.</param>
+        /// <param name="quantized">The quantized frame.</param>
         //private void WritePaletteChunk(Stream stream, in PngHeader header, QuantizedFrame<TPixel> quantized)
         //{
-        //    // Grab the palette and write it to the stream.
-        //    TPixel[] palette = quantized.Palette;
+        //    Grab the palette and write it to the stream.
+        //   TPixel[] palette = quantized.Palette;
         //    byte pixelCount = palette.Length.ToByte();
 
-        //    // Get max colors for bit depth.
-        //    int colorTableLength = (int)Math.Pow(2, header.BitDepth) * 3;
+        //    Get max colors for bit depth.
+
+        //   int colorTableLength = (int)Math.Pow(2, header.BitDepth) * 3;
         //    Rgba32 rgba = default;
         //    bool anyAlpha = false;
 
@@ -485,7 +486,7 @@ namespace Geb.Image.Formats.Png
 
         //        this.WriteChunk(stream, PngChunkType.Palette, colorTable.Array, 0, colorTableLength);
 
-        //        // Write the transparency data
+        //        Write the transparency data
         //        if (anyAlpha)
         //        {
         //            this.WriteChunk(stream, PngChunkType.PaletteAlpha, alphaTable.Array, 0, pixelCount);
@@ -541,63 +542,63 @@ namespace Geb.Image.Formats.Png
         /// <param name="stream">The stream.</param>
         private void WriteDataChunks(ImageBgra32 pixels, Stream stream)
         {
-            //this.bytesPerScanline = this.width * this.bytesPerPixel;
-            //int resultLength = this.bytesPerScanline + 1;
+            this.bytesPerScanline = this.width * this.bytesPerPixel;
+            int resultLength = this.bytesPerScanline + 1;
 
-            //this.previousScanline = this.memoryManager.AllocateCleanManagedByteBuffer(this.bytesPerScanline);
-            //this.rawScanline = this.memoryManager.AllocateCleanManagedByteBuffer(this.bytesPerScanline);
-            //this.result = this.memoryManager.AllocateCleanManagedByteBuffer(resultLength);
+            this.previousScanline = this.memoryManager.AllocateCleanManagedByteBuffer(this.bytesPerScanline);
+            this.rawScanline = this.memoryManager.AllocateCleanManagedByteBuffer(this.bytesPerScanline);
+            this.result = this.memoryManager.AllocateCleanManagedByteBuffer(resultLength);
 
-            //if (this.pngColorType != PngColorType.Palette)
-            //{
-            //    this.sub = this.memoryManager.AllocateCleanManagedByteBuffer(resultLength);
-            //    this.up = this.memoryManager.AllocateCleanManagedByteBuffer(resultLength);
-            //    this.average = this.memoryManager.AllocateCleanManagedByteBuffer(resultLength);
-            //    this.paeth = this.memoryManager.AllocateCleanManagedByteBuffer(resultLength);
-            //}
+            if (this.pngColorType != PngColorType.Palette)
+            {
+                this.sub = this.memoryManager.AllocateCleanManagedByteBuffer(resultLength);
+                this.up = this.memoryManager.AllocateCleanManagedByteBuffer(resultLength);
+                this.average = this.memoryManager.AllocateCleanManagedByteBuffer(resultLength);
+                this.paeth = this.memoryManager.AllocateCleanManagedByteBuffer(resultLength);
+            }
 
-            //byte[] buffer;
-            //int bufferLength;
+            byte[] buffer;
+            int bufferLength;
 
-            //using (var memoryStream = new MemoryStream())
-            //{
-            //    using (var deflateStream = new ZlibDeflateStream(memoryStream, this.compressionLevel))
-            //    {
-            //        for (int y = 0; y < this.height; y++)
-            //        {
-            //            IManagedByteBuffer r = this.EncodePixelRow((ReadOnlySpan<TPixel>)pixels.GetPixelRowSpan(y), y);
-            //            deflateStream.Write(r.Array, 0, resultLength);
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var deflateStream = new ZlibDeflateStream(memoryStream, this.compressionLevel))
+                {
+                    for (int y = 0; y < this.height; y++)
+                    {
+                        IManagedByteBuffer r = this.EncodePixelRow(pixels.GetPixelRowReadOnlySpan(y), y);
+                        deflateStream.Write(r.Array, 0, resultLength);
 
-            //            IManagedByteBuffer temp = this.rawScanline;
-            //            this.rawScanline = this.previousScanline;
-            //            this.previousScanline = temp;
-            //        }
-            //    }
+                        IManagedByteBuffer temp = this.rawScanline;
+                        this.rawScanline = this.previousScanline;
+                        this.previousScanline = temp;
+                    }
+                }
 
-            //    buffer = memoryStream.ToArray();
-            //    bufferLength = buffer.Length;
-            //}
+                buffer = memoryStream.ToArray();
+                bufferLength = buffer.Length;
+            }
 
-            //// Store the chunks in repeated 64k blocks.
-            //// This reduces the memory load for decoding the image for many decoders.
-            //int numChunks = bufferLength / MaxBlockSize;
+            // Store the chunks in repeated 64k blocks.
+            // This reduces the memory load for decoding the image for many decoders.
+            int numChunks = bufferLength / MaxBlockSize;
 
-            //if (bufferLength % MaxBlockSize != 0)
-            //{
-            //    numChunks++;
-            //}
+            if (bufferLength % MaxBlockSize != 0)
+            {
+                numChunks++;
+            }
 
-            //for (int i = 0; i < numChunks; i++)
-            //{
-            //    int length = bufferLength - (i * MaxBlockSize);
+            for (int i = 0; i < numChunks; i++)
+            {
+                int length = bufferLength - (i * MaxBlockSize);
 
-            //    if (length > MaxBlockSize)
-            //    {
-            //        length = MaxBlockSize;
-            //    }
+                if (length > MaxBlockSize)
+                {
+                    length = MaxBlockSize;
+                }
 
-            //    this.WriteChunk(stream, PngChunkType.Data, buffer, i * MaxBlockSize, length);
-            //}
+                this.WriteChunk(stream, PngChunkType.Data, buffer, i * MaxBlockSize, length);
+            }
         }
 
         /// <summary>

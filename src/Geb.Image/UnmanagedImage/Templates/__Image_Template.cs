@@ -42,7 +42,7 @@ namespace Geb.Image.Hidden
 
         private PixelFormat GetOutputBitmapPixelFormat()
         {
-            return PixelFormat.Format8bppIndexed;
+            return PixelFormat.Format8bpp;
         }
 
         #region mixin

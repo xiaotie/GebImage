@@ -48,9 +48,8 @@ namespace Geb.Image.Formats.Png
         /// <returns>The decoded image.</returns>
         public ImageBgra32 Decode(Configuration configuration, Stream stream)
         {
-            //var decoder = new PngDecoderCore(configuration, this);
-            //return decoder.Decode<TPixel>(stream);
-            throw new NotImplementedException();
+            var decoder = new PngDecoderCore(configuration, this);
+            return decoder.Decode(stream);
         }
 
         /// <inheritdoc/>

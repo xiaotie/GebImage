@@ -324,7 +324,7 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToRgb24(Lab24* from, Bgr24* to, int length=1)
+        public static unsafe void ToBgr24(Lab24* from, Bgr24* to, int length=1)
         {
             if (length < 1) return;
 
@@ -371,7 +371,7 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToRgb24(Bgra32* from, Bgr24* to, int length = 1)
+        public static unsafe void ToBgr24(Bgra32* from, Bgr24* to, int length = 1)
         {
             if (length < 1) return;
             Bgra32* end = from + length;
@@ -383,7 +383,7 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToRgb24(byte* from, Bgr24* to, int length = 1)
+        public static unsafe void ToBgr24(byte* from, Bgr24* to, int length = 1)
         {
             if (length < 1) return;
 
@@ -399,7 +399,7 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToArgb32(Bgr24* from, Bgra32* to, int length = 1)
+        public static unsafe void ToBgra32(Bgr24* from, Bgra32* to, int length = 1)
         {
             if (length < 1) return;
             
