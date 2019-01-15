@@ -57,11 +57,9 @@ namespace Geb.Image
             new Formats.Bmp.BmpEncoder().Encode(this, imagePath);
         }
 
-        public void SaveJpeg(String imagePath,int quality = 70)
+        public void SaveJpeg(String imagePath,int quality = 70, Formats.Jpeg.JpegPixelFormats fmt = Formats.Jpeg.JpegPixelFormats.YCbCr)
         {
-            var encoder = new Formats.Jpeg.JpegEncoder();
-            encoder.Quality = quality;
-            encoder.Encode(this, imagePath);
+            Formats.Jpeg.JpegEncoder.Encode(this, imagePath, quality, fmt);
         }
 
         public void SavePng(String imagePath, Formats.Png.PngEncoderOptions options = null)
@@ -73,9 +71,7 @@ namespace Geb.Image
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                var encoder = new Formats.Jpeg.JpegEncoder();
-                encoder.Quality = quality;
-                encoder.Encode(this, ms);
+                Formats.Jpeg.JpegEncoder.Encode(this, ms,quality);
                 return ms.ToArray();
             }
         }
@@ -157,7 +153,7 @@ namespace Geb.Image
                 int* gCache = stackalloc int[256];
                 int* rCache = stackalloc int[256];
 
-                const int shift = 1 << 10;
+                const int shift = 1 << 12;
                 int rShift = (int)(rCoeff * shift);
                 int gShift = (int)(gCoeff * shift);
                 int bShift = shift - rShift - gShift;
@@ -175,7 +171,7 @@ namespace Geb.Image
 
                 while (p != end)
                 {
-                    *to = (Byte)((bCache[p->Red] + gCache[p->Green] + rCache[p->Red]) >> 10);
+                    *to = (Byte)((bCache[p->Blue] + gCache[p->Green] + rCache[p->Red]) >> 12);
 
                     p++;
                     to++;

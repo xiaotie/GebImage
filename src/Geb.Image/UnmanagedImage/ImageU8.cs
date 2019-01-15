@@ -125,11 +125,6 @@ namespace Geb.Image
             return img;
         }
 
-        public void SavePng(String imagePath, Formats.Png.PngEncoderOptions options = null)
-        {
-            Formats.Png.PngEncoder.Encode(this, imagePath, options);
-        }
-
         public unsafe ImageBgr24 ToImageBgr24()
         {
             ImageBgr24 img = new ImageBgr24(this.Width, this.Height);
@@ -146,6 +141,11 @@ namespace Geb.Image
                 to++;
             }
             return img;
+        }
+
+        public void SavePng(String imagePath, Formats.Png.PngEncoderOptions options = null)
+        {
+            Formats.Png.PngEncoder.Encode(this, imagePath, options);
         }
 
         /// <summary>

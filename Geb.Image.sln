@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.WinEx", "src\Geb.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.WinEx.Demo", "src\Geb.Image.WinEx.Demo\Geb.Image.WinEx.Demo.csproj", "{8136D9F1-DE02-4175-B69C-FBAD0768925B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.OpenCVEx", "src\Geb.Image.OpenCVEx\Geb.Image.OpenCVEx.csproj", "{7425BCCB-F886-40B9-9017-1E032A9A52FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.OpenCVEx", "src\Geb.Image.OpenCVEx\Geb.Image.OpenCVEx.csproj", "{7425BCCB-F886-40B9-9017-1E032A9A52FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

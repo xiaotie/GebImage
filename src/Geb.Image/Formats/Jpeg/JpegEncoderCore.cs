@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 using Geb.Image.Formats.Jpeg.Components;
@@ -69,6 +69,24 @@ namespace Geb.Image.Formats.Jpeg
                 // Ah + Ah (Successive approximation bit position high + low)
             };
 
+        private static readonly byte[] SosHeaderGray =
+        {
+                JpegConstants.Markers.XFF, JpegConstants.Markers.SOS,
+
+                // Marker
+                0x00, 0x0c,
+
+                // Length (high byte, low byte), must be 6 + 2 * (number of components in scan)
+                0x01, // Number of components in a scan, 3
+                0x01, // Component Id Y
+                0x00, // DC/AC Huffman table
+                0x00, // Ss - Start of spectral selection.
+                0x3f, // Se - End of spectral selection.
+                0x00
+
+                // Ah + Ah (Successive approximation bit position high + low)
+            };
+
         /// <summary>
         /// The unscaled quantization tables in zig-zag order. Each
         /// encoder copies and scales the tables according to its quality parameter.
@@ -121,6 +139,8 @@ namespace Geb.Image.Formats.Jpeg
         /// </summary>
         private readonly int quality;
 
+        private readonly JpegPixelFormats jpegPixelFormat;
+
         /// <summary>
         /// Gets or sets the subsampling method to use.
         /// </summary>
@@ -155,12 +175,13 @@ namespace Geb.Image.Formats.Jpeg
         /// Initializes a new instance of the <see cref="JpegEncoderCore"/> class.
         /// </summary>
         /// <param name="options">The options</param>
-        public JpegEncoderCore(IJpegEncoderOptions options)
+        public JpegEncoderCore(int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr, bool ignoreMetadata = true)
         {
             // System.Drawing produces identical output for jpegs with a quality parameter of 0 and 1.
-            this.quality = options.Quality.Clamp(1, 100);
-            this.subsample = options.Subsample ?? (this.quality >= 91 ? JpegSubsample.Ratio444 : JpegSubsample.Ratio420);
-            this.ignoreMetadata = options.IgnoreMetadata;
+            this.quality = quality.Clamp(1, 100);
+            this.subsample = this.quality >= 91 ? JpegSubsample.Ratio444 : JpegSubsample.Ratio420;
+            this.ignoreMetadata = ignoreMetadata;
+            this.jpegPixelFormat = fmt;
         }
 
         private static int HorizontalResolution = 72;
@@ -171,16 +192,21 @@ namespace Geb.Image.Formats.Jpeg
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The image to write from.</param>
         /// <param name="stream">The stream to write to.</param>
-        public void Encode(ImageBgra32 image, Stream stream)
+        public void Encode(IImage image, Stream stream)
         {
-            Guard.NotNull(image, nameof(image));
-            Guard.NotNull(stream, nameof(stream));
-
             ushort max = JpegConstants.MaxLength;
             if (image.Width >= max || image.Height >= max)
             {
                 throw new ImageFormatException($"Image is too large to encode at {image.Width}x{image.Height}.");
             }
+
+            ImageConverter converter = null;
+            if (image is ImageBgra32)
+                converter = new ImageBgra32Converter((ImageBgra32)image);
+            else if(image is ImageU8)
+                converter = new ImageU8Converter((ImageU8)image);
+            else
+                throw new ImageFormatException("Only ImageBgra32 and ImageU8 supported.");
 
             this.outputStream = stream;
 
@@ -200,7 +226,7 @@ namespace Geb.Image.Formats.Jpeg
             InitQuantizationTable(1, scale, ref this.chrominanceQuantTable);
 
             // Compute number of components based on input image type.
-            int componentCount = 3;
+            int componentCount = this.jpegPixelFormat == JpegPixelFormats.Gray ? 1 : 3;
 
             // Write the Start Of Image marker.
             this.WriteApplicationHeader((short)HorizontalResolution, (short)HorizontalResolution);
@@ -218,7 +244,7 @@ namespace Geb.Image.Formats.Jpeg
             this.WriteDefineHuffmanTables(componentCount);
 
             // Write the image data.
-            this.WriteStartOfScan(image);
+            this.WriteStartOfScan(converter);
 
             // Write the End Of Image marker.
             this.buffer[0] = JpegConstants.Markers.XFF;
@@ -387,6 +413,10 @@ namespace Geb.Image.Formats.Jpeg
                 {
                     pixelConverter.Convert(pixels, x, y);
 
+                    long len = this.outputStream.Length;
+                    long delta = 0;
+
+
                     prevDCY = this.WriteBlock(
                         QuantIndex.Luminance,
                         prevDCY,
@@ -395,6 +425,7 @@ namespace Geb.Image.Formats.Jpeg
                         &temp2,
                         &onStackLuminanceQuantTable,
                         unzig.Data);
+
                     prevDCCb = this.WriteBlock(
                         QuantIndex.Chrominance,
                         prevDCCb,
@@ -403,6 +434,7 @@ namespace Geb.Image.Formats.Jpeg
                         &temp2,
                         &onStackChrominanceQuantTable,
                         unzig.Data);
+
                     prevDCCr = this.WriteBlock(
                         QuantIndex.Chrominance,
                         prevDCCr,
@@ -782,20 +814,63 @@ namespace Geb.Image.Formats.Jpeg
         /// </summary>
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The pixel accessor providing access to the image pixels.</param>
-        private void WriteStartOfScan(ImageBgra32 image)
+        private void WriteStartOfScan(ImageConverter image)
         {
-            this.outputStream.Write(SosHeaderYCbCr, 0, SosHeaderYCbCr.Length);
-            switch (this.subsample)
+            if(this.jpegPixelFormat == JpegPixelFormats.YCbCr)
+                this.outputStream.Write(SosHeaderYCbCr, 0, SosHeaderYCbCr.Length);
+            else
+                this.outputStream.Write(SosHeaderGray, 0, SosHeaderGray.Length);
+
+            if(this.jpegPixelFormat == JpegPixelFormats.YCbCr)
             {
-                case JpegSubsample.Ratio444:
-                    this.Encode444(image);
-                    break;
-                case JpegSubsample.Ratio420:
-                    this.Encode420(image);
-                    break;
+                ImageBgra32 imageBgra32 = image.GetImageBgra32();
+                switch (this.subsample)
+                {
+                    case JpegSubsample.Ratio444:
+                        this.Encode444(imageBgra32);
+                        break;
+                    case JpegSubsample.Ratio420:
+                        this.Encode420(imageBgra32);
+                        break;
+                }
             }
+            else
+            {
+                ImageU8 imageGray = image.GetImageU8();
+                this.EncodeGray(imageGray);
+            }
+
+            image.Release();
+
             // Pad the last byte with 1's.
             this.Emit(0x7f, 7);
+        }
+
+        private unsafe void EncodeGray(ImageU8 pixels)
+        {
+            Block8x8F temp1 = default;
+            Block8x8F temp2 = default;
+
+            Block8x8F onStackLuminanceQuantTable = this.luminanceQuantTable;
+            var unzig = ZigZag.CreateUnzigTable();
+            GrayForwardConverter pixelConverter = GrayForwardConverter.Create();
+
+            int prevDCY = 0;
+            for (int y = 0; y < pixels.Height; y += 8)
+            {
+                for (int x = 0; x < pixels.Width; x += 8)
+                {
+                    pixelConverter.Convert(pixels, x, y);
+                    prevDCY = this.WriteBlock(
+                        QuantIndex.Luminance,
+                        prevDCY,
+                        &pixelConverter.Y,
+                        &temp1,
+                        &temp2,
+                        &onStackLuminanceQuantTable,
+                        unzig.Data);
+                }
+            }
         }
 
         /// <summary>

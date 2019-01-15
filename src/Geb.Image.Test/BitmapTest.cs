@@ -47,17 +47,35 @@ namespace Geb.Image.Test
             string path = @"./img/demo-bmp-big-01.bmp";
             var decoder = new Formats.Bmp.BmpDecoder();
             var image = decoder.Decode(path);
-            Assert.AreEqual(true, SaveJpeg(image, 5));
-            Assert.AreEqual(true, SaveJpeg(image, 30));
-            Assert.AreEqual(true, SaveJpeg(image, 60));
-            Assert.AreEqual(true, SaveJpeg(image, 90));
+            //Assert.AreEqual(true, SaveJpeg(image, 5));
+            //Assert.AreEqual(true, SaveJpeg(image, 30));
+            //Assert.AreEqual(true, SaveJpeg(image, 60));
             Assert.AreEqual(true, SaveJpeg(image, 95));
+            //Assert.AreEqual(true, SaveJpeg(image, 95));
 
-            string jpeg = GetTempJpegFilePath(95);
+            //string jpeg = GetTempJpegFilePath(95);
+            //Formats.Jpeg.JpegDecoder jpegDecoder = new Formats.Jpeg.JpegDecoder();
+            //var img = jpegDecoder.Decode(jpeg);
+            //Assert.AreEqual(true, img.Width > 0);
+            //Assert.AreEqual(true, SaveJpeg(img, 50));
+        }
+
+        [TestMethod]
+        public void TestEncodeJpg8()
+        {
+            string path = @"./img/demo-bmp-big-01.bmp";
+            var decoder = new Formats.Bmp.BmpDecoder();
+            var image = decoder.Decode(path);
+            //Assert.AreEqual(true, SaveJpeg8(image, 30));
+            Assert.AreEqual(true, SaveJpeg8(image, 95));
+            string path2 = GetTempJpegFilePath(95, true);
             Formats.Jpeg.JpegDecoder jpegDecoder = new Formats.Jpeg.JpegDecoder();
-            var img = jpegDecoder.Decode(jpeg);
+            var img = jpegDecoder.Decode(path2);
+
+            int v1 = image[20, 20].ToGray();
+            int v2 = img[20, 20].ToGray();
+            System.Console.WriteLine(v1 - v2);
             Assert.AreEqual(true, img.Width > 0);
-            Assert.AreEqual(true, SaveJpeg(img, 50));
         }
 
         [TestMethod]
@@ -114,9 +132,21 @@ namespace Geb.Image.Test
             return true;
         }
 
-        protected string GetTempJpegFilePath(int quality)
+        protected bool SaveJpeg8(ImageBgra32 image, int quality)
         {
-            return GetTempFilePath("TestEncodeJpg_" + quality + ".jpg");
+            string path = GetTempJpegFilePath(quality, true);
+            if (File.Exists(path) == true) File.Delete(path);
+            image.SaveJpeg(path, quality, Formats.Jpeg.JpegPixelFormats.Gray);
+            if (File.Exists(path) == false) return false;
+            var bytes = File.ReadAllBytes(path);
+            if (bytes.Length == 0) return false;
+            return true;
+        }
+
+        protected string GetTempJpegFilePath(int quality, bool isJpeg8 = false)
+        {
+            string tail = isJpeg8 ? "_8" : "";
+            return GetTempFilePath("TestEncodeJpg_" + quality + tail + ".jpg");
         }
     }
 }
