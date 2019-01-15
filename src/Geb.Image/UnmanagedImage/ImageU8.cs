@@ -143,10 +143,28 @@ namespace Geb.Image
             return img;
         }
 
+        #region 转换为编码图像
+
+        public void SaveJpeg(String imagePath, int quality = 70, Formats.Jpeg.JpegPixelFormats fmt = Formats.Jpeg.JpegPixelFormats.YCbCr)
+        {
+            Formats.Jpeg.JpegEncoder.Encode(this, imagePath, quality, fmt);
+        }
+
+        public Byte[] ToJpegData(int quality = 70, Formats.Jpeg.JpegPixelFormats fmt = Formats.Jpeg.JpegPixelFormats.YCbCr)
+        {
+            return Formats.Jpeg.JpegEncoder.Encode(this, quality, fmt);
+        }
+
         public void SavePng(String imagePath, Formats.Png.PngEncoderOptions options = null)
         {
             Formats.Png.PngEncoder.Encode(this, imagePath, options);
         }
+
+        public Byte[] ToPngData(Formats.Png.PngEncoderOptions options = null)
+        {
+            return Formats.Png.PngEncoder.Encode(this, options);
+        }
+        #endregion
 
         /// <summary>
         /// 计算八联结的联结数，计算公式为：

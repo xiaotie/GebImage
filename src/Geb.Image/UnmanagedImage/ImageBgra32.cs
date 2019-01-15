@@ -44,14 +44,10 @@ namespace Geb.Image
         {
             UnmanagedImageConverter.Copy(src, dst, width * 4);
         }
-        
+
         #endregion
 
-        public ImageU8 ToGrayscaleImage()
-        {
-            return ToGrayscaleImage(0.299, 0.587, 0.114);
-        }
-
+        #region 转换为编码图像
         public void SaveBmp(String imagePath)
         {
             new Formats.Bmp.BmpEncoder().Encode(this, imagePath);
@@ -62,18 +58,25 @@ namespace Geb.Image
             Formats.Jpeg.JpegEncoder.Encode(this, imagePath, quality, fmt);
         }
 
+        public Byte[] ToJpegData(int quality = 70, Formats.Jpeg.JpegPixelFormats fmt = Formats.Jpeg.JpegPixelFormats.YCbCr)
+        {
+            return Formats.Jpeg.JpegEncoder.Encode(this, quality, fmt);
+        }
+
         public void SavePng(String imagePath, Formats.Png.PngEncoderOptions options = null)
         {
             Formats.Png.PngEncoder.Encode(this, imagePath, options);
         }
 
-        public Byte[] ToJpegData(int quality = 70)
+        public Byte[] ToPngData(Formats.Png.PngEncoderOptions options = null)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                Formats.Jpeg.JpegEncoder.Encode(this, ms,quality);
-                return ms.ToArray();
-            }
+            return Formats.Png.PngEncoder.Encode(this, options);
+        }
+        #endregion
+
+        public ImageU8 ToGrayscaleImage()
+        {
+            return ToGrayscaleImage(0.299, 0.587, 0.114);
         }
 
         public ImageU8 ToGrayscaleImage(byte transparentColor)

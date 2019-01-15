@@ -100,5 +100,14 @@ namespace Geb.Image.Formats.Png
                 return ms.ToArray();
             }
         }
+
+        public static byte[] Encode(ImageU8 image, PngEncoderOptions options = null)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                Encode(image, ms, options);
+                return ms.ToArray();
+            }
+        }
     }
 }
