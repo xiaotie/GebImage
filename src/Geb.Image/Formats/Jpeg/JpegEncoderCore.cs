@@ -413,10 +413,6 @@ namespace Geb.Image.Formats.Jpeg
                 {
                     pixelConverter.Convert(pixels, x, y);
 
-                    long len = this.outputStream.Length;
-                    long delta = 0;
-
-
                     prevDCY = this.WriteBlock(
                         QuantIndex.Luminance,
                         prevDCY,
