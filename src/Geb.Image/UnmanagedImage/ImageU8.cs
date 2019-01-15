@@ -157,12 +157,12 @@ namespace Geb.Image
 
         public void SavePng(String imagePath, Formats.Png.PngEncoderOptions options = null)
         {
-            Formats.Png.PngEncoder.Encode(this, imagePath, options);
+            Formats.Png.PngEncoder.Encode(this, imagePath, options ?? Formats.Png.PngEncoderOptions.Png8);
         }
 
         public Byte[] ToPngData(Formats.Png.PngEncoderOptions options = null)
         {
-            return Formats.Png.PngEncoder.Encode(this, options);
+            return Formats.Png.PngEncoder.Encode(this, options ?? Formats.Png.PngEncoderOptions.Png8);
         }
         #endregion
 
