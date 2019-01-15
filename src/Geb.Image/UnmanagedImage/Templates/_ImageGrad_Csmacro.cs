@@ -215,6 +215,8 @@ namespace Geb.Image
         /// </summary>
         public Int32 Height { get; protected set; }
 
+        public Size Size => new Size(Width, Height);
+
         public Int32 Cols {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get { return Width;}

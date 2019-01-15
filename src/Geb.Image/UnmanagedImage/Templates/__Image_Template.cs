@@ -1,4 +1,4 @@
-﻿/*************************************************************************
+/*************************************************************************
  *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
@@ -71,6 +71,8 @@ namespace Geb.Image.Hidden
         /// 图像的高（像素）
         /// </summary>
         public Int32 Height { get; protected set; }
+
+        public Size Size => new Size(Width, Height);
 
         public Int32 Cols {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
