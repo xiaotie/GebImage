@@ -1,4 +1,4 @@
-﻿/*************************************************************************
+/*************************************************************************
  *  Copyright (c) 2012 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
@@ -9,9 +9,11 @@ using System.Drawing;
 
 namespace Geb.Image
 {
-    public partial class ImageFloat : IDisposable
+    public partial class ImageFloat : IImage, IDisposable
     {
         public const int ChannelCount = 1;
+
+        public int BytesPerPixel { get; } = 4;
 
         #region Image <-> Bitmap 所需的方法
 

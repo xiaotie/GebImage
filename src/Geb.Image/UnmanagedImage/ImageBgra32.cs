@@ -1,4 +1,4 @@
-﻿/*************************************************************************
+/*************************************************************************
  *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
@@ -12,9 +12,11 @@ using System.IO;
 
 namespace Geb.Image
 {
-    public partial class ImageBgra32 : IDisposable
+    public partial class ImageBgra32 : IImage, IDisposable
     {
         public const int ChannelCount = 4;
+
+        public int BytesPerPixel { get; } = 4;
 
         #region Image <-> Bitmap 所需的方法
 
@@ -62,10 +64,20 @@ namespace Geb.Image
             encoder.Encode(this, imagePath);
         }
 
-        public void SavePng(String imagePath)
+        public void SavePng(String imagePath, Formats.Png.PngEncoderOptions options = null)
         {
-            var encoder = new Formats.Png.PngEncoder();
-            encoder.Encode(this, imagePath);
+            Formats.Png.PngEncoder.Encode(this, imagePath, options);
+        }
+
+        public Byte[] ToJpegData(int quality = 70)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                var encoder = new Formats.Jpeg.JpegEncoder();
+                encoder.Quality = quality;
+                encoder.Encode(this, ms);
+                return ms.ToArray();
+            }
         }
 
         public ImageU8 ToGrayscaleImage(byte transparentColor)

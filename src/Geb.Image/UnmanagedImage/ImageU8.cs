@@ -1,4 +1,4 @@
-﻿/*************************************************************************
+/*************************************************************************
  *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
@@ -9,9 +9,11 @@ using System.Drawing;
 
 namespace Geb.Image
 {
-    public partial class ImageU8 : IDisposable
+    public partial class ImageU8 : IImage, IDisposable
     {
         public const int ChannelCount = 1;
+
+        public int BytesPerPixel { get; } = 1;
 
         #region Image <-> Bitmap 所需的方法
 
@@ -104,7 +106,7 @@ namespace Geb.Image
             return this;
         }
 
-        public unsafe ImageBgra32 ToImageArgb32()
+        public unsafe ImageBgra32 ToImageBgra32()
         {
             ImageBgra32 img = new ImageBgra32(this.Width, this.Height);
             Bgra32* p = img.Start;
@@ -123,7 +125,12 @@ namespace Geb.Image
             return img;
         }
 
-        public unsafe ImageBgr24 ToImageRgb24()
+        public void SavePng(String imagePath, Formats.Png.PngEncoderOptions options = null)
+        {
+            Formats.Png.PngEncoder.Encode(this, imagePath, options);
+        }
+
+        public unsafe ImageBgr24 ToImageBgr24()
         {
             ImageBgr24 img = new ImageBgr24(this.Width, this.Height);
             Bgr24* p = img.Start;

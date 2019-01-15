@@ -1,4 +1,4 @@
-﻿/*************************************************************************
+/*************************************************************************
  *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
@@ -66,9 +66,11 @@ namespace Geb.Image
         }
     }
 
-    public partial class ImageSBgra64 : IDisposable
+    public partial class ImageSBgra64 : IImage, IDisposable
     {
         public const int ChannelCount = 4;
+
+        public int BytesPerPixel { get; } = 8;
 
         #region 静态方法
 

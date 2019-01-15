@@ -184,4 +184,86 @@ namespace Geb.Image
             return "Rgba32 [A=" + Alpha + ", R=" + Red.ToString() + ", G=" + Green.ToString() + ", B=" + Blue.ToString() + "]";
         }
     }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public unsafe partial struct Rgb24
+    {
+        public static Rgb24 WHITE = new Rgb24 { Red = 255, Green = 255, Blue = 255};
+        public static Rgb24 BLACK = new Rgb24 {  };
+        public static Rgb24 RED = new Rgb24 { Red = 255};
+        public static Rgb24 BLUE = new Rgb24 { Blue = 255};
+        public static Rgb24 GREEN = new Rgb24 { Green = 255};
+        public static Rgb24 EMPTY = new Rgb24 { };
+
+        [FieldOffset(0)]
+        public Byte Red;
+        [FieldOffset(1)]
+        public Byte Green;
+        [FieldOffset(2)]
+        public Byte Blue;
+
+        public Rgb24(int red, int green, int blue)
+        {
+            Red = (byte)red;
+            Green = (byte)green;
+            Blue = (byte)blue;
+        }
+
+        public Rgb24(byte red, byte green, byte blue)
+        {
+            Red = red;
+            Green = green;
+            Blue = blue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void From(Bgr24* c)
+        {
+            this.Red = c->Red;
+            this.Green = c->Green;
+            this.Blue = c->Blue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void From(Bgr24 c)
+        {
+            this.Red = c.Red;
+            this.Green = c.Green;
+            this.Blue = c.Blue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void From(ref Bgr24 c)
+        {
+            this.Red = c.Red;
+            this.Green = c.Green;
+            this.Blue = c.Blue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void To(Bgr24* c)
+        {
+            c->Blue = this.Blue;
+            c->Green = this.Green;
+            c->Red = this.Red;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void To(ref Bgr24 c)
+        {
+            c.Blue = this.Blue;
+            c.Green = this.Green;
+            c.Red = this.Red;
+        }
+
+        public Byte ToGray()
+        {
+            return (Byte)(0.299 * Red + 0.587 * Green + 0.114 * Blue);
+        }
+
+        public override string ToString()
+        {
+            return "Rgb24 [R=" + Red.ToString() + ", G=" + Green.ToString() + ", B=" + Blue.ToString() + "]";
+        }
+    }
 }

@@ -1,4 +1,4 @@
-﻿/*************************************************************************
+/*************************************************************************
  *  Copyright (c) 2013 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
@@ -25,9 +25,11 @@ namespace Geb.Image
         }
     }
 
-    public partial class ImageHsl : IDisposable
+    public partial class ImageHsl : IImage, IDisposable
     {
         public const int ChannelCount = 3;
+
+        public int BytesPerPixel { get; } = 12;
 
         #region Image <-> Bitmap 所需的方法
 

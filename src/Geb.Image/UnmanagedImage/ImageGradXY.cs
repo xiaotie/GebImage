@@ -1,4 +1,4 @@
-﻿/*************************************************************************
+/*************************************************************************
  *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
@@ -27,9 +27,11 @@ namespace Geb.Image
     /// <summary>
     /// 2D梯度场图像
     /// </summary>
-    public partial class ImageGradXY : IDisposable
+    public partial class ImageGradXY : IImage, IDisposable
     {
         public const int ChannelCount = 2;
+
+        public int BytesPerPixel { get; } = 4;
 
         #region Image <-> Bitmap 所需的方法
 

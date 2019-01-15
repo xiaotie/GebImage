@@ -1,4 +1,4 @@
-﻿/*************************************************************************
+/*************************************************************************
  *  Copyright (c) 2010 Hu Fei(xiaotie@geblab.com; geblab, www.geblab.com)
  ************************************************************************/
 
@@ -20,9 +20,11 @@ namespace Geb.Image
         public float Theta;
     }
 
-    public partial class ImageGrad : IDisposable
+    public partial class ImageGrad : IImage, IDisposable
     {
         public const int ChannelCount = 2;
+
+        public int BytesPerPixel { get; } = 8;
 
         #region Image <-> Bitmap 所需的方法
 

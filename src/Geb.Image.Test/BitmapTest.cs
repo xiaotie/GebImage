@@ -67,13 +67,36 @@ namespace Geb.Image.Test
             var decoder = new Formats.Bmp.BmpDecoder();
             var image = decoder.Decode(path);
             Assert.AreEqual(true, SavePng(image));
+            Assert.AreEqual(true, SavePng8(image));
         }
 
-        protected bool SavePng(ImageBgra32 image)
+        [TestMethod]
+        public void TestDecodePng()
         {
-            string path = "TestEncodePng.png";
+            string path = @"./img/demo-bmp-big-01.bmp";
+            var decoder = new Formats.Bmp.BmpDecoder();
+            var image = decoder.Decode(path);
+            Assert.AreEqual(true, SavePng(image));
+            var pngDecoder = new Formats.Png.PngDecoder();
+            image = pngDecoder.Decode("TestEncodePng.png");
+            Assert.AreEqual(true, image.Length > 0);
+            Assert.AreEqual(true, SavePng(image, "TestEncodePng2.png"));
+        }
+
+        protected bool SavePng(ImageBgra32 image, string path = "TestEncodePng.png")
+        {
             if (File.Exists(path) == true) File.Delete(path);
             image.SavePng(path);
+            if (File.Exists(path) == false) return false;
+            var bytes = File.ReadAllBytes(path);
+            if (bytes.Length == 0) return false;
+            return true;
+        }
+
+        protected bool SavePng8(ImageBgra32 image, string path = "TestEncodePng8.png")
+        {
+            if (File.Exists(path) == true) File.Delete(path);
+            image.SavePng(path, Formats.Png.PngEncoderOptions.Png8);
             if (File.Exists(path) == false) return false;
             var bytes = File.ReadAllBytes(path);
             if (bytes.Length == 0) return false;

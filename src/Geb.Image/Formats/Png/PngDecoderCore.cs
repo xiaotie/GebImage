@@ -667,138 +667,120 @@ namespace Geb.Image.Formats.Png
             // Trim the first marker byte from the buffer
             ReadOnlySpan<byte> scanlineBuffer = defilteredScanline.Slice(1, defilteredScanline.Length - 1);
 
-            //switch (this.pngColorType)
-            //{
-            //    case PngColorType.Grayscale:
-            //        int factor = 255 / ((int)Math.Pow(2, this.header.BitDepth) - 1);
-            //        ReadOnlySpan<byte> newScanline1 = ToArrayByBitsLength(scanlineBuffer, this.bytesPerScanline, this.header.BitDepth);
+            switch (this.pngColorType)
+            {
+                case PngColorType.Grayscale:
+                    int factor = 255 / ((int)Math.Pow(2, this.header.BitDepth) - 1);
+                    ReadOnlySpan<byte> newScanline1 = ToArrayByBitsLength(scanlineBuffer, this.bytesPerScanline, this.header.BitDepth);
 
-            //        for (int x = 0; x < this.header.Width; x++)
-            //        {
-            //            byte intensity = (byte)(newScanline1[x] * factor);
-            //            if (this.hasTrans && intensity == this.intensityTrans)
-            //            {
-            //                color = new Bgra32(intensity, intensity, intensity, (byte)0);
-            //            }
-            //            else
-            //            {
-            //                color = new Bgra32(intensity, intensity, intensity, (byte)255);
-            //            }
+                    for (int x = 0; x < this.header.Width; x++)
+                    {
+                        byte intensity = (byte)(newScanline1[x] * factor);
+                        if (this.hasTrans && intensity == this.intensityTrans)
+                        {
+                            color = new Bgra32(intensity, intensity, intensity, (byte)0);
+                        }
+                        else
+                        {
+                            color = new Bgra32(intensity, intensity, intensity, (byte)255);
+                        }
 
-            //            rowSpan[x] = color;
-            //        }
+                        rowSpan[x] = color;
+                    }
 
-            //        break;
+                    break;
 
-            //    case PngColorType.GrayscaleWithAlpha:
+                case PngColorType.GrayscaleWithAlpha:
 
-            //        for (int x = 0; x < this.header.Width; x++)
-            //        {
-            //            int offset = x * this.bytesPerPixel;
+                    for (int x = 0; x < this.header.Width; x++)
+                    {
+                        int offset = x * this.bytesPerPixel;
 
-            //            byte intensity = scanlineBuffer[offset];
-            //            byte alpha = scanlineBuffer[offset + this.bytesPerSample];
-            //            color = new Bgra32(intensity, intensity, intensity, alpha);
-            //            rowSpan[x] = color;
-            //        }
+                        byte intensity = scanlineBuffer[offset];
+                        byte alpha = scanlineBuffer[offset + this.bytesPerSample];
+                        color = new Bgra32(intensity, intensity, intensity, alpha);
+                        rowSpan[x] = color;
+                    }
 
-            //        break;
+                    break;
 
-            //    case PngColorType.Palette:
+                case PngColorType.Palette:
 
-            //        this.ProcessScanlineFromPalette(scanlineBuffer, rowSpan);
+                    this.ProcessScanlineFromPalette(scanlineBuffer, rowSpan);
 
-            //        break;
+                    break;
 
-            //    case PngColorType.Rgb:
+                case PngColorType.Rgb:
 
-            //        if (!this.hasTrans)
-            //        {
-            //            if (this.header.BitDepth == 16)
-            //            {
-            //                int length = this.header.Width * 3;
-            //                using (IBuffer<byte> compressed = this.configuration.MemoryManager.Allocate<byte>(length))
-            //                {
-            //                    // TODO: Should we use pack from vector here instead?
-            //                    this.From16BitTo8Bit(scanlineBuffer, compressed.Span, length);
-            //                    PackFromRgb24Bytes(compressed.Span, rowSpan, this.header.Width);
-            //                }
-            //            }
-            //            else
-            //            {
-            //                PackFromRgb24Bytes(scanlineBuffer, rowSpan, this.header.Width);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            if (this.header.BitDepth == 16)
-            //            {
-            //                int length = this.header.Width * 3;
-            //                using (IBuffer<byte> compressed = this.configuration.MemoryManager.Allocate<byte>(length))
-            //                {
-            //                    // TODO: Should we use pack from vector here instead?
-            //                    this.From16BitTo8Bit(scanlineBuffer, compressed.Span, length);
+                    if (!this.hasTrans)
+                    {
+                        if (this.header.BitDepth == 16)
+                        {
+                            int length = this.header.Width * 3;
+                            using (IBuffer<byte> compressed = this.configuration.MemoryManager.Allocate<byte>(length))
+                            {
+                                // TODO: Should we use pack from vector here instead?
+                                this.From16BitTo8Bit(scanlineBuffer, compressed.Span, length);
+                                rowSpan.PackFromRgb24Bytes(compressed.Span, this.header.Width);
+                            }
+                        }
+                        else
+                        {
+                            rowSpan.PackFromRgb24Bytes(scanlineBuffer, this.header.Width);
+                        }
+                    }
+                    else
+                    {
+                        if (this.header.BitDepth == 16)
+                        {
+                            int length = this.header.Width * 3;
+                            using (IBuffer<byte> compressed = this.configuration.MemoryManager.Allocate<byte>(length))
+                            {
+                                // TODO: Should we use pack from vector here instead?
+                                this.From16BitTo8Bit(scanlineBuffer, compressed.Span, length);
 
-            //                    Span<Rgb24> rgb24Span = MemoryMarshal.Cast<byte, Rgb24>(compressed.Span);
-            //                    for (int x = 0; x < this.header.Width; x++)
-            //                    {
-            //                        ref Rgb24 rgb24 = ref rgb24Span[x];
-            //                        var rgba32 = default(Rgba32);
-            //                        rgba32.Rgb = rgb24;
-            //                        rgba32.A = (byte)(rgb24.Equals(this.rgb24Trans) ? 0 : 255);
+                                Span<Rgb24> rgb24Span = MemoryMarshal.Cast<byte, Rgb24>(compressed.Span);
+                                for (int x = 0; x < this.header.Width; x++)
+                                {
+                                    ref Rgb24 rgb24 = ref rgb24Span[x];
+                                    color = new Bgra32(rgb24.Blue, rgb24.Green, rgb24.Red, (byte)(rgb24.Equals(this.rgb24Trans) ? 0 : 255));
+                                    rowSpan[x] = color;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ReadOnlySpan<Rgb24> rgb24Span = MemoryMarshal.Cast<byte, Rgb24>(scanlineBuffer);
+                            for (int x = 0; x < this.header.Width; x++)
+                            {
+                                ref readonly Rgb24 rgb24 = ref rgb24Span[x];
+                                color = new Bgra32(rgb24.Blue, rgb24.Green, rgb24.Red, (byte)(rgb24.Equals(this.rgb24Trans) ? 0 : 255));
+                                rowSpan[x] = color;
+                            }
+                        }
+                    }
 
-            //                        color.PackFromRgba32(rgba32);
-            //                        rowSpan[x] = color;
-            //                    }
-            //                }
-            //            }
-            //            else
-            //            {
-            //                ReadOnlySpan<Rgb24> rgb24Span = MemoryMarshal.Cast<byte, Rgb24>(scanlineBuffer);
-            //                for (int x = 0; x < this.header.Width; x++)
-            //                {
-            //                    ref readonly Rgb24 rgb24 = ref rgb24Span[x];
-            //                    var rgba32 = default(Rgba32);
-            //                    rgba32.Rgb = rgb24;
-            //                    rgba32.A = (byte)(rgb24.Equals(this.rgb24Trans) ? 0 : 255);
+                    break;
 
-            //                    color.PackFromRgba32(rgba32);
-            //                    rowSpan[x] = color;
-            //                }
-            //            }
-            //        }
+                case PngColorType.RgbWithAlpha:
 
-            //        break;
+                    if (this.header.BitDepth == 16)
+                    {
+                        int length = this.header.Width * 4;
+                        using (IBuffer<byte> compressed = this.configuration.MemoryManager.Allocate<byte>(length))
+                        {
+                            // TODO: Should we use pack from vector here instead?
+                            this.From16BitTo8Bit(scanlineBuffer, compressed.Span, length);
+                            rowSpan.PackFromRgba32Bytes(compressed.Span, this.header.Width);
+                        }
+                    }
+                    else
+                    {
+                        rowSpan.PackFromRgba32Bytes(scanlineBuffer, this.header.Width);
+                    }
 
-            //    case PngColorType.RgbWithAlpha:
-
-            //        if (this.header.BitDepth == 16)
-            //        {
-            //            int length = this.header.Width * 4;
-            //            using (IBuffer<byte> compressed = this.configuration.MemoryManager.Allocate<byte>(length))
-            //            {
-            //                // TODO: Should we use pack from vector here instead?
-            //                this.From16BitTo8Bit(scanlineBuffer, compressed.Span, length);
-            //                PackFromRgba32Bytes(compressed.Span, rowSpan, this.header.Width);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            PackFromRgba32Bytes(scanlineBuffer, rowSpan, this.header.Width);
-            //        }
-
-            //        break;
-            //}
-        }
-
-        private void PackFromRgba32Bytes(ReadOnlySpan<Byte> span, Span<Bgra32> rowSpan, int width)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void PackFromRgb24Bytes(ReadOnlySpan<Byte> span, Span<Bgra32> rowSpan, int width)
-        {
-            throw new NotImplementedException();
+                    break;
+            }
         }
 
         /// <summary>

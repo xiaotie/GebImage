@@ -1,4 +1,4 @@
-﻿// Copyright (c) Six Labors and contributors.
+// Copyright (c) Six Labors and contributors.
 // Licensed under the Apache License, Version 2.0.
 
 using System;
@@ -143,8 +143,9 @@ namespace Geb.Image.Formats.Png
         /// </summary>
         /// <param name="memoryManager">The <see cref="MemoryManager"/> to use for buffer allocations.</param>
         /// <param name="options">The options for influencing the encoder</param>
-        public PngEncoderCore(MemoryManager memoryManager, IPngEncoderOptions options)
+        public PngEncoderCore(MemoryManager memoryManager, PngEncoderOptions options)
         {
+            if (options == null) options = PngEncoderOptions.Png32;
             this.memoryManager = memoryManager;
             this.pngColorType = options.PngColorType;
             this.pngFilterMethod = options.PngFilterMethod;
@@ -161,40 +162,12 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The <see cref="ImageFrame{TPixel}"/> to encode from.</param>
         /// <param name="stream">The <see cref="Stream"/> to encode the image data to.</param>
-        public void Encode(ImageBgra32 image, Stream stream)
+        public void Encode(IImage image, Stream stream)
         {
-            Guard.NotNull(image, nameof(image));
-            Guard.NotNull(stream, nameof(stream));
-
             this.width = image.Width;
             this.height = image.Height;
 
             stream.Write(PngConstants.HeaderBytes, 0, PngConstants.HeaderBytes.Length);
-
-            //QuantizedFrame<TPixel> quantized = null;
-            //if (this.pngColorType == PngColorType.Palette)
-            //{
-            //    // Create quantized frame returning the palette and set the bit depth.
-            //    quantized = this.quantizer.CreateFrameQuantizer<TPixel>().QuantizeFrame(image.Frames.RootFrame);
-            //    this.palettePixelData = quantized.Pixels;
-            //    byte bits = (byte)ImageMaths.GetBitsNeededForColorDepth(quantized.Palette.Length).Clamp(1, 8);
-
-            //    // Png only supports in four pixel depths: 1, 2, 4, and 8 bits when using the PLTE chunk
-            //    if (bits == 3)
-            //    {
-            //        bits = 4;
-            //    }
-            //    else if (bits >= 5 || bits <= 7)
-            //    {
-            //        bits = 8;
-            //    }
-
-            //    this.bitDepth = bits;
-            //}
-            //else
-            //{
-            //    this.bitDepth = 8;
-            //}
 
             this.bitDepth = 8;
             this.bytesPerPixel = this.CalculateBytesPerPixel();
@@ -209,15 +182,6 @@ namespace Geb.Image.Formats.Png
                 interlaceMethod: 0);
 
             this.WriteHeaderChunk(stream, header);
-
-            // Collect the indexed pixel data
-            //if (quantized != null)
-            //{
-            //    this.WritePaletteChunk(stream, header, quantized);
-            //}
-
-            this.WritePhysicalChunk(stream, image);
-            this.WriteGammaChunk(stream);
             this.WriteDataChunks(image, stream);
             this.WriteEndChunk(stream);
             stream.Flush();
@@ -268,6 +232,42 @@ namespace Geb.Image.Formats.Png
             }
         }
 
+        private void CollectGrayscaleBytes(ReadOnlySpan<Byte> rowSpan)
+        {
+            byte[] rawScanlineArray = this.rawScanline.Array;
+
+            // Copy the pixels across from the image.
+            // Reuse the chunk type buffer.
+            if(this.bytesPerPixel == 1)
+            {
+                for (int x = 0; x < this.width; x++)
+                {
+                    rawScanlineArray[x] = rowSpan[x];
+                }
+            }
+            else
+            {
+                for (int x = 0; x < this.width; x++)
+                {
+                    // Convert the color to YCbCr and store the luminance
+                    // Optionally store the original color alpha.
+                    int offset = x * this.bytesPerPixel;
+                    Byte bgra = rowSpan[x];
+                    for (int i = 0; i < this.bytesPerPixel; i++)
+                    {
+                        if (i == 0)
+                        {
+                            rawScanlineArray[offset] = bgra;
+                        }
+                        else
+                        {
+                            rawScanlineArray[offset + i] = 0xFF;
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Collects a row of true color pixel data.
         /// </summary>
@@ -285,6 +285,22 @@ namespace Geb.Image.Formats.Png
             }
         }
 
+        private void CollectTPixelBytes(ReadOnlySpan<Byte> rowSpan)
+        {
+            byte[] rawScanlineArray = this.rawScanline.Array;
+            for (int x = 0; x < this.width; x++)
+            {
+                // Convert the color to YCbCr and store the luminance
+                // Optionally store the original color alpha.
+                int offset = x * this.bytesPerPixel;
+                Byte val = rowSpan[x];
+                for (int i = 0; i < this.bytesPerPixel; i++)
+                {
+                    rawScanlineArray[offset + i] = i < 2 ? val : (Byte)0xFF;
+                }
+            }
+        }
+
         /// <summary>
         /// Encodes the pixel data line by line.
         /// Each scanline is encoded in the most optimal manner to improve compression.
@@ -298,7 +314,6 @@ namespace Geb.Image.Formats.Png
             switch (this.pngColorType)
             {
                 case PngColorType.Palette:
-                    // TODO: Use Span copy!
                     Buffer.BlockCopy(this.palettePixelData, row * this.rawScanline.Length(), this.rawScanline.Array, 0, this.rawScanline.Length());
                     break;
                 case PngColorType.Grayscale:
@@ -310,6 +325,30 @@ namespace Geb.Image.Formats.Png
                     break;
             }
 
+            return FilterPixelRow();
+        }
+
+        private IManagedByteBuffer EncodePixelRow(ReadOnlySpan<Byte> rowSpan, int row)
+        {
+            switch (this.pngColorType)
+            {
+                case PngColorType.Palette:
+                    Buffer.BlockCopy(this.palettePixelData, row * this.rawScanline.Length(), this.rawScanline.Array, 0, this.rawScanline.Length());
+                    break;
+                case PngColorType.Grayscale:
+                case PngColorType.GrayscaleWithAlpha:
+                    this.CollectGrayscaleBytes(rowSpan);
+                    break;
+                default:
+                    this.CollectTPixelBytes(rowSpan);
+                    break;
+            }
+
+            return FilterPixelRow();
+        }
+
+        private IManagedByteBuffer FilterPixelRow()
+        {
             switch (this.pngFilterMethod)
             {
                 case PngFilterMethod.None:
@@ -437,87 +476,6 @@ namespace Geb.Image.Formats.Png
         }
 
         /// <summary>
-        /// Writes the palette chunk to the stream.
-        /// </summary>
-        /// <typeparam name="TPixel">The pixel format.</typeparam>
-        /// <param name="stream">The <see cref="Stream"/> containing image data.</param>
-        /// <param name="header">The <see cref="PngHeader"/>.</param>
-        /// <param name="quantized">The quantized frame.</param>
-        //private void WritePaletteChunk(Stream stream, in PngHeader header, QuantizedFrame<TPixel> quantized)
-        //{
-        //    Grab the palette and write it to the stream.
-        //   TPixel[] palette = quantized.Palette;
-        //    byte pixelCount = palette.Length.ToByte();
-
-        //    Get max colors for bit depth.
-
-        //   int colorTableLength = (int)Math.Pow(2, header.BitDepth) * 3;
-        //    Rgba32 rgba = default;
-        //    bool anyAlpha = false;
-
-        //    using (IManagedByteBuffer colorTable = this.memoryManager.AllocateManagedByteBuffer(colorTableLength))
-        //    using (IManagedByteBuffer alphaTable = this.memoryManager.AllocateManagedByteBuffer(pixelCount))
-        //    {
-        //        Span<byte> colorTableSpan = colorTable.Span;
-        //        Span<byte> alphaTableSpan = alphaTable.Span;
-
-        //        for (byte i = 0; i < pixelCount; i++)
-        //        {
-        //            if (quantized.Pixels.Contains(i))
-        //            {
-        //                int offset = i * 3;
-        //                palette[i].ToRgba32(ref rgba);
-
-        //                byte alpha = rgba.A;
-
-        //                colorTableSpan[offset] = rgba.R;
-        //                colorTableSpan[offset + 1] = rgba.G;
-        //                colorTableSpan[offset + 2] = rgba.B;
-
-        //                if (alpha > this.threshold)
-        //                {
-        //                    alpha = 255;
-        //                }
-
-        //                anyAlpha = anyAlpha || alpha < 255;
-        //                alphaTableSpan[i] = alpha;
-        //            }
-        //        }
-
-        //        this.WriteChunk(stream, PngChunkType.Palette, colorTable.Array, 0, colorTableLength);
-
-        //        Write the transparency data
-        //        if (anyAlpha)
-        //        {
-        //            this.WriteChunk(stream, PngChunkType.PaletteAlpha, alphaTable.Array, 0, pixelCount);
-        //        }
-        //    }
-        //}
-
-        /// <summary>
-        /// Writes the physical dimension information to the stream.
-        /// </summary>
-        /// <typeparam name="TPixel">The pixel format.</typeparam>
-        /// <param name="stream">The <see cref="Stream"/> containing image data.</param>
-        /// <param name="image">The image.</param>
-        private void WritePhysicalChunk(Stream stream, ImageBgra32 image)
-        {
-            //if (image.MetaData.HorizontalResolution > 0 && image.MetaData.VerticalResolution > 0)
-            //{
-            //    // 39.3700787 = inches in a meter.
-            //    int dpmX = (int)Math.Round(image.MetaData.HorizontalResolution * 39.3700787D);
-            //    int dpmY = (int)Math.Round(image.MetaData.VerticalResolution * 39.3700787D);
-
-            //    BinaryPrimitives.WriteInt32BigEndian(this.chunkDataBuffer.AsSpan(0, 4), dpmX);
-            //    BinaryPrimitives.WriteInt32BigEndian(this.chunkDataBuffer.AsSpan(4, 4), dpmY);
-
-            //    this.chunkDataBuffer[8] = 1;
-
-            //    this.WriteChunk(stream, PngChunkType.Physical, this.chunkDataBuffer, 0, 9);
-            //}
-        }
-
-        /// <summary>
         /// Writes the gamma information to the stream.
         /// </summary>
         /// <param name="stream">The <see cref="Stream"/> containing image data.</param>
@@ -540,7 +498,7 @@ namespace Geb.Image.Formats.Png
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="pixels">The image.</param>
         /// <param name="stream">The stream.</param>
-        private void WriteDataChunks(ImageBgra32 pixels, Stream stream)
+        private void WriteDataChunks(IImage pixels, Stream stream)
         {
             this.bytesPerScanline = this.width * this.bytesPerPixel;
             int resultLength = this.bytesPerScanline + 1;
@@ -566,7 +524,7 @@ namespace Geb.Image.Formats.Png
                 {
                     for (int y = 0; y < this.height; y++)
                     {
-                        IManagedByteBuffer r = this.EncodePixelRow(pixels.GetPixelRowReadOnlySpan(y), y);
+                        IManagedByteBuffer r = EncodePixelRow(pixels, y);
                         deflateStream.Write(r.Array, 0, resultLength);
 
                         IManagedByteBuffer temp = this.rawScanline;
@@ -599,6 +557,14 @@ namespace Geb.Image.Formats.Png
 
                 this.WriteChunk(stream, PngChunkType.Data, buffer, i * MaxBlockSize, length);
             }
+        }
+
+        private IManagedByteBuffer EncodePixelRow(IImage image, int y)
+        {
+            if(image.BytesPerPixel == 4)
+                return this.EncodePixelRow(((ImageBgra32)image).GetPixelRowReadOnlySpan(y), y);
+            else
+                return this.EncodePixelRow(((ImageU8)image).GetPixelRowReadOnlySpan(y), y);
         }
 
         /// <summary>

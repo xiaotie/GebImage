@@ -1,4 +1,4 @@
-﻿// Copyright (c) Six Labors and contributors.
+// Copyright (c) Six Labors and contributors.
 // Licensed under the Apache License, Version 2.0.
 
 using System.IO;
@@ -7,11 +7,12 @@ using Geb.Image.Formats.Quantization;
 
 namespace Geb.Image.Formats.Png
 {
-    /// <summary>
-    /// Image encoder for writing image data to a stream in png format.
-    /// </summary>
-    public sealed class PngEncoder : IPngEncoderOptions
+    public sealed class PngEncoderOptions
     {
+        public static readonly PngEncoderOptions Png32 = new PngEncoderOptions();
+        public static readonly PngEncoderOptions Png24 = new PngEncoderOptions { PngColorType = PngColorType.Rgb };
+        public static readonly PngEncoderOptions Png8 = new PngEncoderOptions { PngColorType = PngColorType.Grayscale };
+
         /// <summary>
         /// Gets or sets the png color type.
         /// </summary>
@@ -52,26 +53,51 @@ namespace Geb.Image.Formats.Png
         /// gamma information to the stream. The default value is false.
         /// </summary>
         public bool WriteGamma { get; set; }
+    }
 
-        /// <summary>
-        /// Encodes the image to the specified stream from the <see cref="Image{TPixel}"/>.
-        /// </summary>
-        /// <typeparam name="TPixel">The pixel format.</typeparam>
-        /// <param name="image">The <see cref="Image{TPixel}"/> to encode from.</param>
-        /// <param name="stream">The <see cref="Stream"/> to encode the image data to.</param>
-        public void Encode(ImageBgra32 image, Stream stream)
+    /// <summary>
+    /// Image encoder for writing image data to a stream in png format.
+    /// </summary>
+    public sealed class PngEncoder
+    {
+        public static void Encode(ImageBgra32 image, Stream stream, PngEncoderOptions options = null)
         {
-            using (var encoder = new PngEncoderCore(Configuration.Default.MemoryManager, this))
+            using (var encoder = new PngEncoderCore(Configuration.Default.MemoryManager, options))
             {
                 encoder.Encode(image, stream);
             }
         }
 
-        public void Encode(ImageBgra32 image, string path)
+        public static void Encode(ImageU8 image, Stream stream, PngEncoderOptions options = null)
+        {
+            using (var encoder = new PngEncoderCore(Configuration.Default.MemoryManager, options))
+            {
+                encoder.Encode(image, stream);
+            }
+        }
+
+        public static void Encode(ImageBgra32 image, string path, PngEncoderOptions options = null)
         {
             using (FileStream fs = new FileStream(path, FileMode.CreateNew))
             {
-                Encode(image, fs);
+                Encode(image, fs, options);
+            }
+        }
+
+        public static void Encode(ImageU8 image, string path, PngEncoderOptions options = null)
+        {
+            using (FileStream fs = new FileStream(path, FileMode.CreateNew))
+            {
+                Encode(image, fs, options);
+            }
+        }
+
+        public static byte[] Encode(ImageBgra32 image, PngEncoderOptions options = null)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                Encode(image, ms, options);
+                return ms.ToArray();
             }
         }
     }
