@@ -103,7 +103,7 @@ namespace Geb.Image.Formats.Jpeg.Components.Decoder
         {
             this.PixelRowCounter = 0;
 
-            if (this.RawJpeg.ImageSizeInPixels != destination.ImageSize)
+            if (this.RawJpeg.ImageSizeInPixels != destination.Size)
             {
                 throw new ArgumentException("Input image is not of the size of the processed one!");
             }

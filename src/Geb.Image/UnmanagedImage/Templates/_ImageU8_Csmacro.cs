@@ -217,7 +217,14 @@ namespace Geb.Image
         /// </summary>
         public Int32 Height { get; protected set; }
 
-        public Size Size => new Size(Width, Height);
+        /// <summary>
+        /// 图像的尺寸（以像素为单位）
+        /// </summary>
+        public Size Size
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return new Size(Width, Height); }
+        }
 
         public Int32 Cols {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -228,7 +235,6 @@ namespace Geb.Image
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get { return Height; }
         }
-
 
         /// <summary>
         /// 图像的起始指针。
@@ -242,12 +248,6 @@ namespace Geb.Image
         }
 
         public Int32 Stride { get; private set; }
-
-        public Size ImageSize
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get { return new Size(Width, Height); }
-        }
 
         public unsafe TPixel this[int index]
         {
@@ -362,16 +362,25 @@ namespace Geb.Image
         }
 
         /// <summary>
-        /// 创建图像，所创建的图像并不是图像数据的拥有者。
+        /// 创建图像
+        /// </summary>
+        /// <param name="size"></param>
+        public ImageU8(Size size):this(size.Width,size.Height)
+        {
+        }
+
+        /// <summary>
+        /// 创建图像，默认所创建的图像并不是图像数据的拥有者。
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="data"></param>
-        public unsafe ImageU8(Int32 width, Int32 height, void* data)
+        /// <param name="isOwner">是否是此块内存数据的拥有者，默认为 false</param>
+        public unsafe ImageU8(Int32 width, Int32 height, void* data, bool isOwner = false)
         {
             if (width <= 0) throw new ArgumentOutOfRangeException("width");
             else if (height <= 0) throw new ArgumentOutOfRangeException("height");
-            _isOwner = false;
+            _isOwner = isOwner;
             Width = width;
             Height = height;
             Length = Width * Height;
@@ -392,14 +401,6 @@ namespace Geb.Image
             ByteCount = SizeOfType * Length;
             Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
         }
-
-        //public void Save(String path)
-        //{
-        //    using (Bitmap bmp = this.ToBitmap())
-        //    {
-        //        bmp.Save(path);
-        //    }
-        //}
 
         public unsafe ImageU8(String path)
         {
@@ -530,48 +531,6 @@ namespace Geb.Image
         //    return image;
         //}
 
- 
-
-        //public virtual unsafe void ToBitmap(Bitmap map)
-        //{
-        //    if (map == null) throw new ArgumentNullException("map");
-        //    if (map.Width != this.Width || map.Height != this.Height)
-        //    {
-        //        throw new ArgumentException("尺寸不匹配.");
-        //    }
-
-        //    if (map.PixelFormat != GetOutputBitmapPixelFormat())
-        //    {
-        //        throw new ArgumentException("只支持 " + GetOutputBitmapPixelFormat().ToString() + " 格式。 ");
-        //    }
-
-        //    if (map.PixelFormat == PixelFormat.Format8bppIndexed)
-        //    {
-        //        map.InitGrayscalePalette();
-        //    }
-
-        //    Int32 step = SizeOfT();
-        //    Byte* srcLine = (Byte*)Start;
-
-        //    BitmapData data = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, map.PixelFormat);
-        //    try
-        //    {
-        //        int width = map.Width;
-        //        int height = map.Height;
-        //        Byte* dstLine = (Byte*)data.Scan0;
-        //        for (int h = 0; h < height; h++)
-        //        {
-        //            ToBitmapCore(srcLine, dstLine, width);
-        //            dstLine += data.Stride;
-        //            srcLine += step * width;
-        //        }
-        //    }
-        //    finally
-        //    {
-        //        map.UnlockBits(data);
-        //    }
-        //}
-
         public void ApplyMatrix(float a, float b, float c, float d, float e, float f)
         {
             //TODO: ApplyMatrix
@@ -583,17 +542,19 @@ namespace Geb.Image
         /// .Net 的 IDE 均不支持直接查看.Net程序中的指针内容，DataSnapshot 提供了调试时查看
         /// 图像数据的唯一途径。请谨慎使用本方法。
         /// </summary>
-        public unsafe TPixel[,] DataSnapshot
+        public unsafe TPixel[][] DataSnapshot
         {
             get
             {
-                TPixel[,] data = new TPixel[Height, Width];
+                TPixel[][] data = new TPixel[Height][];
                 for (int h = 0; h < Height; h++)
                 {
+                    TPixel[] row = new TPixel[Width];
                     for (int w = 0; w < Width; w++)
                     {
-                        data[h, w] = this[h, w];
+                        row[w] = this[h, w];
                     }
+                    data[h] = row;
                 }
                 return data;
             }
