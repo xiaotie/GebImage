@@ -15,10 +15,16 @@ namespace Geb.Image.Formats.Jpeg
     /// </summary>
     public sealed class JpegEncoder
     {
+        private static BaseJpegEncoder CreateJpegEncoder(int quality, JpegPixelFormats fmt)
+        {
+            if (fmt == JpegPixelFormats.Gray) return new Jpeg8GrayEncoder(quality);
+            else return new Jpeg8YCbCrEncoder(quality);
+        }
+
         public static void Encode(ImageBgra32 image, Stream stream, int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr)
         {
-            var encoder = new JpegEncoderCore(quality,fmt);
-            encoder.Encode(image, stream);
+            using (ImageHolder h = ImageHolder.Create(image))
+                CreateJpegEncoder(quality, fmt).Encode(h, stream);
         }
 
         public static void Encode(ImageBgra32 image, string path, int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr)
@@ -40,8 +46,8 @@ namespace Geb.Image.Formats.Jpeg
 
         public static void Encode(ImageU8 image, Stream stream, int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr)
         {
-            var encoder = new JpegEncoderCore(quality, fmt);
-            encoder.Encode(image, stream);
+            using (ImageHolder h = ImageHolder.Create(image))
+                CreateJpegEncoder(quality, fmt).Encode(h, stream);
         }
 
         public static void Encode(ImageU8 image, string path, int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr)

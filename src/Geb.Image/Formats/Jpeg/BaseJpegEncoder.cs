@@ -9,7 +9,7 @@ namespace Geb.Image.Formats.Jpeg
     /// <summary>
     /// Image encoder for writing an image to a stream as a jpeg.
     /// </summary>
-    internal sealed unsafe class JpegEncoderCore
+    internal abstract unsafe class BaseJpegEncoder
     {
         /// <summary>
         /// The number of quantization tables.
@@ -47,7 +47,7 @@ namespace Geb.Image.Formats.Jpeg
         /// sequential DCTs, those bytes (8-bit Ss, 8-bit Se, 4-bit Ah, 4-bit Al)
         /// should be 0x00, 0x3f, 0x00&lt;&lt;4 | 0x00.
         /// </summary>
-        private static readonly byte[] SosHeaderYCbCr =
+        protected static readonly byte[] SosHeaderYCbCr =
             {
                 JpegConstants.Markers.XFF, JpegConstants.Markers.SOS,
 
@@ -69,7 +69,7 @@ namespace Geb.Image.Formats.Jpeg
                 // Ah + Ah (Successive approximation bit position high + low)
             };
 
-        private static readonly byte[] SosHeaderGray =
+        protected static readonly byte[] SosHeaderGray =
         {
                 JpegConstants.Markers.XFF, JpegConstants.Markers.SOS,
 
@@ -93,7 +93,7 @@ namespace Geb.Image.Formats.Jpeg
         /// The values are derived from section K.1 after converting from natural to
         /// zig-zag order.
         /// </summary>
-        private static readonly byte[,] UnscaledQuant =
+        protected static readonly byte[,] UnscaledQuant =
             {
                     {
                         // Luminance.
@@ -139,12 +139,12 @@ namespace Geb.Image.Formats.Jpeg
         /// </summary>
         private readonly int quality;
 
-        private readonly JpegPixelFormats jpegPixelFormat;
+        protected readonly JpegPixelFormats jpegPixelFormat;
 
         /// <summary>
         /// Gets or sets the subsampling method to use.
         /// </summary>
-        private readonly JpegSubsample? subsample = JpegSubsample.Ratio420;
+        protected readonly JpegSubsample? subsample = JpegSubsample.Ratio420;
 
         /// <summary>
         /// The accumulated bits to write to the stream.
@@ -159,29 +159,32 @@ namespace Geb.Image.Formats.Jpeg
         /// <summary>
         /// The scaled chrominance table, in zig-zag order.
         /// </summary>
-        private Block8x8F chrominanceQuantTable;
+        protected Block8x8F chrominanceQuantTable;
 
         /// <summary>
         /// The scaled luminance table, in zig-zag order.
         /// </summary>
-        private Block8x8F luminanceQuantTable;
+        protected Block8x8F luminanceQuantTable;
 
         /// <summary>
         /// The output stream. All attempted writes after the first error become no-ops.
         /// </summary>
         private Stream outputStream;
 
+        protected readonly int componentCount;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="JpegEncoderCore"/> class.
+        /// Initializes a new instance of the <see cref="BaseJpegEncoder"/> class.
         /// </summary>
         /// <param name="options">The options</param>
-        public JpegEncoderCore(int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr, bool ignoreMetadata = true)
+        public BaseJpegEncoder(int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr, bool ignoreMetadata = true)
         {
             // System.Drawing produces identical output for jpegs with a quality parameter of 0 and 1.
             this.quality = quality.Clamp(1, 100);
             this.subsample = this.quality >= 91 ? JpegSubsample.Ratio444 : JpegSubsample.Ratio420;
             this.ignoreMetadata = ignoreMetadata;
             this.jpegPixelFormat = fmt;
+            this.componentCount = fmt == JpegPixelFormats.YCbCr ? 3 : 1;
         }
 
         private static int HorizontalResolution = 72;
@@ -192,21 +195,13 @@ namespace Geb.Image.Formats.Jpeg
         /// <typeparam name="TPixel">The pixel format.</typeparam>
         /// <param name="image">The image to write from.</param>
         /// <param name="stream">The stream to write to.</param>
-        public void Encode(IImage image, Stream stream)
+        public void Encode(ImageHolder image, Stream stream)
         {
             ushort max = JpegConstants.MaxLength;
             if (image.Width >= max || image.Height >= max)
             {
                 throw new ImageFormatException($"Image is too large to encode at {image.Width}x{image.Height}.");
             }
-
-            ImageConverter converter = null;
-            if (image is ImageBgra32)
-                converter = new ImageBgra32Converter((ImageBgra32)image);
-            else if(image is ImageU8)
-                converter = new ImageU8Converter((ImageU8)image);
-            else
-                throw new ImageFormatException("Only ImageBgra32 and ImageU8 supported.");
 
             this.outputStream = stream;
 
@@ -225,9 +220,6 @@ namespace Geb.Image.Formats.Jpeg
             InitQuantizationTable(0, scale, ref this.luminanceQuantTable);
             InitQuantizationTable(1, scale, ref this.chrominanceQuantTable);
 
-            // Compute number of components based on input image type.
-            int componentCount = this.jpegPixelFormat == JpegPixelFormats.Gray ? 1 : 3;
-
             // Write the Start Of Image marker.
             this.WriteApplicationHeader((short)HorizontalResolution, (short)HorizontalResolution);
 
@@ -238,13 +230,20 @@ namespace Geb.Image.Formats.Jpeg
             this.WriteDefineQuantizationTables();
 
             // Write the image dimensions.
-            this.WriteStartOfFrame(image.Width, image.Height, componentCount);
+            this.WriteStartOfFrame(image.Width, image.Height);
 
             // Write the Huffman tables.
-            this.WriteDefineHuffmanTables(componentCount);
+            this.WriteDefineHuffmanTables();
+
+            // Write sos header
+            var sosHeader = this.GetSosHeader();
+            this.outputStream.Write(sosHeader, 0, sosHeader.Length);
 
             // Write the image data.
-            this.WriteStartOfScan(converter);
+            this.WriteImageData(image);
+
+            // Pad the last byte with 1's.
+            this.Emit(0x7f, 7);
 
             // Write the End Of Image marker.
             this.buffer[0] = JpegConstants.Markers.XFF;
@@ -275,7 +274,7 @@ namespace Geb.Image.Formats.Jpeg
         /// <param name="i">The quantization index.</param>
         /// <param name="scale">The scaling factor.</param>
         /// <param name="quant">The quantization table.</param>
-        private static void InitQuantizationTable(int i, int scale, ref Block8x8F quant)
+        protected void InitQuantizationTable(int i, int scale, ref Block8x8F quant)
         {
             for (int j = 0; j < Block8x8F.Size; j++)
             {
@@ -385,63 +384,7 @@ namespace Geb.Image.Formats.Jpeg
             }
         }
 
-        /// <summary>
-        /// Encodes the image with no subsampling.
-        /// </summary>
-        /// <typeparam name="TPixel">The pixel format.</typeparam>
-        /// <param name="pixels">The pixel accessor providing access to the image pixels.</param>
-        private void Encode444(ImageBgra32 pixels)
-        {
-            // TODO: Need a JpegScanEncoder<TPixel> class or struct that encapsulates the scan-encoding implementation. (Similar to JpegScanDecoder.)
-            // (Partially done with YCbCrForwardConverter<TPixel>)
-            Block8x8F temp1 = default;
-            Block8x8F temp2 = default;
-
-            Block8x8F onStackLuminanceQuantTable = this.luminanceQuantTable;
-            Block8x8F onStackChrominanceQuantTable = this.chrominanceQuantTable;
-
-            var unzig = ZigZag.CreateUnzigTable();
-
-            // ReSharper disable once InconsistentNaming
-            int prevDCY = 0, prevDCCb = 0, prevDCCr = 0;
-
-            var pixelConverter = YCbCrForwardConverter.Create();
-
-            for (int y = 0; y < pixels.Height; y += 8)
-            {
-                for (int x = 0; x < pixels.Width; x += 8)
-                {
-                    pixelConverter.Convert(pixels, x, y);
-
-                    prevDCY = this.WriteBlock(
-                        QuantIndex.Luminance,
-                        prevDCY,
-                        &pixelConverter.Y,
-                        &temp1,
-                        &temp2,
-                        &onStackLuminanceQuantTable,
-                        unzig.Data);
-
-                    prevDCCb = this.WriteBlock(
-                        QuantIndex.Chrominance,
-                        prevDCCb,
-                        &pixelConverter.Cb,
-                        &temp1,
-                        &temp2,
-                        &onStackChrominanceQuantTable,
-                        unzig.Data);
-
-                    prevDCCr = this.WriteBlock(
-                        QuantIndex.Chrominance,
-                        prevDCCr,
-                        &pixelConverter.Cr,
-                        &temp1,
-                        &temp2,
-                        &onStackChrominanceQuantTable,
-                        unzig.Data);
-                }
-            }
-        }
+        
 
         /// <summary>
         /// Writes the application header containing the JFIF identifier plus extra data.
@@ -496,7 +439,7 @@ namespace Geb.Image.Formats.Jpeg
         /// <returns>
         /// The <see cref="int"/>
         /// </returns>
-        private int WriteBlock(
+        protected int WriteBlock(
             QuantIndex index,
             int prevDC,
             Block8x8F* src,
@@ -552,7 +495,7 @@ namespace Geb.Image.Formats.Jpeg
         /// Writes the Define Huffman Table marker and tables.
         /// </summary>
         /// <param name="componentCount">The number of components to write.</param>
-        private void WriteDefineHuffmanTables(int componentCount)
+        private void WriteDefineHuffmanTables()
         {
             // Table identifiers.
             byte[] headers = { 0x00, 0x10, 0x01, 0x11 };
@@ -618,159 +561,13 @@ namespace Geb.Image.Formats.Jpeg
             this.outputStream.Write(dqt, 0, dqtCount);
         }
 
-        ///// <summary>
-        ///// Writes the EXIF profile.
-        ///// </summary>
-        ///// <param name="exifProfile">The exif profile.</param>
-        ///// <exception cref="ImageFormatException">
-        ///// Thrown if the EXIF profile size exceeds the limit
-        ///// </exception>
-        //private void WriteExifProfile(ExifProfile exifProfile)
-        //{
-        //    const int Max = 65533;
-        //    byte[] data = exifProfile?.ToByteArray();
-        //    if (data == null || data.Length == 0)
-        //    {
-        //        return;
-        //    }
-
-        //    if (data.Length > Max)
-        //    {
-        //        throw new ImageFormatException($"Exif profile size exceeds limit. nameof{Max}");
-        //    }
-
-        //    int length = data.Length + 2;
-
-        //    this.buffer[0] = JpegConstants.Markers.XFF;
-        //    this.buffer[1] = JpegConstants.Markers.APP1; // Application Marker
-        //    this.buffer[2] = (byte)((length >> 8) & 0xFF);
-        //    this.buffer[3] = (byte)(length & 0xFF);
-
-        //    this.outputStream.Write(this.buffer, 0, 4);
-        //    this.outputStream.Write(data, 0, data.Length);
-        //}
-
-        ///// <summary>
-        ///// Writes the ICC profile.
-        ///// </summary>
-        ///// <param name="iccProfile">The ICC profile to write.</param>
-        ///// <exception cref="ImageFormatException">
-        ///// Thrown if any of the ICC profiles size exceeds the limit
-        ///// </exception>
-        //private void WriteIccProfile(IccProfile iccProfile)
-        //{
-        //    // Just incase someone set the value to null by accident.
-        //    if (iccProfile == null)
-        //    {
-        //        return;
-        //    }
-
-        //    const int IccOverheadLength = 14;
-        //    const int Max = 65533;
-        //    const int MaxData = Max - IccOverheadLength;
-
-        //    byte[] data = iccProfile.ToByteArray();
-
-        //    if (data == null || data.Length == 0)
-        //    {
-        //        return;
-        //    }
-
-        //    // Calculate the number of markers we'll need, rounding up of course
-        //    int dataLength = data.Length;
-        //    int count = dataLength / MaxData;
-
-        //    if (count * MaxData != dataLength)
-        //    {
-        //        count++;
-        //    }
-
-        //    // Per spec, counting starts at 1.
-        //    int current = 1;
-        //    int offset = 0;
-
-        //    while (dataLength > 0)
-        //    {
-        //        int length = dataLength; // Number of bytes to write.
-
-        //        if (length > MaxData)
-        //        {
-        //            length = MaxData;
-        //        }
-
-        //        dataLength -= length;
-
-        //        this.buffer[0] = JpegConstants.Markers.XFF;
-        //        this.buffer[1] = JpegConstants.Markers.APP2; // Application Marker
-        //        int markerLength = length + 16;
-        //        this.buffer[2] = (byte)((markerLength >> 8) & 0xFF);
-        //        this.buffer[3] = (byte)(markerLength & 0xFF);
-
-        //        this.outputStream.Write(this.buffer, 0, 4);
-
-        //        this.buffer[0] = (byte)'I';
-        //        this.buffer[1] = (byte)'C';
-        //        this.buffer[2] = (byte)'C';
-        //        this.buffer[3] = (byte)'_';
-        //        this.buffer[4] = (byte)'P';
-        //        this.buffer[5] = (byte)'R';
-        //        this.buffer[6] = (byte)'O';
-        //        this.buffer[7] = (byte)'F';
-        //        this.buffer[8] = (byte)'I';
-        //        this.buffer[9] = (byte)'L';
-        //        this.buffer[10] = (byte)'E';
-        //        this.buffer[11] = 0x00;
-        //        this.buffer[12] = (byte)current; // The position within the collection.
-        //        this.buffer[13] = (byte)count; // The total number of profiles.
-
-        //        this.outputStream.Write(this.buffer, 0, IccOverheadLength);
-        //        this.outputStream.Write(data, offset, length);
-
-        //        current++;
-        //        offset += length;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Writes the metadata profiles to the image.
-        ///// </summary>
-        ///// <param name="image">The image.</param>
-        ///// <typeparam name="TPixel">The pixel format.</typeparam>
-        //private void WriteProfiles<TPixel>(Image<TPixel> image)
-        //    where TPixel : struct, IPixel<TPixel>
-        //{
-        //    if (this.ignoreMetadata)
-        //    {
-        //        return;
-        //    }
-
-        //    image.MetaData.SyncProfiles();
-        //    this.WriteExifProfile(image.MetaData.ExifProfile);
-        //    this.WriteIccProfile(image.MetaData.IccProfile);
-        //}
-
         /// <summary>
         /// Writes the Start Of Frame (Baseline) marker
         /// </summary>
         /// <param name="width">The width of the image</param>
         /// <param name="height">The height of the image</param>
-        /// <param name="componentCount">The number of components in a pixel</param>
-        private void WriteStartOfFrame(int width, int height, int componentCount)
+        private void WriteStartOfFrame(int width, int height)
         {
-            // "default" to 4:2:0
-            byte[] subsamples = { 0x22, 0x11, 0x11 };
-            byte[] chroma = { 0x00, 0x01, 0x01 };
-
-            switch (this.subsample)
-            {
-                case JpegSubsample.Ratio444:
-                    subsamples = new byte[] { 0x11, 0x11, 0x11 };
-                    break;
-                case JpegSubsample.Ratio420:
-                    subsamples = new byte[] { 0x22, 0x11, 0x11 };
-                    break;
-            }
-
             // Length (high byte, low byte), 8 + components * 3.
             int markerlen = 8 + (3 * componentCount);
             this.WriteMarkerHeader(JpegConstants.Markers.SOF0, markerlen);
@@ -792,6 +589,20 @@ namespace Geb.Image.Formats.Jpeg
             }
             else
             {
+                // "default" to 4:2:0
+                byte[] subsamples = { 0x22, 0x11, 0x11 };
+                byte[] chroma = { 0x00, 0x01, 0x01 };
+
+                switch (this.subsample)
+                {
+                    case JpegSubsample.Ratio444:
+                        subsamples = new byte[] { 0x11, 0x11, 0x11 };
+                        break;
+                    case JpegSubsample.Ratio420:
+                        subsamples = new byte[] { 0x22, 0x11, 0x11 };
+                        break;
+                }
+
                 for (int i = 0; i < componentCount; i++)
                 {
                     this.buffer[(3 * i) + 6] = (byte)(i + 1);
@@ -805,145 +616,9 @@ namespace Geb.Image.Formats.Jpeg
             this.outputStream.Write(this.buffer, 0, (3 * (componentCount - 1)) + 9);
         }
 
-        /// <summary>
-        /// Writes the StartOfScan marker.
-        /// </summary>
-        /// <typeparam name="TPixel">The pixel format.</typeparam>
-        /// <param name="image">The pixel accessor providing access to the image pixels.</param>
-        private void WriteStartOfScan(ImageConverter image)
-        {
-            if(this.jpegPixelFormat == JpegPixelFormats.YCbCr)
-                this.outputStream.Write(SosHeaderYCbCr, 0, SosHeaderYCbCr.Length);
-            else
-                this.outputStream.Write(SosHeaderGray, 0, SosHeaderGray.Length);
+        protected abstract byte[] GetSosHeader();
 
-            if(this.jpegPixelFormat == JpegPixelFormats.YCbCr)
-            {
-                ImageBgra32 imageBgra32 = image.GetImageBgra32();
-                switch (this.subsample)
-                {
-                    case JpegSubsample.Ratio444:
-                        this.Encode444(imageBgra32);
-                        break;
-                    case JpegSubsample.Ratio420:
-                        this.Encode420(imageBgra32);
-                        break;
-                }
-            }
-            else
-            {
-                ImageU8 imageGray = image.GetImageU8();
-                this.EncodeGray(imageGray);
-            }
-
-            image.Release();
-
-            // Pad the last byte with 1's.
-            this.Emit(0x7f, 7);
-        }
-
-        private unsafe void EncodeGray(ImageU8 pixels)
-        {
-            Block8x8F temp1 = default;
-            Block8x8F temp2 = default;
-
-            Block8x8F onStackLuminanceQuantTable = this.luminanceQuantTable;
-            var unzig = ZigZag.CreateUnzigTable();
-            GrayForwardConverter pixelConverter = GrayForwardConverter.Create();
-
-            int prevDCY = 0;
-            for (int y = 0; y < pixels.Height; y += 8)
-            {
-                for (int x = 0; x < pixels.Width; x += 8)
-                {
-                    pixelConverter.Convert(pixels, x, y);
-                    prevDCY = this.WriteBlock(
-                        QuantIndex.Luminance,
-                        prevDCY,
-                        &pixelConverter.Y,
-                        &temp1,
-                        &temp2,
-                        &onStackLuminanceQuantTable,
-                        unzig.Data);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Encodes the image with subsampling. The Cb and Cr components are each subsampled
-        /// at a factor of 2 both horizontally and vertically.
-        /// </summary>
-        /// <typeparam name="TPixel">The pixel format.</typeparam>
-        /// <param name="pixels">The pixel accessor providing access to the image pixels.</param>
-        private void Encode420(ImageBgra32 pixels)
-        {
-            // TODO: Need a JpegScanEncoder<TPixel> class or struct that encapsulates the scan-encoding implementation. (Similar to JpegScanDecoder.)
-            Block8x8F b = default;
-
-            BlockQuad cb = default;
-            BlockQuad cr = default;
-            var cbPtr = (Block8x8F*)cb.Data;
-            var crPtr = (Block8x8F*)cr.Data;
-
-            Block8x8F temp1 = default;
-            Block8x8F temp2 = default;
-
-            Block8x8F onStackLuminanceQuantTable = this.luminanceQuantTable;
-            Block8x8F onStackChrominanceQuantTable = this.chrominanceQuantTable;
-
-            var unzig = ZigZag.CreateUnzigTable();
-
-            var pixelConverter = YCbCrForwardConverter.Create();
-
-            // ReSharper disable once InconsistentNaming
-            int prevDCY = 0, prevDCCb = 0, prevDCCr = 0;
-
-            for (int y = 0; y < pixels.Height; y += 16)
-            {
-                for (int x = 0; x < pixels.Width; x += 16)
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        int xOff = (i & 1) * 8;
-                        int yOff = (i & 2) * 4;
-
-                        pixelConverter.Convert(pixels, x + xOff, y + yOff);
-
-                        cbPtr[i] = pixelConverter.Cb;
-                        crPtr[i] = pixelConverter.Cr;
-
-                        prevDCY = this.WriteBlock(
-                            QuantIndex.Luminance,
-                            prevDCY,
-                            &pixelConverter.Y,
-                            &temp1,
-                            &temp2,
-                            &onStackLuminanceQuantTable,
-                            unzig.Data);
-                    }
-
-                    Block8x8F.Scale16X16To8X8(&b, cbPtr);
-                    prevDCCb = this.WriteBlock(
-                        QuantIndex.Chrominance,
-                        prevDCCb,
-                        &b,
-                        &temp1,
-                        &temp2,
-                        &onStackChrominanceQuantTable,
-                        unzig.Data);
-
-                    Block8x8F.Scale16X16To8X8(&b, crPtr);
-                    prevDCCr = this.WriteBlock(
-                        QuantIndex.Chrominance,
-                        prevDCCr,
-                        &b,
-                        &temp1,
-                        &temp2,
-                        &onStackChrominanceQuantTable,
-                        unzig.Data);
-                }
-            }
-        }
+        protected abstract void WriteImageData(ImageHolder image);
 
         /// <summary>
         /// Writes the header for a marker with the given length.
