@@ -14,3 +14,4 @@ libs/
 src/bin/
 .vs/
 lib/
+*.nupkg

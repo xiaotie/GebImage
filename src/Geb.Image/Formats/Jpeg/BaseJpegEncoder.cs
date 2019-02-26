@@ -209,11 +209,11 @@ namespace Geb.Image.Formats.Jpeg
             int scale;
             if (this.quality < 50)
             {
-                scale = 5000 / this.quality;
+                scale = 5000 / this.quality;       // 5000->100
             }
             else
             {
-                scale = 200 - (this.quality * 2);
+                scale = 200 - (this.quality * 2);  // 100->0
             }
 
             // Initialize the quantization tables.
