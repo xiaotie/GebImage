@@ -1,1 +1,1 @@
-nuget pack ../src/Geb.Image/Geb.Image.csproj
+nuget pack gebimage.nuspec

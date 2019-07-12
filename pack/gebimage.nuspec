@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Geb.Image</id>
+        <version>2.0.0</version>
+        <title>Geb Image Library</title>
+        <authors>hufei(geblab)</authors>
+        <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
+        <projectUrl>https://github.com/xiaotie/GebImage</projectUrl>
+        <iconUrl>http://www.geblab.com/Content/images/logo.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Geb Image Library</description>
+        <language>en-US</language>
+		<dependencies>
+			<dependency id="NETStandard.Library" version="2.0.3" />
+			<dependency id="System.Buffers" version="4.5.0" />
+            <dependency id="System.Memory" version="4.5.0" />
+            <dependency id="System.Numerics.Vectors" version="4.5.0" />
+            <dependency id="System.Runtime.CompilerServices.Unsafe" version="4.5.0" />
+		</dependencies>
+    </metadata>
+    <files>
+        <file src="..\src\Geb.Image\bin\Release\netstandard2.0\Geb.Image.dll" target="lib\netstandard2.0" />
+        <file src="..\src\Geb.Image\bin\Release\netstandard2.0\Geb.Image.pdb" target="lib\netstandard2.0" />
+    </files>
+</package>
