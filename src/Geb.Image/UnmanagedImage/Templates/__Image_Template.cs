@@ -91,6 +91,12 @@ namespace Geb.Image.Hidden
             get { return Height; }
         }
 
+        public unsafe Span<TPixel> Span
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return new Span<TPixel>((void*)Start, Length); }
+        }
+
         /// <summary>
         /// 图像的起始指针。
         /// </summary>

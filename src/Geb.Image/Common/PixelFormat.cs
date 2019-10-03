@@ -6,6 +6,6 @@ namespace Geb.Image
 {
     public enum PixelFormat
     {
-        Format32bppBgra, Format24bppBgr, Format8bpp
+        Format32bppBgra, Format24bppBgr, Format8bpp, Format72bppRgbS
     }
 }

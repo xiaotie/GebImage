@@ -22,6 +22,8 @@ namespace Geb.Image
 
         public unsafe Span<T> DataSpan { get { return new Span<T>((void*)Data, ByteLength); } }
 
+        public unsafe ReadOnlySpan<T> DataSpanReadOnly { get { return new ReadOnlySpan<T>((void*)Data, ByteLength); } }
+
         public unsafe Image(int width, int height = 1)
         {
             if (width <= 0) throw new ArgumentOutOfRangeException("width");
