@@ -415,7 +415,7 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToArgb32(SBgra64* from, Bgra32* to, int length = 1)
+        public static unsafe void ToBgra32(SBgra64* from, Bgra32* to, int length = 1)
         {
             if (length < 1) return;
 
@@ -489,7 +489,7 @@ namespace Geb.Image
             }
         }
 
-        public static unsafe void ToArgb32(Byte* from, Bgra32* to, int length = 1)
+        public static unsafe void ToBgra32(Byte* from, Bgra32* to, int length = 1)
         {
             if (length < 1) return;
 

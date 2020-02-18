@@ -1,3 +1,6 @@
-int x = 9;
-Console.WriteLine(x);
-Console.WriteLine("Hello World!");
+#load "../common.csx"
+
+using Geb.Image;
+
+ImageBgra32 img = new ImageBgra32(100,100);
+Console.WriteLine(img[32]);

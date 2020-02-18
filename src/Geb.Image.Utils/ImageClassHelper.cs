@@ -1,28 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Text;
 
 namespace Geb.Image
 {
-    using Geb.Image.WinEx;
-
-    public static class BitmapExtentions
+    public static class ImageClassHelper
     {
-        public unsafe static ImageU8 ToImageU8(this Bitmap bmp)
+        public static ImageBgra32 ToImageBgra32(this Bitmap bitmap)
         {
-            ImageU8 img = new ImageU8(bmp.Width, bmp.Height);
+            if (bitmap == null) return null;
 
-            int height = bmp.Height;
-            int width = bmp.Width;
+            ImageBgra32 imageBgra32 = new ImageBgra32(bitmap.Width, bitmap.Height);
+            imageBgra32.CreateFromBitmap(bitmap);
+            return imageBgra32;
+        }
+
+        public static unsafe void CreateFromBitmap(this ImageBgra32 image, Bitmap map)
+        {
+            int height = map.Height;
+            int width = map.Width;
 
             const int PixelFormat32bppCMYK = 8207;
-            var format = bmp.PixelFormat;
 
-            Bitmap newMap = bmp;
-            const Int32 step = 1;
+            System.Drawing.Imaging.PixelFormat format = map.PixelFormat;
+
+            Bitmap newMap = map;
+            Int32 step = ImageBgra32.SizeOfPixel();
 
             switch (format)
             {
@@ -37,27 +40,27 @@ namespace Geb.Image
                         newMap = new Bitmap(width, height, format);
                         using (Graphics g = Graphics.FromImage(newMap))
                         {
-                            g.DrawImage(bmp, new Point());
+                            g.DrawImage(map, new Point());
                         }
                     }
                     else
                     {
                         format = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-                        newMap = bmp.Clone(new Rectangle(0, 0, width, height), System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                        newMap = map.Clone(new Rectangle(0, 0, width, height), System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                     }
                     break;
             }
 
             BitmapData data = newMap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, format);
             Byte* line = (Byte*)data.Scan0;
-            Byte* dstLine = (Byte*)img.Start;
+            Byte* dstLine = (Byte*)image.Start;
             try
             {
                 if (format == System.Drawing.Imaging.PixelFormat.Format24bppRgb)
                 {
                     for (int h = 0; h < height; h++)
                     {
-                        UnmanagedImageConverter.ToByte((Bgr24*)line, dstLine, width);
+                        UnmanagedImageConverter.ToBgra32((Bgr24*)line, (Bgra32*)dstLine, width);
                         line += data.Stride;
                         dstLine += step * width;
                     }
@@ -66,8 +69,7 @@ namespace Geb.Image
                 {
                     for (int h = 0; h < height; h++)
                     {
-                        UnmanagedImageConverter.ToByte((Bgra32*)line, dstLine, width);
-
+                        UnmanagedImageConverter.Copy((byte*)line, (byte*)dstLine, 4 * width);
                         line += data.Stride;
                         dstLine += step * width;
                     }
@@ -80,20 +82,11 @@ namespace Geb.Image
             finally
             {
                 newMap.UnlockBits(data);
-                if (newMap != bmp)
+                if (newMap != map)
                 {
                     newMap.Dispose();
                 }
             }
-
-            return img;
-        }
-
-        public static void ShowDialog(this Bitmap bmp, String title = "图像预览")
-        {
-            BitmapWindow window = new BitmapWindow();
-            window.Bitmap = bmp;
-            window.ShowDialog();
         }
     }
 }

@@ -1,17 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2043
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image", "src\Geb.Image\Geb.Image.csproj", "{3E6EEDFD-13A8-422D-86F0-4DD9906E87F2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.Test", "src\Geb.Image.Test\Geb.Image.Test.csproj", "{A8CAA1FC-7A48-4598-8BF6-5B6640919E28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.WinEx", "src\Geb.Image.WinEx\Geb.Image.WinEx.csproj", "{F84F308D-E24A-431E-B16A-E0B57A29910E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.WinEx.Demo", "src\Geb.Image.WinEx.Demo\Geb.Image.WinEx.Demo.csproj", "{8136D9F1-DE02-4175-B69C-FBAD0768925B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.OpenCVEx", "src\Geb.Image.OpenCVEx\Geb.Image.OpenCVEx.csproj", "{7425BCCB-F886-40B9-9017-1E032A9A52FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.Utils", "src\Geb.Image.Utils\Geb.Image.Utils.csproj", "{F31F7261-77F9-48FE-8CB9-6433CF88CF67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,18 +25,14 @@ Global
 		{A8CAA1FC-7A48-4598-8BF6-5B6640919E28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8CAA1FC-7A48-4598-8BF6-5B6640919E28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8CAA1FC-7A48-4598-8BF6-5B6640919E28}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F84F308D-E24A-431E-B16A-E0B57A29910E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F84F308D-E24A-431E-B16A-E0B57A29910E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F84F308D-E24A-431E-B16A-E0B57A29910E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F84F308D-E24A-431E-B16A-E0B57A29910E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8136D9F1-DE02-4175-B69C-FBAD0768925B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8136D9F1-DE02-4175-B69C-FBAD0768925B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8136D9F1-DE02-4175-B69C-FBAD0768925B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8136D9F1-DE02-4175-B69C-FBAD0768925B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7425BCCB-F886-40B9-9017-1E032A9A52FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7425BCCB-F886-40B9-9017-1E032A9A52FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7425BCCB-F886-40B9-9017-1E032A9A52FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7425BCCB-F886-40B9-9017-1E032A9A52FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F31F7261-77F9-48FE-8CB9-6433CF88CF67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F31F7261-77F9-48FE-8CB9-6433CF88CF67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F31F7261-77F9-48FE-8CB9-6433CF88CF67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F31F7261-77F9-48FE-8CB9-6433CF88CF67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -391,7 +391,7 @@ namespace Geb.Image
             Width = width;
             Height = height;
             Length = Width * Height;
-            SizeOfType = SizeOfT();
+            SizeOfType = SizeOfPixel();
             Stride = SizeOfType * Width;
             ByteCount = SizeOfType * Length;
             Start = (TPixel*)data;
@@ -403,7 +403,7 @@ namespace Geb.Image
             Height = height;
             Width = width;
             Length = Width * Height;
-            SizeOfType = SizeOfT();
+            SizeOfType = SizeOfPixel();
             Stride = SizeOfType * Width;
             ByteCount = SizeOfType * Length;
             Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
@@ -443,7 +443,7 @@ namespace Geb.Image
             Dispose();
         }
 
-        private static Int32 SizeOfT()
+        public static Int32 SizeOfPixel()
         {
             return Marshal.SizeOf(typeof(TPixel));
         }
@@ -801,6 +801,17 @@ namespace Geb.Image
                 }
             }
             return this;
+        }
+
+        /// <summary>
+        /// 将 src 通过单应性变换后复制到图像上
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public unsafe TImage CopyFrom(TImage src, Matrix3x3 m)
+        {
+            throw new NotImplementedException();
         }
 
         public TImage FloodFill(System.Drawing.Point location, TPixel anchorColor, TPixel replecedColor)

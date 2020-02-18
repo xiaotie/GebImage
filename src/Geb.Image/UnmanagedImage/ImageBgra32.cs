@@ -32,7 +32,7 @@ namespace Geb.Image
 
         private unsafe void Copy(byte* from, void* to, int length)
         {
-            UnmanagedImageConverter.ToArgb32(from, (Bgra32*)to, length);
+            UnmanagedImageConverter.ToBgra32(from, (Bgra32*)to, length);
         }
 
         private PixelFormat GetOutputBitmapPixelFormat()
@@ -73,6 +73,12 @@ namespace Geb.Image
             return Formats.Png.PngEncoder.Encode(this, options);
         }
         #endregion
+
+        public static ImageBgra32 Read(String filePath)
+        {
+            if(File.Exists(filePath) == false) throw new FileNotFoundException("File Not Exist", filePath);
+            return ImageReader.Instance.Read(filePath);
+        }
 
         public ImageU8 ToGrayscaleImage()
         {

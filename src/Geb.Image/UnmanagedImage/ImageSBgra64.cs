@@ -118,7 +118,7 @@ namespace Geb.Image
 
         private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
         {
-            UnmanagedImageConverter.ToArgb32((SBgra64*)src, (Bgra32*)dst, width);
+            UnmanagedImageConverter.ToBgra32((SBgra64*)src, (Bgra32*)dst, width);
         }
 
         #endregion

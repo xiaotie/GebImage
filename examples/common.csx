@@ -1,0 +1,1 @@
+#r "../src/Geb.Image/bin/Debug/netstandard2.0/Geb.Image.dll"

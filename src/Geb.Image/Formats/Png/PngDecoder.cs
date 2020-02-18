@@ -52,6 +52,12 @@ namespace Geb.Image.Formats.Png
             return decoder.Decode(stream);
         }
 
+        public ImageBgra32 Decode(Stream stream)
+        {
+            var decoder = new PngDecoderCore(null, this);
+            return decoder.Decode(stream);
+        }
+
         public ImageBgra32 Decode(String filePath)
         {
             using (FileStream fs = new FileStream(filePath, FileMode.Open))

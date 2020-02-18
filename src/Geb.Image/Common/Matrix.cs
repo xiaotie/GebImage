@@ -70,4 +70,15 @@ namespace Geb.Image
             return new Matrix(cos, -sin, sin, cos);
         }
     }
+
+    /// <summary>
+    /// 单应性矩阵：
+    ///     h11 h12 h13
+    ///     h21 h22 h23
+    ///     h31 h32 h33
+    /// </summary>
+    public struct Matrix3x3
+    {
+        public float H11, H12, H13, H21, H22, H23, H31, H32, H33;
+    }
 }
