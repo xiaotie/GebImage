@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenCvSharp4" Version="4.3.0.20200524" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Geb.Image\Geb.Image.csproj" />
+  </ItemGroup>
+
+</Project>

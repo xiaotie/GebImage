@@ -10,9 +10,10 @@ using TImage = Geb.Image.Hidden.Image_Template;
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-using System.Drawing;
 
 namespace Geb.Image.Hidden
 {
@@ -265,11 +266,11 @@ namespace Geb.Image.Hidden
 
         public unsafe Image_Template(String path)
         {
-            //using (Bitmap bmp = new Bitmap(path))
-            //{
-            //    AllocMemory(bmp.Width, bmp.Height);
-            //    this.CreateFromBitmap(bmp);
-            //}
+            using (Bitmap bmp = new Bitmap(path))
+            {
+                AllocMemory(bmp.Width, bmp.Height);
+                this.CreateFromBitmap(bmp);
+            }
         }
 
         //public Image_Template(Bitmap map)
@@ -302,95 +303,83 @@ namespace Geb.Image.Hidden
             return Marshal.SizeOf(typeof(TPixel));
         }
 
-        //protected virtual unsafe void CreateFromBitmap(Bitmap map)
-        //{
-        //    int height = map.Height;
-        //    int width = map.Width;
+        protected virtual unsafe void CreateFromBitmap(Bitmap map)
+        {
+            int height = map.Height;
+            int width = map.Width;
 
-        //    const int PixelFormat32bppCMYK = 8207;
+            const int PixelFormat32bppCMYK = 8207;
 
-        //    PixelFormat format = map.PixelFormat;
+            System.Drawing.Imaging.PixelFormat format = map.PixelFormat;
 
-        //    this.Width = width;
-        //    this.Height = height;
+            this.Width = width;
+            this.Height = height;
 
-        //    Bitmap newMap = map;
-        //    Int32 step = SizeOfT();
+            Bitmap newMap = map;
+            Int32 step = SizeOfType;
 
-        //    switch (format)
-        //    {
-        //        case PixelFormat.Format24bppRgb:
-        //            break;
-        //        case PixelFormat.Format32bppArgb:
-        //            break;
-        //        default:
-        //            if ((int)format == PixelFormat32bppCMYK)
-        //            {
-        //                format = PixelFormat.Format24bppRgb;
-        //                newMap = new Bitmap(width, height, format);
-        //                using (Graphics g = Graphics.FromImage(newMap))
-        //                {
-        //                    g.DrawImage(map, new Point());
-        //                }
-        //            }
-        //            else
-        //            {
-        //                format = PixelFormat.Format32bppArgb;
-        //                newMap = map.Clone(new Rectangle(0, 0, width, height), PixelFormat.Format32bppArgb);
-        //            }
-        //            break;
-        //    }
+            switch (format)
+            {
+                case System.Drawing.Imaging.PixelFormat.Format24bppRgb:
+                    break;
+                case System.Drawing.Imaging.PixelFormat.Format32bppArgb:
+                    break;
+                default:
+                    if ((int)format == PixelFormat32bppCMYK)
+                    {
+                        format = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
+                        newMap = new Bitmap(width, height, format);
+                        using (Graphics g = Graphics.FromImage(newMap))
+                        {
+                            g.DrawImage(map, new Point());
+                        }
+                    }
+                    else
+                    {
+                        format = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
+                        newMap = map.Clone(new Rectangle(0, 0, width, height), System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    }
+                    break;
+            }
 
-        //    BitmapData data = newMap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, format);
-        //    Byte* line = (Byte*)data.Scan0;
-        //    Byte* dstLine = (Byte*)Start;
-        //    try
-        //    {
-        //        if (format == PixelFormat.Format24bppRgb)
-        //        {
-        //            for (int h = 0; h < height; h++)
-        //            {
-        //                Copy((Rgb24*)line, (void*)dstLine, width);
-        //                line += data.Stride;
-        //                dstLine += step * width;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            for (int h = 0; h < height; h++)
-        //            {
-        //                Copy((Argb32*)line, (void*)dstLine, width);
+            BitmapData data = newMap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, format);
+            Byte* line = (Byte*)data.Scan0;
+            Byte* dstLine = (Byte*)Start;
+            try
+            {
+                if (format == System.Drawing.Imaging.PixelFormat.Format24bppRgb)
+                {
+                    for (int h = 0; h < height; h++)
+                    {
+                        Copy((Bgr24*)line, (void*)dstLine, width);
+                        line += data.Stride;
+                        dstLine += step * width;
+                    }
+                }
+                else
+                {
+                    for (int h = 0; h < height; h++)
+                    {
+                        Copy((Bgra32*)line, (void*)dstLine, width);
 
-        //                line += data.Stride;
-        //                dstLine += step * width;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-        //    finally
-        //    {
-        //        newMap.UnlockBits(data);
-        //        if (newMap != map)
-        //        {
-        //            newMap.Dispose();
-        //        }
-        //    }
-        //}
-
-        //public virtual unsafe SixLabors.ImageSharp.Image<Bgra32> ToCoreImage()
-        //{
-
-        //    // SkImage<Rgba32> image = new Image<Rgba32>(this.Width, this.Height);
-           
-        //    SixLabors.ImageSharp.Image<Bgra32> image = new SixLabors.ImageSharp.Image<Bgra32>(this.Width, this.Height);
-        //    image.Frames.RootFrame.MemoryManager.
-        //    // TODO
-            
-        //    return image;
-        //}
+                        line += data.Stride;
+                        dstLine += step * width;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                newMap.UnlockBits(data);
+                if (newMap != map)
+                {
+                    newMap.Dispose();
+                }
+            }
+        }
 
         public void ApplyMatrix(float a, float b, float c, float d, float e, float f)
         {

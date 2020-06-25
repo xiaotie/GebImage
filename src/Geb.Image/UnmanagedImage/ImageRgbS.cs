@@ -60,5 +60,20 @@ namespace Geb.Image
         public const int ChannelCount = 1;
 
         public int BytesPerPixel { get; } = 12;
+
+        private unsafe void Copy(Bgr24* from, void* to, int length)
+        {
+            throw new NotImplementedException();
+        }
+
+        private unsafe void Copy(Bgra32* from, void* to, int length)
+        {
+            throw new NotImplementedException();
+        }
+
+        private unsafe void Copy(byte* from, void* to, int length)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
