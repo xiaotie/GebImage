@@ -75,5 +75,15 @@ namespace Geb.Image
         {
             throw new NotImplementedException();
         }
+
+        private unsafe void ToBitmapCore(byte* src, byte* dst, int width)
+        {
+            throw new NotImplementedException();
+        }
+
+        private PixelFormat GetOutputBitmapPixelFormat()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

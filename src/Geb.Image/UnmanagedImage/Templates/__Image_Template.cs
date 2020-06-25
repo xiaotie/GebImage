@@ -41,9 +41,9 @@ namespace Geb.Image.Hidden
             UnmanagedImageConverter.Copy(src, dst, width);
         }
 
-        private PixelFormat GetOutputBitmapPixelFormat()
+        private Geb.Image.PixelFormat GetOutputBitmapPixelFormat()
         {
-            return PixelFormat.Format8bpp;
+            return Geb.Image.PixelFormat.Format8bpp;
         }
 
         #region mixin
@@ -210,6 +210,14 @@ namespace Geb.Image.Hidden
         /// </summary>
         public ROI ROI { get; private set; }
 
+        public void Save(String path)
+        {
+            using (Bitmap bmp = this.ToBitmap())
+            {
+                bmp.Save(path);
+            }
+        }
+
         /// <summary>
         /// 创建图像。
         /// </summary>
@@ -273,12 +281,12 @@ namespace Geb.Image.Hidden
             }
         }
 
-        //public Image_Template(Bitmap map)
-        //{
-        //    if (map == null) throw new ArgumentNullException("map");
-        //    AllocMemory(map.Width, map.Height);
-        //    this.CreateFromBitmap(map);
-        //}
+        public Image_Template(Bitmap map)
+        {
+            if (map == null) throw new ArgumentNullException("map");
+            AllocMemory(map.Width, map.Height);
+            this.CreateFromBitmap(map);
+        }
 
         public unsafe virtual void Dispose()
         {
@@ -378,6 +386,55 @@ namespace Geb.Image.Hidden
                 {
                     newMap.Dispose();
                 }
+            }
+        }
+
+
+
+        public virtual unsafe Bitmap ToBitmap()
+        {
+            Bitmap map = new Bitmap(this.Width, this.Height, GetOutputBitmapPixelFormat().ToSystemDrawingPixelFormat());
+            ToBitmap(map);
+            return map;
+        }
+
+        public virtual unsafe void ToBitmap(Bitmap map)
+        {
+            if (map == null) throw new ArgumentNullException("map");
+            if (map.Width != this.Width || map.Height != this.Height)
+            {
+                throw new ArgumentException("尺寸不匹配.");
+            }
+
+            if (map.PixelFormat != GetOutputBitmapPixelFormat().ToSystemDrawingPixelFormat())
+            {
+                throw new ArgumentException("只支持 " + GetOutputBitmapPixelFormat().ToString() + " 格式。 ");
+            }
+
+            if (map.PixelFormat == System.Drawing.Imaging.PixelFormat.Format8bppIndexed)
+            {
+                map.InitGrayscalePalette();
+            }
+
+            Int32 step = SizeOfType;
+            Byte* srcLine = (Byte*)Start;
+
+            BitmapData data = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, map.PixelFormat);
+            try
+            {
+                int width = map.Width;
+                int height = map.Height;
+                Byte* dstLine = (Byte*)data.Scan0;
+                for (int h = 0; h < height; h++)
+                {
+                    ToBitmapCore(srcLine, dstLine, width);
+                    dstLine += data.Stride;
+                    srcLine += step * width;
+                }
+            }
+            finally
+            {
+                map.UnlockBits(data);
             }
         }
 
