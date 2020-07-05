@@ -9,8 +9,6 @@ using System.Text;
 
 namespace Geb.Image
 {
-    using Geb.Utils;
-
     public partial struct Hsl 
     {
         public float H;

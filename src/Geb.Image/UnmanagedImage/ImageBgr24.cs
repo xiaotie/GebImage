@@ -11,8 +11,6 @@ using System.Text;
 
 namespace Geb.Image
 {
-    using Geb.Utils;
-
     [StructLayout(LayoutKind.Explicit)]
     public partial struct Bgr24
     {
