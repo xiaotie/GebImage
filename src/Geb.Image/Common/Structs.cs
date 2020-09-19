@@ -109,6 +109,47 @@ namespace Geb.Image
         }
     }
 
+    public struct Vector2F
+    {
+        public float X;
+        public float Y;
+
+        public Vector2F(float x, float y)
+        {
+            X = x; Y = y;
+        }
+
+        public Vector2F(double x, double y)
+        {
+            X = (float)x; Y = (float)y;
+        }
+
+        public Vector2F(Int16 x, Int16 y)
+        {
+            X = x; Y = y;
+        }
+
+        public Vector2F(Int32 x, Int32 y)
+        {
+            X = x; Y = y;
+        }
+
+        public Vector2F(Int64 x, Int64 y)
+        {
+            X = (float)x; Y = (float)y;
+        }
+
+        public static Boolean operator ==(Vector2F lhs, Vector2F rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(Vector2F lhs, Vector2F rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+    }
+
     public partial struct PointF
     {
         public float X;

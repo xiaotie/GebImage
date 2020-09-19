@@ -416,7 +416,20 @@ namespace Geb.Image
             if (width <= 0) throw new ArgumentOutOfRangeException("width");
             else if (height <= 0) throw new ArgumentOutOfRangeException("height");
             _isOwner = true;
-            AllocMemory(width, height);
+            AllocMemory(width, height, 1);
+        }
+
+        /// <summary>
+        /// 创建图像。
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        public unsafe ImageLab24(Int32 width, Int32 height, int lineSizeAlignmentBytes)
+        {
+            if (width <= 0) throw new ArgumentOutOfRangeException("width");
+            else if (height <= 0) throw new ArgumentOutOfRangeException("height");
+            _isOwner = true;
+            AllocMemory(width, height,lineSizeAlignmentBytes);
         }
 
         /// <summary>
@@ -448,7 +461,9 @@ namespace Geb.Image
             Start = (TPixel*)data;
         }
 
-        private unsafe void AllocMemory(int width, int height)
+        public int LineSizeAlignmentBytes { get; private set; } = 1;
+
+        private unsafe void AllocMemory(int width, int height, int lineSizeAlignmentBytes = 1)
         {
             _isOwner = true;
             Height = height;
@@ -456,8 +471,12 @@ namespace Geb.Image
             Length = Width * Height;
             SizeOfType = SizeOfPixel();
             Stride = SizeOfType * Width;
+            LineSizeAlignmentBytes = Math.Max(1, lineSizeAlignmentBytes);
+            int tail = Stride % LineSizeAlignmentBytes;
+            if (tail > 0) Stride += tail;
             ByteCount = SizeOfType * Length;
             Start = (TPixel*)Marshal.AllocHGlobal(ByteCount);
+            //Console.WriteLine("Thread " + System.Threading.Thread.CurrentThread.ManagedThreadId + " Alloc Memory:" + StartIntPtr);
         }
 
         public unsafe ImageLab24(String path)
@@ -483,6 +502,7 @@ namespace Geb.Image
                 if (Start != null)
                 {
                     Marshal.FreeHGlobal((IntPtr)Start);
+                    //Console.WriteLine("Thread " + System.Threading.Thread.CurrentThread.ManagedThreadId + " Dispose Memory:" + StartIntPtr);
                     Start = null;
                 }
                 _isOwner = false;
@@ -617,7 +637,7 @@ namespace Geb.Image
                 {
                     ToBitmapCore(srcLine, dstLine, width);
                     dstLine += data.Stride;
-                    srcLine += step * width;
+                    srcLine += Stride;
                 }
             }
             finally
@@ -1609,8 +1629,81 @@ namespace Geb.Image
             }
             else
             {
-                //TODO: 实现双线性插值
-                throw new NotImplementedException("InterpolationMode not implemented");
+                // 先行计算
+                float* alphaW = stackalloc float[width];
+                float* betaW = stackalloc float[width];
+                Int32* idxW0 = stackalloc Int32[width];
+                Int32* idxW1 = stackalloc Int32[width];
+
+                for (int w = 0; w < width; w++)
+                {
+                    float offsetF = (w * wCoeff);
+                    int offsetInt = (int)offsetF;
+                    idxW0[w] = offsetInt * nChannel;
+                    idxW1[w] = Math.Min(offsetInt + 1, wSrc-1) * nChannel;
+                    alphaW[w] = offsetF - offsetInt;
+                    betaW[w] = 1 + offsetInt - offsetF;
+                }
+
+                float xAlpha = 0;
+                float xBeta = 0;
+
+                // 对每个 channel 进行分别处理
+                TChannel test = (TChannel)1.5f;
+                if(1.5f - test > 0.00001f)  // TChannel 是非浮点类型
+                {
+                    for (int n = 0; n < nChannel; n++)
+                    {
+                        TChannel* s0 = rootSrc + n;
+                        TChannel* d0 = rootDst + n;
+                        for (int h = 0; h < height; h++)
+                        {
+                            float yDstF = h * hCoeff;
+                            int yDst = (int)yDstF;
+                            float yAlpha = yDstF - yDst;
+                            float yBeta = 1 - yAlpha;
+
+                            TChannel* sLine0 = s0 + yDst * wSrc * nChannel;
+                            TChannel* sLine1 = s0 + Math.Min(yDst + 1, hSrc - 1) * wSrc * nChannel;
+                            TChannel* dLine = d0 + h * width * nChannel;
+
+                            for (int w = 0; w < width; w++)
+                            {
+                                xAlpha = alphaW[w];
+                                xBeta = 1 - xAlpha;
+                                TChannel val = (TChannel)(sLine0[idxW0[w]] * xBeta * yBeta + sLine0[idxW1[w]] * xAlpha * yBeta + sLine1[idxW0[w]] * xBeta * yAlpha + sLine1[idxW1[w]] * xAlpha * yAlpha + 0.5f);
+                                dLine[w * nChannel] = val;
+                            }
+                        }
+                    }
+                }
+                else // TChannel 是浮点类型
+                {
+                    for (int n = 0; n < nChannel; n++)
+                    {
+                        TChannel* s0 = rootSrc + n;
+                        TChannel* d0 = rootDst + n;
+                        for (int h = 0; h < height; h++)
+                        {
+                            float yDstF = h * hCoeff;
+                            int yDst = (int)yDstF;
+                            float yAlpha = yDstF - yDst;
+                            float yBeta = 1 - yAlpha;
+
+                            TChannel* sLine0 = s0 + yDst * wSrc * nChannel;
+                            TChannel* sLine1 = s0 + Math.Min(yDst + 1, hSrc - 1) * wSrc * nChannel;
+                            TChannel* dLine = d0 + h * width * nChannel;
+
+                            for (int w = 0; w < width; w++)
+                            {
+                                xAlpha = alphaW[w];
+                                xBeta = 1 - xAlpha;
+                                TChannel val = (TChannel)(sLine0[idxW0[w]] * xBeta * yBeta + sLine0[idxW1[w]] * xAlpha * yBeta + sLine1[idxW0[w]] * xBeta * yAlpha + sLine1[idxW1[w]] * xAlpha * yAlpha);
+                                dLine[w * nChannel] = val;
+                            }
+                        }
+                    }
+                }
             }
             return imgDst;
         }
