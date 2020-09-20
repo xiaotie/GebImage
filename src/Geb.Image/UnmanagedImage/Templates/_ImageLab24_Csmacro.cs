@@ -519,6 +519,14 @@ namespace Geb.Image
             return Marshal.SizeOf(typeof(TPixel));
         }
 
+        public void CloneFrom(Bitmap map)
+        {
+            if (map.Width != this.Width || map.Height != this.Height)
+                throw new ArgumentException("Bitmap must be same size.");
+
+            this.CreateFromBitmap(map);
+        }
+
         protected virtual unsafe void CreateFromBitmap(Bitmap map)
         {
             int height = map.Height;

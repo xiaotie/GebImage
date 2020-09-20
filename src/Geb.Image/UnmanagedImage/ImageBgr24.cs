@@ -299,6 +299,41 @@ namespace Geb.Image
             return img;
         }
 
+        /// <summary>
+        /// 对图像进行 Alpha 混合
+        /// </summary>
+        /// <param name="background"></param>
+        /// <param name="mask"></param>
+        /// <returns></returns>
+        public unsafe ImageBgr24 AlphaMix(ImageBgr24 background, ImageU8 mask)
+        {
+            var size = this.Size;
+            if (size != background.Size || size != mask.Size)
+                throw new ArgumentException("All the images must be same size.");
+
+            ImageBgr24 imgMixed = background.Clone();
+            Bgr24* pSrc = this.Start;
+            Bgr24* pDst = imgMixed.Start;
+            Byte* pMask = mask.Start;
+            for (int i = 0; i < imgMixed.Length; i++)
+            {
+                int alpha = pMask[i];
+                if (alpha == 255) pDst[i] = pSrc[i];
+                else if (alpha > 0)
+                {
+                    int beta = 255 - alpha;
+                    Bgr24 a = pSrc[i];
+                    Bgr24 b = pDst[i];
+                    a.Red = (Byte)((a.Red * alpha + b.Red * beta) >> 8);
+                    a.Green = (Byte)((a.Green * alpha + b.Green * beta) >> 8);
+                    a.Blue = (Byte)((a.Blue * alpha + b.Blue * beta) >> 8);
+                    pDst[i] = a;
+                }
+            }
+
+            return imgMixed;
+        }
+
         public unsafe void ApplyMedianFilter(int medianRadius)
         {
             if (medianRadius > 0)
