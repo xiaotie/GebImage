@@ -299,6 +299,21 @@ namespace Geb.Image
             }
         }
 
+        public unsafe TPixel this[Geb.Image.Point location]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return Start[location.Y * this.Width + location.X];
+            }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set
+            {
+                Start[location.Y * this.Width + location.X] = value;
+            }
+        }
+
+
         public unsafe TPixel this[PointS location]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -513,7 +528,7 @@ namespace Geb.Image
                         newMap = new Bitmap(width, height, format);
                         using (Graphics g = Graphics.FromImage(newMap))
                         {
-                            g.DrawImage(map, new Point());
+                            g.DrawImage(map, new System.Drawing.Point());
                         }
                     }
                     else
@@ -562,8 +577,6 @@ namespace Geb.Image
                 }
             }
         }
-
-
 
         public virtual unsafe Bitmap ToBitmap()
         {
@@ -678,6 +691,15 @@ namespace Geb.Image
             return this;
         }
 
+        public void Reshape(int width, int height)
+        {
+            if (width <= 0) throw new ArgumentException("Width must large than 0");
+            if (height <= 0) throw new ArgumentException("Height must large than 0");
+            if (width * height != this.Width * this.Height) throw new ArgumentException("width*height must be same as this image's length");
+            this.Width = width;
+            this.Height = height;
+        }
+
         /// <summary>
         /// 对图像进行转置，行变成列，列变成行。转置结果直接存在当前的图像中。
         /// </summary>
@@ -777,20 +799,20 @@ namespace Geb.Image
             return this;
         }
 
-        public unsafe TImage CopyFrom(TImage src, System.Drawing.Point start, System.Drawing.Rectangle region, System.Drawing.Point destAnchor)
+        public unsafe TImage CopyFrom(TImage src, System.Drawing.Rectangle region, System.Drawing.Point destAnchor)
         {
-            return CopyFrom(src, new PointS(start.X, start.Y), new Rect(region.X, region.Y, region.Width, region.Height), new PointS(destAnchor.X, destAnchor.Y));
+            return CopyFrom(src, new Rect(region.X, region.Y, region.Width, region.Height), new PointS(destAnchor.X, destAnchor.Y));
         }
 
-        public unsafe TImage CopyFrom(TImage src, PointS start, Rect region, PointS destAnchor)
+        public unsafe TImage CopyFrom(TImage src, Rect region, PointS destAnchor)
         {
-            if (start.X >= src.Width || start.Y >= src.Height) return this;
-            int startSrcX = Math.Max(0, (int)start.X);
-            int startSrcY = Math.Max(0, (int)start.Y);
-            int endSrcX = Math.Min(start.X + region.Width, src.Width);
-            int endSrcY = Math.Min(start.Y + region.Height, src.Height);
-            int offsetX = start.X < 0? -start.X : 0;
-            int offsetY = start.Y < 0? -start.Y : 0;
+            if (region.X >= src.Width || region.Y >= src.Height) return this;
+            int startSrcX = Math.Max(0, (int)region.X);
+            int startSrcY = Math.Max(0, (int)region.Y);
+            int endSrcX = Math.Min(region.X + region.Width, src.Width);
+            int endSrcY = Math.Min(region.Y + region.Height, src.Height);
+            int offsetX = region.X < 0? -region.X : 0;
+            int offsetY = region.Y < 0? -region.Y : 0;
             offsetX = destAnchor.X + offsetX;
             offsetY = destAnchor.Y + offsetY;
             int startDstX = Math.Max(0, offsetX);
@@ -1686,7 +1708,7 @@ namespace Geb.Image
             TImage img = new TImage(Width + paddingSize * 2, Height + paddingSize * 2);
             img.Fill(default(TPixel));//这里效率不高。原本只需要填充四周扩大的部分即可
 
-            img.CopyFrom(this, new System.Drawing.Point(0, 0), new System.Drawing.Rectangle(0, 0, this.Width, this.Height), new System.Drawing.Point(paddingSize, paddingSize));
+            img.CopyFrom(this, new Rect(0, 0, this.Width, this.Height), new PointS(paddingSize, paddingSize));
 
             int width = this.Width;
             int height = this.Height;

@@ -109,6 +109,103 @@ namespace Geb.Image
         }
     }
 
+    /// <summary>
+    /// 点。横纵坐标都是Int32格式。
+    /// </summary>
+    [StructLayout(LayoutKind.Explicit)]
+    public partial struct Point
+    {
+        [FieldOffset(0)]
+        public Int32 X;
+        [FieldOffset(2)]
+        public Int32 Y;
+
+        public Point ToPointF()
+        {
+            return new Point(X, Y);
+        }
+
+        public Point(Int16 x, Int16 y)
+        {
+            X = x; Y = y;
+        }
+
+        public Point(Int32 x, Int32 y)
+        {
+            X = x; Y = y;
+        }
+
+        public Point(Int64 x, Int64 y)
+        {
+            X = (Int32)x; Y = (Int32)y;
+        }
+
+        public Point Right()
+        {
+            return new Point(X + 1, Y);
+        }
+
+        public Point Left()
+        {
+            return new Point(X - 1, Y);
+        }
+
+        public Point Up()
+        {
+            return new Point(X, Y - 1);
+        }
+
+        public Point Down()
+        {
+            return new Point(X, Y + 1);
+        }
+
+        public Point RightUp()
+        {
+            return new Point(X + 1, Y - 1);
+        }
+
+        public Point LeftUp()
+        {
+            return new Point(X - 1, Y - 1);
+        }
+
+        public Point RightDown()
+        {
+            return new Point(X + 1, Y + 1);
+        }
+
+        public Point LeftDown()
+        {
+            return new Point(X - 1, Y + 1);
+        }
+
+        public Point Move(Point shift)
+        {
+            return new Point(X + shift.X, Y + shift.Y);
+        }
+
+        public Point Move(int xShift, int yShift)
+        {
+            return new Point(X + xShift, Y + yShift);
+        }
+
+        public Int32 GetHashCode32()
+        {
+            return Y * Int32.MaxValue + X;
+        }
+
+        public static Boolean operator ==(Point lhs, Point rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(Point lhs, Point rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+    }
+
     public struct Vector2F
     {
         public float X;

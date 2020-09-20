@@ -382,7 +382,7 @@ namespace Geb.Image
             }
         }
 
-        public unsafe void ApplyMedianFilter(int medianRadius, IList<Point> points)
+        public unsafe void ApplyMedianFilter(int medianRadius, IList<Geb.Image.Point> points)
         {
             if (medianRadius <= 0 || points == null) return;
             Bgr24[] vals = new Bgr24[points.Count];
@@ -396,7 +396,7 @@ namespace Geb.Image
             
             for (int i = 0; i < points.Count; i++)
             {
-                Point p = points[i];
+                Geb.Image.Point p = points[i];
                 int x = p.X;
                 int y = p.Y;
                 count = 0;
@@ -427,7 +427,7 @@ namespace Geb.Image
 
             for (int i = 0; i < points.Count; i++)
             {
-                Point p = points[i];
+                Geb.Image.Point p = points[i];
                 this[p] = vals[i];
             }
         }

@@ -122,7 +122,7 @@ namespace Geb.Image
                 newMap = new Bitmap(bmp.Width, bmp.Height, format);
                 using (Graphics g = Graphics.FromImage(newMap))
                 {
-                    g.DrawImage(bmp, new Point());
+                    g.DrawImage(bmp, new System.Drawing.Point());
                 }
             }
             else
@@ -250,6 +250,81 @@ namespace Geb.Image
             if (angle < 0) angle = 360 + angle;
             double radius = Math.Sqrt(p.X * p.X + p.Y * p.Y);
             return new PolarPointD(radius, angle);
+        }
+
+        public static Rect ToRect(this Rectangle rect)
+        {
+            return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        public static RectF ToRect(this RectangleF rect)
+        {
+            return new RectF(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        public static RectF ToRectF(this Rectangle rect)
+        {
+            return new RectF(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        public static Rectangle ToRectangle(this Rect rect)
+        {
+            return new Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        public static RectangleF ToRectangleF(this Rect rect)
+        {
+            return new RectangleF(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        public static RectangleF ToRectangleF(this RectF rect)
+        {
+            return new RectangleF(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        public static Geb.Image.PointS ToPointS(this System.Drawing.Point p)
+        {
+            return new PointS(p.X, p.Y);
+        }
+
+        public static Geb.Image.Point ToPoint(this System.Drawing.Point p)
+        {
+            return new Geb.Image.Point(p.X, p.Y);
+        }
+
+        public static Geb.Image.PointF ToPointF(this System.Drawing.Point p)
+        {
+            return new Geb.Image.PointF(p.X, p.Y);
+        }
+
+        public static Geb.Image.PointF ToPointF(this System.Drawing.PointF p)
+        {
+            return new Geb.Image.PointF(p.X, p.Y);
+        }
+
+        public static System.Drawing.PointF ToPointF(this Geb.Image.PointF p)
+        {
+            return new System.Drawing.PointF(p.X, p.Y);
+        }
+
+        public static System.Drawing.PointF ToPointF(this Geb.Image.PointS p)
+        {
+            return new System.Drawing.PointF(p.X, p.Y);
+        }
+
+        public static System.Drawing.PointF ToPointF(this Geb.Image.Point p)
+        {
+            return new System.Drawing.PointF(p.X, p.Y);
+        }
+
+        public static System.Drawing.Point ToPoint(this Geb.Image.PointS p)
+        {
+            return new System.Drawing.Point(p.X, p.Y);
+        }
+
+        public static System.Drawing.Point ToPoint(this Geb.Image.Point p)
+        {
+            return new System.Drawing.Point(p.X, p.Y);
         }
     }
 }
