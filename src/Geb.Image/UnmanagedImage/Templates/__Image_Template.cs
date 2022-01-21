@@ -555,6 +555,32 @@ namespace Geb.Image.Hidden
         }
 
         /// <summary>
+        /// 在图像边缘添加 border
+        /// </summary>
+        /// <param name="paddingLeft">左侧填充像素数</param>
+        /// <param name="paddingTop">上侧填充像素数</param>
+        /// <param name="paddingRight">右侧填充像素数</param>
+        /// <param name="paddingBottom">下侧填充像素数</param>
+        /// <param name="val">填充值</param>
+        /// <returns></returns>
+        public unsafe TImage MakeBorder(uint paddingLeft, uint paddingTop, uint paddingRight, uint paddingBottom, TPixel val)
+        {
+            int newWidth = (int)(this.Width + paddingLeft + paddingRight);
+            int newHeight = (int)(this.Height + paddingTop + paddingBottom);
+            TImage img = new TImage(newWidth, newHeight);
+            img.Fill(val);  // 这里可以进一步优化，只填充 border 部分
+            TPixel* src0 = this.Start;
+            TPixel* dst0 = img.Start + paddingLeft + paddingTop * img.Width;
+            for(int h = 0; h < this.Height; h++)
+            {
+                Span<TPixel> srcSpan = new Span<TPixel>(src0 + h * this.Width, this.Width);
+                Span<TPixel> dstSpan = new Span<TPixel>(dst0 + h * img.Width, this.Width);
+                srcSpan.CopyTo(dstSpan);
+            }
+            return img;
+        }
+
+        /// <summary>
         /// 对图像进行转置，行变成列，列变成行。转置结果直接存在当前的图像中。
         /// </summary>
         /// <returns></returns>

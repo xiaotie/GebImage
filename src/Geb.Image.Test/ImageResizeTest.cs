@@ -24,5 +24,19 @@ namespace Geb.Image.Test
             Bgr24 c = img2[1, 1];
             Assert.AreEqual(101, c.Blue);
         }
+
+        [TestMethod]
+        public void TestMakeBorder()
+        {
+            ImageBgr24 img = new ImageBgr24(9, 8);
+            img.Fill(Bgr24.RED);
+            ImageBgr24 img2 = img.MakeBorder(1, 2, 3, 4, Bgr24.GREEN);
+            Assert.AreEqual(13, img2.Width);
+            Assert.AreEqual(14, img2.Height);
+            Assert.AreEqual(Bgr24.RED, img2[2, 1]);
+            Assert.AreEqual(Bgr24.GREEN, img2[1, 1]);
+            Assert.AreEqual(Bgr24.RED, img2[9, 9]);
+            Assert.AreEqual(Bgr24.GREEN, img2[10, 10]);
+        }
     }
 }
