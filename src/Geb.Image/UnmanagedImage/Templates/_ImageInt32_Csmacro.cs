@@ -899,6 +899,59 @@ namespace Geb.Image
             return this;
         }
 
+        public unsafe TImage DrawImage(TImage src, Rect region, Rect dstRest)
+        {
+            throw new NotImplementedException();
+
+            if (region.X >= src.Width || region.Y >= src.Height) return this;
+            if (dstRest.Width <= 0 || dstRest.Height <= 0 || dstRest.X >= this.Width || dstRest.Y >= this.Height) return this;
+
+            int startSrcX = Math.Max(0, (int)region.X);
+            int startSrcY = Math.Max(0, (int)region.Y);
+            int endSrcX = Math.Min(region.X + region.Width, src.Width);
+            int endSrcY = Math.Min(region.Y + region.Height, src.Height);
+            int offsetX = region.X < 0 ? -region.X : 0;
+            int offsetY = region.Y < 0 ? -region.Y : 0;
+            offsetX = dstRest.X + offsetX;
+            offsetY = dstRest.Y + offsetY;
+            int startDstX = Math.Max(0, offsetX);
+            int startDstY = Math.Max(0, offsetY);
+            offsetX = offsetX < 0 ? -offsetX : 0;
+            offsetY = offsetY < 0 ? -offsetY : 0;
+            startSrcX += offsetX;
+            startSrcY += offsetY;
+            int endDstX = Math.Min(dstRest.X + region.Width, this.Width);
+            int endDstY = Math.Min(dstRest.Y + region.Height, this.Height);
+            int copyWidth = Math.Min(endSrcX - startSrcX, endDstX - startDstX);
+            int copyHeight = Math.Min(endSrcY - startSrcY, endDstY - startDstY);
+            if (copyWidth <= 0 || copyHeight <= 0) return this;
+
+            int srcWidth = src.Width;
+            int dstWidth = this.Width;
+
+            TPixel* srcLine = src.Start + srcWidth * startSrcY + startSrcX;
+            TPixel* dstLine = this.Start + dstWidth * startDstY + startDstX;
+            TPixel* endSrcLine = srcLine + srcWidth * copyHeight;
+            int alpha1, alpha2, blendAlpha, alpha;
+            {
+                while (srcLine < endSrcLine)
+                {
+                    TPixel* pSrc = srcLine;
+                    TPixel* endPSrc = pSrc + copyWidth;
+                    TPixel* pDst = dstLine;
+                    while (pSrc < endPSrc)
+                    {
+                        *pDst = *pSrc;
+                        pSrc++;
+                        pDst++;
+                    }
+                    srcLine += srcWidth;
+                    dstLine += dstWidth;
+                }
+            }
+            return this;
+        }
+
         /// <summary>
         /// 将 src 通过单应性变换后复制到图像上
         /// </summary>
