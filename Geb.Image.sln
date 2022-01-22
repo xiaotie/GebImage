@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image", "src\Geb.Image\Geb.Image.csproj", "{3E6EEDFD-13A8-422D-86F0-4DD9906E87F2}"
 EndProject
@@ -9,7 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.Test", "src\Geb.I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.OpenCV", "src\Geb.Image.OpenCV\Geb.Image.OpenCV.csproj", "{B6301419-28B3-4867-9F1B-0C0FC8FE7526}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.WinForm", "src\Geb.Image.WinForm\Geb.Image.WinForm.csproj", "{303E833B-77DB-47F8-AAB5-EEFF1E4BE85A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.WinForm", "src\Geb.Image.WinForm\Geb.Image.WinForm.csproj", "{303E833B-77DB-47F8-AAB5-EEFF1E4BE85A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Analysis", "src\Geb.Image.Analysis\Geb.Image.Analysis.csproj", "{AD0E8F3B-6253-4DEF-8F51-9262ED325F19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Edit", "src\Geb.Image.Edit\Geb.Image.Edit.csproj", "{6EFCE6ED-3819-401A-AFA2-9C9C6D8AE43C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Numerics", "src\Geb.Numerics\Geb.Numerics.csproj", "{41881BD5-253B-47AE-A93F-DD27EDC98E11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +39,18 @@ Global
 		{303E833B-77DB-47F8-AAB5-EEFF1E4BE85A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{303E833B-77DB-47F8-AAB5-EEFF1E4BE85A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{303E833B-77DB-47F8-AAB5-EEFF1E4BE85A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD0E8F3B-6253-4DEF-8F51-9262ED325F19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD0E8F3B-6253-4DEF-8F51-9262ED325F19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD0E8F3B-6253-4DEF-8F51-9262ED325F19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD0E8F3B-6253-4DEF-8F51-9262ED325F19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EFCE6ED-3819-401A-AFA2-9C9C6D8AE43C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EFCE6ED-3819-401A-AFA2-9C9C6D8AE43C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EFCE6ED-3819-401A-AFA2-9C9C6D8AE43C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EFCE6ED-3819-401A-AFA2-9C9C6D8AE43C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41881BD5-253B-47AE-A93F-DD27EDC98E11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41881BD5-253B-47AE-A93F-DD27EDC98E11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41881BD5-253B-47AE-A93F-DD27EDC98E11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41881BD5-253B-47AE-A93F-DD27EDC98E11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

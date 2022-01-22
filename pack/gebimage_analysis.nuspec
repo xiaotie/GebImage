@@ -1,23 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>Geb.Image</id>
+        <id>Geb.Image.Analysis</id>
         <version>6.0.0</version>
-        <title>Geb Image Library</title>
+        <title>Geb Image Analysis Library</title>
         <authors>hufei(geblab)</authors>
         <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
         <projectUrl>https://github.com/xiaotie/GebImage</projectUrl>
         <iconUrl>http://www.geblab.com/Content/images/logo.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Geb Image Library</description>
+        <description>Geb Image Analysis Library</description>
         <language>en-US</language>
 		<dependencies>
             <dependency id="System.Drawing.Common" version="6.0.0" />
+            <dependency id="Geb.Image" version="6.0.0" />
+            <dependency id="Geb.Numerics" version="6.0.0" />
 		</dependencies>
     </metadata>
     <files>
-        <file src="..\src\Geb.Image\bin\Release\net6.0\Geb.Image.dll" target="lib\net6.0" />
-        <file src="..\src\Geb.Image\bin\Release\net6.0\Geb.Image.xml" target="lib\net6.0" />
-        <file src="..\src\Geb.Image\bin\Release\net6.0\Geb.Image.pdb" target="lib\net6.0" />
+        <file src="..\src\Geb.Image.Analysis\bin\Release\net6.0\Geb.Image.Analysis.dll" target="lib\net6.0" />
+        <file src="..\src\Geb.Image.Analysis\bin\Release\net6.0\Geb.Image.Analysis.xml" target="lib\net6.0" />
     </files>
 </package>
