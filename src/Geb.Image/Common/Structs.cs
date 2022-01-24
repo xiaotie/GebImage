@@ -405,6 +405,28 @@ namespace Geb.Image
         }
     }
 
+    public struct SizeF
+    {
+        public float Width;
+        public float Height;
+
+        public SizeF(float width, float height)
+        {
+            Width = width;
+            Height = height;
+        }
+
+        public static Boolean operator ==(SizeF lhs, SizeF rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static Boolean operator !=(SizeF lhs, SizeF rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+    }
+
     public struct Size<T> where T : struct
     {
         public T Width;

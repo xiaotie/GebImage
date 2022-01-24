@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Geb.Image.Edit</id>
-        <version>6.0.0</version>
+        <version>6.0.1</version>
         <title>Geb Image Edit Library</title>
         <authors>hufei(geblab)</authors>
         <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
@@ -13,7 +13,7 @@
         <language>en-US</language>
 		<dependencies>
             <dependency id="System.Drawing.Common" version="6.0.0" />
-            <dependency id="Geb.Image" version="6.0.0" />
+            <dependency id="Geb.Image" version="6.0.1" />
             <dependency id="Geb.Numerics" version="6.0.0" />
 		</dependencies>
     </metadata>
