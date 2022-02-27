@@ -220,11 +220,6 @@ namespace Geb.Image.Hidden
             }
         }
 
-        /// <summary>
-        /// 感兴趣区域。目前尚无用途。
-        /// </summary>
-        public ROI ROI { get; private set; }
-
         public void Save(String path)
         {
             using (Bitmap bmp = this.ToBitmap())
@@ -341,11 +336,22 @@ namespace Geb.Image.Hidden
             Dispose();
         }
 
+        /// <summary>
+        /// 每个像素所占的 bytes 数
+        /// </summary>
+        /// <returns></returns>
         public static Int32 SizeOfPixel()
         {
             return Marshal.SizeOf(typeof(TPixel));
         }
 
+        #region Bitmap 操作
+
+        /// <summary>
+        /// 从 Bitmap 中复制数据。仅支持 windows 
+        /// </summary>
+        /// <param name="map"></param>
+        /// <exception cref="ArgumentException"></exception>
         public void CloneFrom(Bitmap map)
         {
             if (map.Width != this.Width || map.Height != this.Height)
@@ -354,6 +360,10 @@ namespace Geb.Image.Hidden
             this.CreateFromBitmap(map);
         }
 
+        /// <summary>
+        /// 从 Bitmap 中复制数据。仅支持 windows 
+        /// </summary>
+        /// <param name="map"></param>
         protected virtual unsafe void CreateFromBitmap(Bitmap map)
         {
             int height = map.Height;
@@ -432,6 +442,10 @@ namespace Geb.Image.Hidden
             }
         }
 
+        /// <summary>
+        /// 转换成 Bitmap。仅支持 windows 
+        /// </summary>
+        /// <returns></returns>
         public virtual unsafe Bitmap ToBitmap()
         {
             Bitmap map = new Bitmap(this.Width, this.Height, GetOutputBitmapPixelFormat().ToSystemDrawingPixelFormat());
@@ -439,6 +453,12 @@ namespace Geb.Image.Hidden
             return map;
         }
 
+        /// <summary>
+        /// 转换成  Bitmap。仅支持 windows 
+        /// </summary>
+        /// <param name="map"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public virtual unsafe void ToBitmap(Bitmap map)
         {
             if (map == null) throw new ArgumentNullException("map");
@@ -479,6 +499,8 @@ namespace Geb.Image.Hidden
             }
         }
 
+        #endregion
+
         public void ApplyMatrix(float a, float b, float c, float d, float e, float f)
         {
             //TODO: ApplyMatrix
@@ -508,6 +530,10 @@ namespace Geb.Image.Hidden
             }
         }
 
+        /// <summary>
+        /// 克隆一个副本。
+        /// </summary>
+        /// <returns></returns>
         public TImage Clone()
         {
             TImage img = new TImage(this.Width, this.Height);
@@ -527,6 +553,13 @@ namespace Geb.Image.Hidden
             return img;
         }
 
+        /// <summary>
+        /// 从另一个图像中复制
+        /// </summary>
+        /// <param name="src"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
         public unsafe TImage CloneFrom(TImage src)
         {
             if (src == null) throw new ArgumentNullException("src");

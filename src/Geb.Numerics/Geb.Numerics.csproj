@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <BaseOutputPath>..\..\bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>..\..\bin\obj\Geb.Numerics\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
 </Project>

@@ -4,6 +4,8 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <BaseOutputPath>..\..\bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>..\..\bin\obj\Geb.Image.WinForm\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

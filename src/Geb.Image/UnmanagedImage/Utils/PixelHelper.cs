@@ -15,7 +15,5 @@ namespace Geb.Image
         {
             return (byte)(255 - p);
         }
-
-
     }
 }

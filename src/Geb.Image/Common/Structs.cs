@@ -461,6 +461,8 @@ namespace Geb.Image
         public int Left { get { return X; } }
         public int Right { get { return X + Width; } }
 
+        public Point Center { get { return new Point(X + Width / 2, Y + Height / 2); } }
+
         public Rect(Int32 x = 0, Int32 y = 0, Int32 w = 0, Int32 h = 0)
         {
             X = x;
@@ -512,6 +514,8 @@ namespace Geb.Image
         public int Bottom { get { return Y + Height; } }
         public int Left { get { return X; } }
         public int Right { get { return X + Width; } }
+
+        public PointS Center { get { return new PointS(X + Width/2, Y + Height/2); } }
 
         public RectS(Int16 x = 0, Int16 y = 0, Int16 w = 0, Int16 h = 0)
         {
@@ -568,6 +572,13 @@ namespace Geb.Image
         public double Width;
         public double Height;
 
+        public double Top { get { return Y; } }
+        public double Bottom { get { return Y + Height; } }
+        public double Left { get { return X; } }
+        public double Right { get { return X + Width; } }
+
+        public PointD Center { get { return new PointD(X + 0.5 * Width, Y + 0.5 * Height); } }
+
         public RectD(double x = 0, double y = 0, double w = 0, double h = 0)
         {
             X = x;
@@ -579,6 +590,11 @@ namespace Geb.Image
         public RectF ToRectF()
         {
             return new RectF((float)X, (float)Y, (float)Width, (float)Height);
+        }
+
+        public Rect ToRect()
+        {
+            return new Rect((int)Math.Round(X), (int)Math.Round(Y), (int)Math.Round(Width), (int)Math.Round(Height));
         }
 
         public static Boolean operator ==(RectD lhs, RectD rhs)
@@ -599,6 +615,13 @@ namespace Geb.Image
         public float Width;
         public float Height;
 
+        public float Top { get { return Y; } }
+        public float Bottom { get { return Y + Height; } }
+        public float Left { get { return X; } }
+        public float Right { get { return X + Width; } }
+
+        public PointF Center { get { return new PointF(X + 0.5f * Width, Y + 0.5f * Height); } }
+
         public RectF(float x = 0, float y = 0, float w = 0, float h = 0)
         {
             X = x;
@@ -610,6 +633,20 @@ namespace Geb.Image
         public RectD ToRectD()
         {
             return new RectD(X, Y, Width, Height);
+        }
+
+        public Rect ToRect()
+        {
+            return new Rect((int)Math.Round(X), (int)Math.Round(Y), (int)Math.Round(Width), (int)Math.Round(Height));
+        }
+
+        /// <summary>
+        /// 转换成 System.Drawing.RectangleF
+        /// </summary>
+        /// <returns></returns>
+        public System.Drawing.RectangleF ToRectangleF()
+        {
+            return new System.Drawing.RectangleF(X, Y, Width, Height);
         }
 
         public static Boolean operator ==(RectF lhs, RectF rhs)

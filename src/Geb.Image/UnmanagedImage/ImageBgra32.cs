@@ -3,11 +3,6 @@
  ************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.IO;
 
 namespace Geb.Image
@@ -200,25 +195,25 @@ namespace Geb.Image
             }
         }
 
-        public unsafe void CombineAlpha(ImageBgra32 src, System.Drawing.Point start, System.Drawing.Rectangle region, System.Drawing.Point destAnchor)
+        public unsafe void CombineAlpha(ImageBgra32 src, Rect srcRect, Point dest)
         {
-            if (start.X >= src.Width || start.Y >= src.Height) return;
-            int startSrcX = Math.Max(0, start.X);
-            int startSrcY = Math.Max(0, start.Y);
-            int endSrcX = Math.Min(start.X + region.Width, src.Width);
-            int endSrcY = Math.Min(start.Y + region.Height, src.Height);
-            int offsetX = start.X < 0 ? -start.X : 0;
-            int offsetY = start.Y < 0 ? -start.Y : 0;
-            offsetX = destAnchor.X + offsetX;
-            offsetY = destAnchor.Y + offsetY;
+            if (srcRect.X >= src.Width || srcRect.Y >= src.Height) return;
+            int startSrcX = Math.Max(0, srcRect.X);
+            int startSrcY = Math.Max(0, srcRect.Y);
+            int endSrcX = Math.Min(srcRect.X + srcRect.Width, src.Width);
+            int endSrcY = Math.Min(srcRect.Y + srcRect.Height, src.Height);
+            int offsetX = srcRect.X < 0 ? -srcRect.X : 0;
+            int offsetY = srcRect.Y < 0 ? -srcRect.Y : 0;
+            offsetX = dest.X + offsetX;
+            offsetY = dest.Y + offsetY;
             int startDstX = Math.Max(0, offsetX);
             int startDstY = Math.Max(0, offsetY);
             offsetX = offsetX < 0 ? -offsetX : 0;
             offsetY = offsetY < 0 ? -offsetY : 0;
             startSrcX += offsetX;
             startSrcY += offsetY;
-            int endDstX = Math.Min(destAnchor.X + region.Width, this.Width);
-            int endDstY = Math.Min(destAnchor.Y + region.Height, this.Height);
+            int endDstX = Math.Min(dest.X + srcRect.Width, this.Width);
+            int endDstY = Math.Min(dest.Y + srcRect.Height, this.Height);
             int copyWidth = Math.Min(endSrcX - startSrcX, endDstX - startDstX);
             int copyHeight = Math.Min(endSrcY - startSrcY, endDstY - startDstY);
             if (copyWidth <= 0 || copyHeight <= 0) return;

@@ -257,14 +257,19 @@ namespace Geb.Image
             return new Rect(rect.X, rect.Y, rect.Width, rect.Height);
         }
 
-        public static RectF ToRect(this RectangleF rect)
+        public static RectF ToRectF(this Rectangle rect)
         {
             return new RectF(rect.X, rect.Y, rect.Width, rect.Height);
         }
 
-        public static RectF ToRectF(this Rectangle rect)
+        public static RectF ToRectF(this RectangleF rect)
         {
             return new RectF(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        public static Rect ToRect(this RectangleF rect)
+        {
+            return ToRectF(rect).ToRect();
         }
 
         public static Rectangle ToRectangle(this Rect rect)
@@ -280,6 +285,11 @@ namespace Geb.Image
         public static RectangleF ToRectangleF(this RectF rect)
         {
             return new RectangleF(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        public static Rectangle ToRectangle(this RectF rect)
+        {
+            return ToRectangle(rect.ToRect());
         }
 
         public static Geb.Image.PointS ToPointS(this System.Drawing.Point p)

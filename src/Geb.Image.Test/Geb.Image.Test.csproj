@@ -4,6 +4,10 @@
     <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <BaseOutputPath>..\..\bin\</BaseOutputPath>
+
+    <BaseIntermediateOutputPath>..\..\bin\obj\Geb.Image.Test\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

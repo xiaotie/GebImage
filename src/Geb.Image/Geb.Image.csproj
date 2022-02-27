@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <Version>5.0.0</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <BaseOutputPath>..\..\bin</BaseOutputPath>
+    <BaseIntermediateOutputPath>..\..\bin\obj\Geb.Image\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -24,7 +24,7 @@ namespace Geb.Image.Analysis
             int n = result.Length;
             Point[] ret = new Point[n];
             for (int i = 0; i < n; i++)
-                ret[i] = new Point((int)result[i].X, (int)result[i].Y);
+                ret[i] = new Point((int)Math.Round(result[i].X), (int)Math.Round(result[i].Y));
             return ret;
         }
 
