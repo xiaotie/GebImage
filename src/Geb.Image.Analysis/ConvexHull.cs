@@ -11,168 +11,109 @@ namespace Geb.Image.Analysis
     /// </summary>
     public class ConvexHull
     {
-        #region 创建凸包
-        /// <summary>
-        /// 给定由 pts 形成的多边形，返回形成多边形凸包的那些点的子集
-        /// </summary>
-        /// <param name="pts"></param>
-        /// <returns></returns>
-        public static Point[] CreateConvexHull(Point[] pts)
+        public class GrahamScan
         {
-            PointF[] mpts = FromPoints(pts);
-            PointF[] result = CreateConvexHull(mpts);
-            int n = result.Length;
-            Point[] ret = new Point[n];
-            for (int i = 0; i < n; i++)
-                ret[i] = new Point((int)Math.Round(result[i].X), (int)Math.Round(result[i].Y));
-            return ret;
-        }
-
-        /// <summary>
-        /// 给定由 pts 形成的多边形，返回形成多边形凸包的那些点的子集
-        /// </summary>
-        /// <param name="pts"></param>
-        /// <returns></returns>
-        public static PointF[] CreateConvexHull(PointF[] pts)
-        {
-            PointF[][] l_u = ConvexHull_LU(pts);
-            PointF[] lower = l_u[0];
-            PointF[] upper = l_u[1];
-            // Join the lower and upper hull  
-            int nl = lower.Length;
-            int nu = upper.Length;
-            PointF[] result = new PointF[nl + nu];
-            for (int i = 0; i < nl; i++)
-                result[i] = lower[i];
-            for (int i = 0; i < nu; i++)
-                result[i + nl] = upper[i];
-            return result;
-        }
-
-        // returns the two points that form the diameter of the polygon formed by points pts  
-        // takes and returns integer Point structs, not PointF  
-        public static Point[] Diameter(Point[] pts)
-        {
-            PointF[] fpts = FromPoints(pts);
-            PointF[] maxPair = Diameter(fpts);
-            return new Point[] { new Point((int)maxPair[0].X, (int)maxPair[0].Y), new Point((int)maxPair[1].X, (int)maxPair[1].Y) };
-        }
-
-        // returns the two points that form the diameter of the polygon formed by points pts  
-        public static PointF[] Diameter(PointF[] pts)
-        {
-            IEnumerable<Pair> pairs = RotatingCalipers(pts);
-            double max2 = Double.NegativeInfinity;
-            Pair maxPair = null;
-            foreach (Pair pair in pairs)
+            const int TURN_LEFT = 1;
+            const int TURN_RIGHT = -1;
+            const int TURN_NONE = 0;
+            public static int Turn(PointF p, PointF q, PointF r)
             {
-                PointF p = pair.a;
-                PointF q = pair.b;
-                double dx = p.X - q.X;
-                double dy = p.Y - q.Y;
-                double dist2 = dx * dx + dy * dy;
-                if (dist2 > max2)
+                return ((q.X - p.X) * (r.Y - p.Y) - (r.X - p.X) * (q.Y - p.Y)).CompareTo(0);
+            }
+
+            public static void KeepLeft(List<PointF> hull, PointF r)
+            {
+                while (hull.Count > 1 && Turn(hull[hull.Count - 2], hull[hull.Count - 1], r) != TURN_LEFT)
                 {
-                    maxPair = pair;
-                    max2 = dist2;
+                    hull.RemoveAt(hull.Count - 1);
+                }
+                if (hull.Count == 0 || hull[hull.Count - 1] != r)
+                {
+                    hull.Add(r);
                 }
             }
 
-            // return Math.Sqrt(max2);  
-            return new PointF[] { maxPair.a, maxPair.b };
-        }
-
-        private static PointF[] FromPoints(Point[] pts)
-        {
-            int n = pts.Length;
-            PointF[] mpts = new PointF[n];
-            for (int i = 0; i < n; i++)
-                mpts[i] = new PointF(pts[i].X, pts[i].Y);
-            return mpts;
-        }
-
-        private static double Orientation(PointF p, PointF q, PointF r)
-        {
-            return (q.Y - p.Y) * (r.X - p.X) - (q.X - p.X) * (r.Y - p.Y);
-        }
-
-        private static void Pop<T>(List<T> l)
-        {
-            int n = l.Count;
-            l.RemoveAt(n - 1);
-        }
-
-        private static T At<T>(List<T> l, int index)
-        {
-            int n = l.Count;
-            if (index < 0)
-                return l[n + index];
-            return l[index];
-        }
-
-        private static PointF[][] ConvexHull_LU(PointF[] arr_pts)
-        {
-            List<PointF> u = new List<PointF>();
-            List<PointF> l = new List<PointF>();
-            List<PointF> pts = new List<PointF>(arr_pts.Length);
-            pts.AddRange(arr_pts);
-            pts.Sort(Compare);
-            foreach (PointF p in pts)
+            public static double GetAngle(PointF p1, PointF p2)
             {
-                while (u.Count > 1 && Orientation(At(u, -2), At(u, -1), p) <= 0) Pop(u);
-                while (l.Count > 1 && Orientation(At(l, -2), At(l, -1), p) >= 0) Pop(l);
-                u.Add(p);
-                l.Add(p);
+                float xDiff = p2.X - p1.X;
+                float yDiff = p2.Y - p1.Y;
+                return Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
             }
-            return new PointF[][] { l.ToArray(), u.ToArray() };
-        }
 
-        private class Pair
-        {
-            public PointF a, b;
-            public Pair(PointF a, PointF b)
+            public static List<PointF> MergeSort(PointF p0, List<PointF> arrPoint)
             {
-                this.a = a;
-                this.b = b;
+                if (arrPoint.Count == 1)
+                {
+                    return arrPoint;
+                }
+                List<PointF> arrSortedInt = new List<PointF>();
+                int middle = (int)arrPoint.Count / 2;
+                List<PointF> leftArray = arrPoint.GetRange(0, middle);
+                List<PointF> rightArray = arrPoint.GetRange(middle, arrPoint.Count - middle);
+                leftArray = MergeSort(p0, leftArray);
+                rightArray = MergeSort(p0, rightArray);
+                int leftptr = 0;
+                int rightptr = 0;
+                for (int i = 0; i < leftArray.Count + rightArray.Count; i++)
+                {
+                    if (leftptr == leftArray.Count)
+                    {
+                        arrSortedInt.Add(rightArray[rightptr]);
+                        rightptr++;
+                    }
+                    else if (rightptr == rightArray.Count)
+                    {
+                        arrSortedInt.Add(leftArray[leftptr]);
+                        leftptr++;
+                    }
+                    else if (GetAngle(p0, leftArray[leftptr]) < GetAngle(p0, rightArray[rightptr]))
+                    {
+                        arrSortedInt.Add(leftArray[leftptr]);
+                        leftptr++;
+                    }
+                    else
+                    {
+                        arrSortedInt.Add(rightArray[rightptr]);
+                        rightptr++;
+                    }
+                }
+                return arrSortedInt;
             }
-        }
 
-        private static IEnumerable<Pair> RotatingCalipers(PointF[] pts)
-        {
-            PointF[][] l_u = ConvexHull_LU(pts);
-            PointF[] lower = l_u[0];
-            PointF[] upper = l_u[1];
-            int i = 0;
-            int j = lower.Length - 1;
-            while (i < upper.Length - 1 || j > 0)
+            public static List<PointF> ConvexHull(IList<PointF> points)
             {
-                yield return new Pair(upper[i], lower[j]);
-                if (i == upper.Length - 1) j--;
-                else if (j == 0) i += 1;
-                else if ((upper[i + 1].Y - upper[i].Y) * (lower[j].X - lower[j - 1].X) >
-                    (lower[j].Y - lower[j - 1].Y) * (upper[i + 1].X - upper[i].X))
-                    i++;
-                else
-                    j--;
+                PointF p0 = points[0];
+                foreach (PointF value in points)
+                {
+                    if (p0.Y > value.Y)
+                        p0 = value;
+                }
+                List<PointF> order = new List<PointF>();
+                foreach (PointF value in points)
+                {
+                    if (p0 != value)
+                        order.Add(value);
+                }
+
+                order = MergeSort(p0, order);
+                List<PointF> result = new List<PointF>();
+                result.Add(p0);
+                result.Add(order[0]);
+                result.Add(order[1]);
+                order.RemoveAt(0);
+                order.RemoveAt(0);
+                foreach (PointF value in order)
+                {
+                    KeepLeft(result, value);
+                }
+                return result;
             }
         }
 
-        private static int Compare(PointF a, PointF b)
+        public static List<PointF> CreateConvexHull(IList<PointF> pts)
         {
-            if (a.X < b.X)
-            {
-                return -1;
-            }
-            else if (a.X == b.X)
-            {
-                if (a.Y < b.Y)
-                    return -1;
-                else if (a.Y == b.Y)
-                    return 0;
-            }
-            return 1;
+            return GrahamScan.ConvexHull(pts);
         }
-        #endregion
 
         #region 旋转卡壳算法
 
@@ -193,7 +134,7 @@ namespace Geb.Image.Analysis
         }
 
         /// <summary>
-        /// 旋转卡壳算法。翻译自 opencv
+        /// 旋转卡壳算法。翻译自 opencv。注意，输入的凸包顶点需要时按顺序排列的，如果是乱序，返回的是错误的结果。
         /// </summary>
         /// <param name="points">输入凸包的顶点</param>
         /// <param name="mode">模式，MinAreaRect 或 MaxHeight</param>
@@ -464,12 +405,13 @@ namespace Geb.Image.Analysis
         /// 输入多边形（可以不是凸多边形）顶点，返回包含所有顶点的面积最小的矩阵。翻译自 opencv 的 cv::minAreaRect 方法
         /// </summary>
         /// <param name="points">多边形顶点。多边形可以非凸多边形</param>
+        /// <param name="isClockwiseConvexHullVertices">传入的点是否是凸包顺时针排列的顶点</param>
         /// <returns>返回包含所有顶点的面积最小的矩阵</returns>
-        public static unsafe RotatedRectF MinAreaRect(PointF[] points)
+        public static unsafe RotatedRectF MinAreaRect(PointF[] points, bool isClockwiseConvexHullVertices = false)
         {
             RotatedRectF box = new RotatedRectF();
             PointF* output = stackalloc PointF[3];
-            PointF[] hpoints = CreateConvexHull(points);
+            PointF[] hpoints = isClockwiseConvexHullVertices ? points : CreateConvexHull(points).ToArray();
             if(hpoints.Length > 2)
             {
                 RotatingCalipers(new Span<PointF>(hpoints), RotatingCalipersMode.MinAreaRect, new Span<float>(output, 6));
