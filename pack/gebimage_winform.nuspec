@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Geb.Image.WinForm</id>
-        <version>6.0.1</version>
+        <version>6.0.2</version>
         <title>Geb Image Library WinForm Extend Library</title>
         <authors>hufei(geblab)</authors>
         <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
@@ -13,11 +13,11 @@
         <language>en-US</language>
 		<dependencies>
             <dependency id="System.Drawing.Common" version="6.0.0" />
-            <dependency id="Geb.Image" version="6.0.1" />
+            <dependency id="Geb.Image" version="6.0.2" />
 		</dependencies>
     </metadata>
     <files>
-        <file src="..\src\Geb.Image.WinForm\bin\Release\net6.0-windows\Geb.Image.WinForm.dll" target="lib\net6.0" />
-        <file src="..\src\Geb.Image.WinForm\bin\Release\net6.0-windows\Geb.Image.WinForm.xml" target="lib\net6.0" />
+        <file src="..\bin\Release\net6.0-windows\Geb.Image.WinForm.dll" target="lib\net6.0" />
+        <file src="..\bin\Release\net6.0-windows\Geb.Image.WinForm.xml" target="lib\net6.0" />
     </files>
 </package>

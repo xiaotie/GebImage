@@ -184,6 +184,26 @@ namespace Geb.Image
             return img;
         }
 
+        /// <summary>
+        /// 将当前图像转换为 ImageBgr24 格式的图像
+        /// </summary>
+        /// <returns>转换后的图像</returns>
+        public unsafe ImageBgr24 ToImageBgr24()
+        {
+            ImageBgr24 image = new ImageBgr24(this.Width, this.Height);
+            Bgra32* pSrc = this.Start;
+            Bgr24* pDst = image.Start;
+            Bgra32* pSrcEnd = this.Start + this.Length;
+            while(pSrc < pSrcEnd)
+            {
+                pDst->Red = pSrc->Red;
+                pDst->Green = pSrc->Green;
+                pDst->Blue = pSrc->Blue;
+                pSrc++;pDst++;
+            }
+            return image;
+        }
+
         public unsafe void SetAlpha(byte alpha)
         {
             Bgra32* start = (Bgra32*)this.Start;

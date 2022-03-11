@@ -16,11 +16,17 @@ namespace Geb.Image.Formats.Jpeg
             return new ImageBgra32Holder(image);
         }
 
+        public static ImageHolder Create(ImageBgr24 image)
+        {
+            return new ImageBgr24Holder(image);
+        }
+
         public int Width => GetRawImage().Width;
         public int Height => GetRawImage().Height;
 
         protected ImageU8 _imageU8;
         protected ImageBgra32 _imageBgra32;
+        protected ImageBgr24 _imageBgr24;
 
         public abstract IImage GetRawImage();
 
@@ -33,6 +39,15 @@ namespace Geb.Image.Formats.Jpeg
             return _imageBgra32;
         }
 
+        public ImageBgr24 GetImageBgr24()
+        {
+            if (_imageBgr24 == null && _imageU8 != null)
+            {
+                _imageBgr24 = _imageU8.ToImageBgr24();
+            }
+            return _imageBgr24;
+        }
+
         public ImageU8 GetImageU8()
         {
             if(_imageU8 == null && _imageBgra32 != null)
@@ -42,8 +57,25 @@ namespace Geb.Image.Formats.Jpeg
             return _imageU8;
         }
 
-        public virtual void Release()
+        public void Release()
         {
+            if (this._imageU8 != null)
+            {
+                _imageU8.Dispose();
+                _imageU8 = null;
+            }
+
+            if (this._imageBgr24 != null)
+            {
+                _imageBgr24.Dispose();
+                _imageBgr24 = null;
+            }
+
+            if (this._imageBgra32 != null)
+            {
+                _imageBgra32.Dispose();
+                _imageBgra32 = null;
+            }
         }
 
         public void Dispose()
@@ -63,15 +95,6 @@ namespace Geb.Image.Formats.Jpeg
         {
             this._imageU8 = image;
         }
-
-        public override void Release()
-        {
-            if(this._imageBgra32 != null)
-            {
-                _imageBgra32.Dispose();
-                _imageBgra32 = null;
-            }
-        }
     }
 
     public class ImageBgra32Holder : ImageHolder
@@ -85,14 +108,18 @@ namespace Geb.Image.Formats.Jpeg
         {
             return this._imageBgra32;
         }
+    }
 
-        public override void Release()
+    public class ImageBgr24Holder : ImageHolder
+    {
+        public ImageBgr24Holder(ImageBgr24 image)
         {
-            if (this._imageU8 != null)
-            {
-                _imageU8.Dispose();
-                _imageU8 = null;
-            }
+            this._imageBgr24 = image;
+        }
+
+        public override IImage GetRawImage()
+        {
+            return this._imageBgr24;
         }
     }
 }

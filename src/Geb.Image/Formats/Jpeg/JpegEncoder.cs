@@ -44,6 +44,29 @@ namespace Geb.Image.Formats.Jpeg
             }
         }
 
+        public static void Encode(ImageBgr24 image, Stream stream, int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr)
+        {
+            using (ImageHolder h = ImageHolder.Create(image))
+                CreateJpegEncoder(quality, fmt).Encode(h, stream);
+        }
+
+        public static void Encode(ImageBgr24 image, string path, int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr)
+        {
+            using (FileStream fs = new FileStream(path, FileMode.CreateNew))
+            {
+                Encode(image, fs, quality, fmt);
+            }
+        }
+
+        public static byte[] Encode(ImageBgr24 image, int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr)
+        {
+            using (MemoryStream fs = new MemoryStream())
+            {
+                Encode(image, fs, quality, fmt);
+                return fs.ToArray();
+            }
+        }
+
         public static void Encode(ImageU8 image, Stream stream, int quality = 50, JpegPixelFormats fmt = JpegPixelFormats.YCbCr)
         {
             using (ImageHolder h = ImageHolder.Create(image))

@@ -18,7 +18,7 @@
 		</dependencies>
     </metadata>
     <files>
-        <file src="..\src\Geb.Image.Edit\bin\Release\net6.0\Geb.Image.Edit.dll" target="lib\net6.0" />
-        <file src="..\src\Geb.Image.Edit\bin\Release\net6.0\Geb.Image.Edit.xml" target="lib\net6.0" />
+        <file src="..\bin\Release\net6.0\Geb.Image.Edit.dll" target="lib\net6.0" />
+        <file src="..\bin\Release\net6.0\Geb.Image.Edit.xml" target="lib\net6.0" />
     </files>
 </package>

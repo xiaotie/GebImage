@@ -158,6 +158,34 @@ namespace Geb.Image
 
         #endregion
 
+        #region 转换为编码图像
+        public void SaveBmp(String imagePath)
+        {
+            using(var imageBgr32=this.ToImageBgr32())
+                new Formats.Bmp.BmpEncoder().Encode(imageBgr32, imagePath);
+        }
+
+        public void SaveJpeg(String imagePath, int quality = 70, Formats.Jpeg.JpegPixelFormats fmt = Formats.Jpeg.JpegPixelFormats.YCbCr)
+        {
+            Formats.Jpeg.JpegEncoder.Encode(this, imagePath, quality, fmt);
+        }
+
+        public Byte[] ToJpegData(int quality = 70, Formats.Jpeg.JpegPixelFormats fmt = Formats.Jpeg.JpegPixelFormats.YCbCr)
+        {
+            return Formats.Jpeg.JpegEncoder.Encode(this, quality, fmt);
+        }
+
+        public void SavePng(String imagePath, Formats.Png.PngEncoderOptions options = null)
+        {
+            Formats.Png.PngEncoder.Encode(this, imagePath, options);
+        }
+
+        public Byte[] ToPngData(Formats.Png.PngEncoderOptions options = null)
+        {
+            return Formats.Png.PngEncoder.Encode(this, options);
+        }
+        #endregion
+
         public unsafe ImageBgr24(int width, int height, Bgr24* p0, int stride) 
             : this(width,height)
         {
@@ -298,6 +326,27 @@ namespace Geb.Image
             }
             return img;
         }
+
+        /// <summary>
+        /// 将当前图像转换为 ImageBgra32 格式的图像
+        /// </summary>
+        /// <returns>转换后的图像</returns>
+        public unsafe ImageBgra32 ToImageBgr32()
+        {
+            ImageBgra32 image = new ImageBgra32(this.Width, this.Height);
+            Bgr24* pSrc = this.Start;
+            Bgra32* pDst = image.Start;
+            Bgr24* pSrcEnd = this.Start + this.Length;
+            while (pSrc < pSrcEnd)
+            {
+                pDst->Red = pSrc->Red;
+                pDst->Green = pSrc->Green;
+                pDst->Blue = pSrc->Blue;
+                pSrc++; pDst++;
+            }
+            return image;
+        }
+
 
         /// <summary>
         /// 对图像进行 Alpha 混合

@@ -16,8 +16,8 @@
 		</dependencies>
     </metadata>
     <files>
-        <file src="..\src\Geb.Numerics\bin\Release\net6.0\Geb.Numerics.dll" target="lib\net6.0" />
-        <file src="..\src\Geb.Numerics\bin\Release\net6.0\Geb.Numerics.xml" target="lib\net6.0" />
-        <file src="..\src\Geb.Numerics\bin\Release\net6.0\Geb.Numerics.pdb" target="lib\net6.0" />
+        <file src="..\bin\Release\net6.0\Geb.Numerics.dll" target="lib\net6.0" />
+        <file src="..\bin\Release\net6.0\Geb.Numerics.xml" target="lib\net6.0" />
+        <file src="..\bin\Release\net6.0\Geb.Numerics.pdb" target="lib\net6.0" />
     </files>
 </package>

@@ -62,7 +62,15 @@ namespace Geb.Image.Formats.Png
     {
         public static void Encode(ImageBgra32 image, Stream stream, PngEncoderOptions options = null)
         {
-            using (var encoder = new PngEncoderCore(Configuration.Default.MemoryManager, options))
+            using (var encoder = new PngEncoderCore(Configuration.Default.MemoryManager, options ?? PngEncoderOptions.Png32))
+            {
+                encoder.Encode(image, stream);
+            }
+        }
+
+        public static void Encode(ImageBgr24 image, Stream stream, PngEncoderOptions options = null)
+        {
+            using (var encoder = new PngEncoderCore(Configuration.Default.MemoryManager, options ?? PngEncoderOptions.Png24))
             {
                 encoder.Encode(image, stream);
             }
@@ -70,13 +78,21 @@ namespace Geb.Image.Formats.Png
 
         public static void Encode(ImageU8 image, Stream stream, PngEncoderOptions options = null)
         {
-            using (var encoder = new PngEncoderCore(Configuration.Default.MemoryManager, options))
+            using (var encoder = new PngEncoderCore(Configuration.Default.MemoryManager, options ?? PngEncoderOptions.Png8))
             {
                 encoder.Encode(image, stream);
             }
         }
 
         public static void Encode(ImageBgra32 image, string path, PngEncoderOptions options = null)
+        {
+            using (FileStream fs = new FileStream(path, FileMode.CreateNew))
+            {
+                Encode(image, fs, options);
+            }
+        }
+
+        public static void Encode(ImageBgr24 image, string path, PngEncoderOptions options = null)
         {
             using (FileStream fs = new FileStream(path, FileMode.CreateNew))
             {
@@ -93,6 +109,15 @@ namespace Geb.Image.Formats.Png
         }
 
         public static byte[] Encode(ImageBgra32 image, PngEncoderOptions options = null)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                Encode(image, ms, options);
+                return ms.ToArray();
+            }
+        }
+
+        public static byte[] Encode(ImageBgr24 image, PngEncoderOptions options = null)
         {
             using (MemoryStream ms = new MemoryStream())
             {
