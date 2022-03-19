@@ -377,6 +377,29 @@ namespace Geb.Image
             return Start + row * this.Width;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe Span<TPixel> RowSpan(Int32 row)
+        {
+            if (row < 0 || row >= this.Height) throw new ArgumentOutOfRangeException("row");
+            return new Span<TPixel>(Start + row * this.Width, this.Width);
+        }
+
+        /// <summary>
+        /// 截取图像的一部分
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <returns></returns>
+        public TImage this[Rect rect]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                TImage image = new TImage(Width, Height);
+                image.CopyFrom(this, rect, new PointS(0, 0));
+                return image;
+            }
+        }
+
         public Rect Rect
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
