@@ -14,7 +14,6 @@
 		<dependencies>
             <dependency id="System.Drawing.Common" version="6.0.0" />
             <dependency id="Geb.Image" version="6.0.2" />
-            <dependency id="Geb.Numerics" version="6.0.1" />
 		</dependencies>
     </metadata>
     <files>

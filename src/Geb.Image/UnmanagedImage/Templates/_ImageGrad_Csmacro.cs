@@ -978,67 +978,130 @@ namespace Geb.Image
             return this;
         }
 
-        public unsafe TImage DrawImage(TImage src, Rect region, Rect dstRest)
-        {
-            throw new NotImplementedException();
-
-            if (region.X >= src.Width || region.Y >= src.Height) return this;
-            if (dstRest.Width <= 0 || dstRest.Height <= 0 || dstRest.X >= this.Width || dstRest.Y >= this.Height) return this;
-
-            int startSrcX = Math.Max(0, (int)region.X);
-            int startSrcY = Math.Max(0, (int)region.Y);
-            int endSrcX = Math.Min(region.X + region.Width, src.Width);
-            int endSrcY = Math.Min(region.Y + region.Height, src.Height);
-            int offsetX = region.X < 0 ? -region.X : 0;
-            int offsetY = region.Y < 0 ? -region.Y : 0;
-            offsetX = dstRest.X + offsetX;
-            offsetY = dstRest.Y + offsetY;
-            int startDstX = Math.Max(0, offsetX);
-            int startDstY = Math.Max(0, offsetY);
-            offsetX = offsetX < 0 ? -offsetX : 0;
-            offsetY = offsetY < 0 ? -offsetY : 0;
-            startSrcX += offsetX;
-            startSrcY += offsetY;
-            int endDstX = Math.Min(dstRest.X + region.Width, this.Width);
-            int endDstY = Math.Min(dstRest.Y + region.Height, this.Height);
-            int copyWidth = Math.Min(endSrcX - startSrcX, endDstX - startDstX);
-            int copyHeight = Math.Min(endSrcY - startSrcY, endDstY - startDstY);
-            if (copyWidth <= 0 || copyHeight <= 0) return this;
-
-            int srcWidth = src.Width;
-            int dstWidth = this.Width;
-
-            TPixel* srcLine = src.Start + srcWidth * startSrcY + startSrcX;
-            TPixel* dstLine = this.Start + dstWidth * startDstY + startDstX;
-            TPixel* endSrcLine = srcLine + srcWidth * copyHeight;
-            int alpha1, alpha2, blendAlpha, alpha;
-            {
-                while (srcLine < endSrcLine)
-                {
-                    TPixel* pSrc = srcLine;
-                    TPixel* endPSrc = pSrc + copyWidth;
-                    TPixel* pDst = dstLine;
-                    while (pSrc < endPSrc)
-                    {
-                        *pDst = *pSrc;
-                        pSrc++;
-                        pDst++;
-                    }
-                    srcLine += srcWidth;
-                    dstLine += dstWidth;
-                }
-            }
-            return this;
-        }
-
         /// <summary>
-        /// 将 src 通过单应性变换后复制到图像上
+        /// 将图像进行仿射变换后，绘制到原图像上
         /// </summary>
         /// <param name="src"></param>
         /// <param name="m"></param>
-        /// <returns></returns>
-        public unsafe TImage CopyFrom(TImage src, Matrix3x3 m)
+        /// <exception cref="NotImplementedException"></exception>
+        public unsafe void DrawImage(TImage src, AffineTransMatrix m)
         {
+            Rect rect = src.Rect;
+            Span<PointF> points = stackalloc PointF[4];
+            points[0] = m * rect.LeftTop;
+            points[1] = m * rect.LeftBottom;
+            points[2] = m * rect.RightTop;
+            points[3] = m * rect.RightBottom;
+            double xMin, xMax, yMin, yMax;
+            xMin = xMax = points[0].X;
+            yMin = yMax = points[0].Y;
+            foreach(var p in points)
+            {
+                xMin = Math.Min(p.X, xMin);
+                yMin = Math.Min(p.Y, yMin);
+                xMax = Math.Max(p.X, xMax);
+                yMax = Math.Max(p.Y, yMax);
+            }
+
+            // 如果映射后的区域在图像的边界外面，则不用进行处理
+            if (xMin >= Width || yMin >= Height || xMax <= 0 || yMax <= 0) return;
+            
+            int xFrom = (int)xMin; xFrom = Math.Max(0, xFrom);
+            int yFrom = (int)yMin; yFrom = Math.Max(0, yFrom);
+            int xEnd = (int)xMax + 1; xEnd = Math.Min(Width, xEnd);
+            int yEnd = (int)yMax + 1; yEnd = Math.Min(Height, yEnd);
+
+            // 逆矩阵
+            var im = m.Inverse();
+
+            //// 先行计算
+            //float* alphaW = stackalloc float[this.Width];
+            //float* betaW = stackalloc float[this.Width];
+            //Int32* idxW0 = stackalloc Int32[this.Width];
+            //Int32* idxW1 = stackalloc Int32[this.Width];
+
+            //for (int w = 0; w < width; w++)
+            //{
+            //    float offsetF = (w * wCoeff);
+            //    int offsetInt = (int)offsetF;
+            //    idxW0[w] = offsetInt * nChannel;
+            //    idxW1[w] = Math.Min(offsetInt + 1, wSrc - 1) * nChannel;
+            //    alphaW[w] = offsetF - offsetInt;
+            //    betaW[w] = 1 + offsetInt - offsetF;
+            //}
+
+            //float xAlpha = 0;
+            //float xBeta = 0;
+
+            //// 对每个 channel 进行分别处理
+            //TChannel test = (TChannel)1.5f;
+            //if (1.5f - test > 0.00001f)  // TChannel 是非浮点类型
+            //{
+            //    for (int n = 0; n < nChannel; n++)
+            //    {
+            //        TChannel* s0 = rootSrc + n;
+            //        TChannel* d0 = rootDst + n;
+            //        for (int h = 0; h < height; h++)
+            //        {
+            //            float yDstF = h * hCoeff;
+            //            int yDst = (int)yDstF;
+            //            float yAlpha = yDstF - yDst;
+            //            float yBeta = 1 - yAlpha;
+
+            //            TChannel* sLine0 = s0 + yDst * wSrc * nChannel;
+            //            TChannel* sLine1 = s0 + Math.Min(yDst + 1, hSrc - 1) * wSrc * nChannel;
+            //            TChannel* dLine = d0 + h * width * nChannel;
+
+            //            for (int w = 0; w < width; w++)
+            //            {
+            //                xAlpha = alphaW[w];
+            //                xBeta = 1 - xAlpha;
+            //                TChannel val = (TChannel)(sLine0[idxW0[w]] * xBeta * yBeta + sLine0[idxW1[w]] * xAlpha * yBeta + sLine1[idxW0[w]] * xBeta * yAlpha + sLine1[idxW1[w]] * xAlpha * yAlpha + 0.5f);
+            //                dLine[w * nChannel] = val;
+            //            }
+            //        }
+            //    }
+            //}
+            //else // TChannel 是浮点类型
+            //{
+            //    for (int n = 0; n < nChannel; n++)
+            //    {
+            //        TChannel* s0 = rootSrc + n;
+            //        TChannel* d0 = rootDst + n;
+            //        for (int h = 0; h < height; h++)
+            //        {
+            //            float yDstF = h * hCoeff;
+            //            int yDst = (int)yDstF;
+            //            float yAlpha = yDstF - yDst;
+            //            float yBeta = 1 - yAlpha;
+
+            //            TChannel* sLine0 = s0 + yDst * wSrc * nChannel;
+            //            TChannel* sLine1 = s0 + Math.Min(yDst + 1, hSrc - 1) * wSrc * nChannel;
+            //            TChannel* dLine = d0 + h * width * nChannel;
+
+            //            for (int w = 0; w < width; w++)
+            //            {
+            //                xAlpha = alphaW[w];
+            //                xBeta = 1 - xAlpha;
+            //                TChannel val = (TChannel)(sLine0[idxW0[w]] * xBeta * yBeta + sLine0[idxW1[w]] * xAlpha * yBeta + sLine1[idxW0[w]] * xBeta * yAlpha + sLine1[idxW1[w]] * xAlpha * yAlpha);
+            //                dLine[w * nChannel] = val;
+            //            }
+            //        }
+            //    }
+            //}
+
+            for (int h = yFrom; h < yEnd; h++)
+            {
+                for(int w = xFrom; w < xEnd; w++)
+                {
+                    // 求 (w,h) 在 src 中的坐标
+                    PointF p = im * new Point(w, h);
+
+                    // 不需要复制
+                    if (rect.IsContains(p) == false) continue;
+                }
+            }
+
             throw new NotImplementedException();
         }
 

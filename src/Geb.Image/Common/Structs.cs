@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace Geb.Image
 {
@@ -461,6 +462,11 @@ namespace Geb.Image
         public int Left { get { return X; } }
         public int Right { get { return X + Width; } }
 
+        public Point LeftTop { get { return new Point(X, Y); } }
+        public Point RightTop { get { return new Point(X + Width, Y); } }
+        public Point LeftBottom { get { return new Point(X, Y + Height); } }
+        public Point RightBottom { get { return new Point(X + Width, Y + Height); } }
+
         public Point Center { get { return new Point(X + Width / 2, Y + Height / 2); } }
 
         public Rect(Int32 x = 0, Int32 y = 0, Int32 w = 0, Int32 h = 0)
@@ -471,6 +477,7 @@ namespace Geb.Image
             Height = h;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Boolean IsContains(Rect other)
         {
             return this.Top <= other.Top
@@ -479,12 +486,32 @@ namespace Geb.Image
                 && this.Right >= other.Right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Boolean IsIntersects(Rect r)
         {
             return !(r.Left>Right || r.Right<Left || r.Top>Bottom || r.Bottom<Top);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Boolean IsContains(PointS point)
+        {
+            return this.Top <= point.Y
+                && this.Bottom > point.Y
+                && this.Left <= point.X
+                && this.Right > point.X;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Boolean IsContains(Point point)
+        {
+            return this.Top <= point.Y
+                && this.Bottom > point.Y
+                && this.Left <= point.X
+                && this.Right > point.X;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Boolean IsContains(PointF point)
         {
             return this.Top <= point.Y
                 && this.Bottom > point.Y
@@ -514,6 +541,11 @@ namespace Geb.Image
         public int Bottom { get { return Y + Height; } }
         public int Left { get { return X; } }
         public int Right { get { return X + Width; } }
+
+        public PointS LeftTop { get { return new PointS(X, Y); } }
+        public PointS RightTop { get { return new PointS(X + Width, Y); } }
+        public PointS LeftBottom { get { return new PointS(X, Y + Height); } }
+        public PointS RightBottom { get { return new PointS(X + Width, Y + Height); } }
 
         public PointS Center { get { return new PointS(X + Width/2, Y + Height/2); } }
 
@@ -577,6 +609,11 @@ namespace Geb.Image
         public double Left { get { return X; } }
         public double Right { get { return X + Width; } }
 
+        public PointD LeftTop { get { return new PointD(X, Y); } }
+        public PointD RightTop { get { return new PointD(X + Width, Y); } }
+        public PointD LeftBottom { get { return new PointD(X, Y + Height); } }
+        public PointD RightBottom { get { return new PointD(X + Width, Y + Height); } }
+
         public PointD Center { get { return new PointD(X + 0.5 * Width, Y + 0.5 * Height); } }
 
         public RectD(double x = 0, double y = 0, double w = 0, double h = 0)
@@ -620,6 +657,10 @@ namespace Geb.Image
         public float Left { get { return X; } }
         public float Right { get { return X + Width; } }
 
+        public PointF LeftTop { get { return new PointF(X, Y); } }
+        public PointF RightTop { get { return new PointF(X + Width, Y); } }
+        public PointF LeftBottom { get { return new PointF(X, Y + Height); } }
+        public PointF RightBottom { get { return new PointF(X + Width, Y + Height); } }
         public PointF Center { get { return new PointF(X + 0.5f * Width, Y + 0.5f * Height); } }
 
         public RectF(float x = 0, float y = 0, float w = 0, float h = 0)

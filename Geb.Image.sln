@@ -11,11 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.OpenCV", "src\Geb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.WinForm", "src\Geb.Image.WinForm\Geb.Image.WinForm.csproj", "{303E833B-77DB-47F8-AAB5-EEFF1E4BE85A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Analysis", "src\Geb.Image.Analysis\Geb.Image.Analysis.csproj", "{AD0E8F3B-6253-4DEF-8F51-9262ED325F19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.Analysis", "src\Geb.Image.Analysis\Geb.Image.Analysis.csproj", "{AD0E8F3B-6253-4DEF-8F51-9262ED325F19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.Edit", "src\Geb.Image.Edit\Geb.Image.Edit.csproj", "{6EFCE6ED-3819-401A-AFA2-9C9C6D8AE43C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Numerics", "src\Geb.Numerics\Geb.Numerics.csproj", "{41881BD5-253B-47AE-A93F-DD27EDC98E11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.Edit", "src\Geb.Image.Edit\Geb.Image.Edit.csproj", "{6EFCE6ED-3819-401A-AFA2-9C9C6D8AE43C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +45,6 @@ Global
 		{6EFCE6ED-3819-401A-AFA2-9C9C6D8AE43C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EFCE6ED-3819-401A-AFA2-9C9C6D8AE43C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EFCE6ED-3819-401A-AFA2-9C9C6D8AE43C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{41881BD5-253B-47AE-A93F-DD27EDC98E11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{41881BD5-253B-47AE-A93F-DD27EDC98E11}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41881BD5-253B-47AE-A93F-DD27EDC98E11}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{41881BD5-253B-47AE-A93F-DD27EDC98E11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

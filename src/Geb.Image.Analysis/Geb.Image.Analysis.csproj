@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Geb.Image\Geb.Image.csproj" />
-    <ProjectReference Include="..\Geb.Numerics\Geb.Numerics.csproj" />
   </ItemGroup>
 
 </Project>

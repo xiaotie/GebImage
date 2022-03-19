@@ -781,10 +781,10 @@ namespace Geb.Image.Analysis
         /// <param name="b"></param>
         void interpolateExtremum(int r, int c, ResponseLayer t, ResponseLayer m, ResponseLayer b)
         {
-            Geb.Numerics.Matrix D = new Geb.Numerics.Matrix(BuildDerivative(r, c, t, m, b));
-            Geb.Numerics.Matrix H = new Geb.Numerics.Matrix(BuildHessian(r, c, t, m, b));
-            Geb.Numerics.Matrix Hi = H.Inverse();
-            Geb.Numerics.Matrix Of = -1 * Hi * D;
+            Geb.Image.Matrix D = new Geb.Image.Matrix(BuildDerivative(r, c, t, m, b));
+            Geb.Image.Matrix H = new Geb.Image.Matrix(BuildHessian(r, c, t, m, b));
+            Geb.Image.Matrix Hi = H.Inverse();
+            Geb.Image.Matrix Of = -1 * Hi * D;
 
             // get the offsets from the interpolation
             double[] O = { Of[0, 0], Of[1, 0], Of[2, 0] };

@@ -10,7 +10,6 @@ using System.Text;
 namespace Geb.Image.Edit
 {
     using Geb.Image;
-    using Geb.Numerics;
 
     public class TpsException : Exception
     {
@@ -31,7 +30,7 @@ namespace Geb.Image.Edit
         public List<PointF> DstPoints { get; private set; }
 
         private int m_offset;
-        private Geb.Numerics.Matrix m_mapMatrix = null;
+        private Geb.Image.Matrix m_mapMatrix = null;
 
         public TpsInterpolation2D(ICollection<PointF> srcPoints, ICollection<PointF> dstPoints)
         {
@@ -86,9 +85,9 @@ namespace Geb.Image.Edit
 
         private void Prepair()
         {
-            Geb.Numerics.Matrix l = this.GetLandmarksMapMatrix();
+            Geb.Image.Matrix l = this.GetLandmarksMapMatrix();
             l = l.Inverse();
-            Geb.Numerics.Matrix y = GetTargetsMapMatrix();
+            Geb.Image.Matrix y = GetTargetsMapMatrix();
             m_mapMatrix = l * y; // m_mapMatrix 是  (W|a1,a2,a3) 的转置
         }
 
@@ -96,9 +95,9 @@ namespace Geb.Image.Edit
         /// 将 n*2 的矩阵 V 增加 3*2 的 0 元素 ，得到矩阵Y
         /// </summary>
         /// <returns>矩阵Y。</returns>
-        private Geb.Numerics.Matrix GetTargetsMapMatrix()
+        private Geb.Image.Matrix GetTargetsMapMatrix()
         {
-            Geb.Numerics.Matrix ret = new Geb.Numerics.Matrix(this.DstPoints.Count + 3, 2);
+            Geb.Image.Matrix ret = new Geb.Image.Matrix(this.DstPoints.Count + 3, 2);
 
             for (int i = 0; i < ret.RowCount; i++)
             {
@@ -143,10 +142,10 @@ namespace Geb.Image.Edit
         /// 产生矩阵 L
         /// </summary>
         /// <returns>矩阵L(见 Bookstein(1989))，矩阵大小为(n+3)*(n+3)。</returns>
-        private Geb.Numerics.Matrix GetLandmarksMapMatrix()
+        private Geb.Image.Matrix GetLandmarksMapMatrix()
         {
             IList<PointF> src = this.SrcPoints;
-            Geb.Numerics.Matrix ret = new Geb.Numerics.Matrix(src.Count + 3, src.Count + 3);
+            Geb.Image.Matrix ret = new Geb.Image.Matrix(src.Count + 3, src.Count + 3);
 
             for (int i = 0; i < src.Count; ++i)
             {

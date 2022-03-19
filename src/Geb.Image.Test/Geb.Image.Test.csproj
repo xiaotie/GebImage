@@ -20,7 +20,6 @@
     <ProjectReference Include="..\Geb.Image.Analysis\Geb.Image.Analysis.csproj" />
     <ProjectReference Include="..\Geb.Image.Edit\Geb.Image.Edit.csproj" />
     <ProjectReference Include="..\Geb.Image\Geb.Image.csproj" />
-    <ProjectReference Include="..\Geb.Numerics\Geb.Numerics.csproj" />
   </ItemGroup>
 
   <ItemGroup>
