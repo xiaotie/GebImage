@@ -15,3 +15,4 @@ src/bin/
 .vs/
 lib/
 *.nupkg
+examples/tmp/

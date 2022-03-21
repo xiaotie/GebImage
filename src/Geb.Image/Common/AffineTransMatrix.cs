@@ -90,6 +90,11 @@ namespace Geb.Image
             return CreatePanningMatrix(root.X, root.Y) * CreateRotationMatrix(radians) * CreatePanningMatrix(-root.X, -root.Y);
         }
 
+        public static AffineTransMatrix CreateRotationMatrix(PointF root, double radians)
+        {
+            return CreatePanningMatrix(root.X, root.Y) * CreateRotationMatrix(radians) * CreatePanningMatrix(-root.X, -root.Y);
+        }
+
         /// <summary>
         /// 生成平移矩阵
         /// </summary>

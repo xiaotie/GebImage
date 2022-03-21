@@ -355,6 +355,37 @@ namespace Geb.Image
             }
         }
 
+        public TImage this[RotatedRectF rect]
+        {
+            get
+            {
+                AffineTransMatrix m = AffineTransMatrix.CreateRotationMatrix(rect.Center, rect.Angle);
+                List<PointF> points = new List<PointF>();
+                foreach (var p in rect.Points())
+                    points.Add(m * p);
+
+                double xMin, xMax, yMin, yMax;
+                xMin = xMax = points[0].X;
+                yMin = yMax = points[0].Y;
+                foreach (var p in points)
+                {
+                    xMin = Math.Min(p.X, xMin);
+                    yMin = Math.Min(p.Y, yMin);
+                    xMax = Math.Max(p.X, xMax);
+                    yMax = Math.Max(p.Y, yMax);
+                }
+
+                m = AffineTransMatrix.CreatePanningMatrix(-xMin, -yMin) * m;
+                int width = Math.Max(2, (int)Math.Round(xMax - xMin));
+                int height = Math.Max(2, (int)Math.Round(yMax - yMin));
+
+                TImage image = new TImage(width, height);
+                image.Fill(default(TPixel));
+                image.DrawImage(this, m);
+                return image;
+            }
+        }
+
         public Rect Rect
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

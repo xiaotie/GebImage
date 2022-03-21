@@ -13,7 +13,12 @@ namespace Geb.Image
     {
         public PointF Center;
         public SizeF Size;
+
+        /// <summary>
+        /// 角度值。
+        /// </summary>
         public float Angle;
+
         public RotatedRectF(PointF center, SizeF size, float angle)
         {
             this.Center = center;
