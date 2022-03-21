@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Geb.Image</id>
-        <version>6.0.2</version>
+        <version>6.0.3</version>
         <title>Geb Image Library</title>
         <authors>hufei(geblab)</authors>
         <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
