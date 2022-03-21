@@ -1011,98 +1011,54 @@ namespace Geb.Image
             int xEnd = (int)xMax + 1; xEnd = Math.Min(Width, xEnd);
             int yEnd = (int)yMax + 1; yEnd = Math.Min(Height, yEnd);
 
+            int nChannel = sizeof(TPixel) / sizeof(TChannel);
+            TChannel* rootSrc = (TChannel*)src.Start;
+            TChannel* rootDst = (TChannel*)this.Start;
+
             // 逆矩阵
             var im = m.Inverse();
 
-            //// 先行计算
-            //float* alphaW = stackalloc float[this.Width];
-            //float* betaW = stackalloc float[this.Width];
-            //Int32* idxW0 = stackalloc Int32[this.Width];
-            //Int32* idxW1 = stackalloc Int32[this.Width];
+            float xAlpha = 0;
+            float yAlpha = 0;
+            float xBeta = 0;
+            float yBeta = 0;
 
-            //for (int w = 0; w < width; w++)
-            //{
-            //    float offsetF = (w * wCoeff);
-            //    int offsetInt = (int)offsetF;
-            //    idxW0[w] = offsetInt * nChannel;
-            //    idxW1[w] = Math.Min(offsetInt + 1, wSrc - 1) * nChannel;
-            //    alphaW[w] = offsetF - offsetInt;
-            //    betaW[w] = 1 + offsetInt - offsetF;
-            //}
+            TChannel* sLine0 = null;
+            TChannel* sLine1 = null;
 
-            //float xAlpha = 0;
-            //float xBeta = 0;
-
-            //// 对每个 channel 进行分别处理
-            //TChannel test = (TChannel)1.5f;
-            //if (1.5f - test > 0.00001f)  // TChannel 是非浮点类型
-            //{
-            //    for (int n = 0; n < nChannel; n++)
-            //    {
-            //        TChannel* s0 = rootSrc + n;
-            //        TChannel* d0 = rootDst + n;
-            //        for (int h = 0; h < height; h++)
-            //        {
-            //            float yDstF = h * hCoeff;
-            //            int yDst = (int)yDstF;
-            //            float yAlpha = yDstF - yDst;
-            //            float yBeta = 1 - yAlpha;
-
-            //            TChannel* sLine0 = s0 + yDst * wSrc * nChannel;
-            //            TChannel* sLine1 = s0 + Math.Min(yDst + 1, hSrc - 1) * wSrc * nChannel;
-            //            TChannel* dLine = d0 + h * width * nChannel;
-
-            //            for (int w = 0; w < width; w++)
-            //            {
-            //                xAlpha = alphaW[w];
-            //                xBeta = 1 - xAlpha;
-            //                TChannel val = (TChannel)(sLine0[idxW0[w]] * xBeta * yBeta + sLine0[idxW1[w]] * xAlpha * yBeta + sLine1[idxW0[w]] * xBeta * yAlpha + sLine1[idxW1[w]] * xAlpha * yAlpha + 0.5f);
-            //                dLine[w * nChannel] = val;
-            //            }
-            //        }
-            //    }
-            //}
-            //else // TChannel 是浮点类型
-            //{
-            //    for (int n = 0; n < nChannel; n++)
-            //    {
-            //        TChannel* s0 = rootSrc + n;
-            //        TChannel* d0 = rootDst + n;
-            //        for (int h = 0; h < height; h++)
-            //        {
-            //            float yDstF = h * hCoeff;
-            //            int yDst = (int)yDstF;
-            //            float yAlpha = yDstF - yDst;
-            //            float yBeta = 1 - yAlpha;
-
-            //            TChannel* sLine0 = s0 + yDst * wSrc * nChannel;
-            //            TChannel* sLine1 = s0 + Math.Min(yDst + 1, hSrc - 1) * wSrc * nChannel;
-            //            TChannel* dLine = d0 + h * width * nChannel;
-
-            //            for (int w = 0; w < width; w++)
-            //            {
-            //                xAlpha = alphaW[w];
-            //                xBeta = 1 - xAlpha;
-            //                TChannel val = (TChannel)(sLine0[idxW0[w]] * xBeta * yBeta + sLine0[idxW1[w]] * xAlpha * yBeta + sLine1[idxW0[w]] * xBeta * yAlpha + sLine1[idxW1[w]] * xAlpha * yAlpha);
-            //                dLine[w * nChannel] = val;
-            //            }
-            //        }
-            //    }
-            //}
-
-            for (int h = yFrom; h < yEnd; h++)
+            for (int n = 0; n < nChannel; n++)
             {
-                for(int w = xFrom; w < xEnd; w++)
+                TChannel* s0 = rootSrc + n;
+                TChannel* d0 = rootDst + n;
+                for (int h = yFrom; h < yEnd; h++)
                 {
-                    // 求 (w,h) 在 src 中的坐标
-                    PointF p = im * new Point(w, h);
+                    TChannel* dLine = d0 + h * this.Stride;
 
-                    // 不需要复制
-                    if (rect.IsContains(p) == false) continue;
+                    for (int w = xFrom; w < xEnd; w++)
+                    {
+                        // 求 (w,h) 在 src 中的坐标
+                        PointF p = im * new Point(w, h);
+
+                        // 不需要复制
+                        if (rect.IsContains(p) == false) continue;
+
+                        xAlpha = p.X - (int)p.X; xBeta = 1 - xAlpha;
+                        yAlpha = p.Y - (int)p.Y; yBeta = 1 - yAlpha;
+
+                        // 避免指针越界
+                        p.X = Math.Min(rect.Width - 1 - 0.00001f, p.X);
+                        p.Y = Math.Min(rect.Height - 1 - 0.00001f, p.Y);
+
+                        //this[h, w] = src[(int)p.Y, (int)p.X];
+
+                        sLine0 = s0 + src.Stride * (int)p.Y + nChannel * (int)p.X;
+                        sLine1 = sLine0 + src.Stride;
+
+                        TChannel val = (TChannel)(sLine0[0] * xBeta * yBeta + sLine0[nChannel] * xAlpha * yBeta + sLine1[0] * xBeta * yAlpha + sLine1[nChannel] * xAlpha * yAlpha + 0.5f);
+                        dLine[w * nChannel] = val;
+                    }
                 }
             }
-
-            throw new NotImplementedException();
         }
 
         public TImage FloodFill(System.Drawing.Point location, TPixel anchorColor, TPixel replecedColor)

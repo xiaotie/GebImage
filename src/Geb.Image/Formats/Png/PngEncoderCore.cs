@@ -232,6 +232,27 @@ namespace Geb.Image.Formats.Png
             }
         }
 
+        private void CollectGrayscaleBytes(ReadOnlySpan<Bgr24> rowSpan)
+        {
+            byte[] rawScanlineArray = this.rawScanline.Array;
+
+            // Copy the pixels across from the image.
+            // Reuse the chunk type buffer.
+            for (int x = 0; x < this.width; x++)
+            {
+                // Convert the color to YCbCr and store the luminance
+                // Optionally store the original color alpha.
+                int offset = x * this.bytesPerPixel;
+                Bgr24 bgra = rowSpan[x];
+                byte luminance = (byte)((0.299F * bgra.Red) + (0.587F * bgra.Green) + (0.114F * bgra.Blue));
+
+                for (int i = 0; i < this.bytesPerPixel; i++)
+                {
+                    rawScanlineArray[offset] = luminance;
+                }
+            }
+        }
+
         private void CollectGrayscaleBytes(ReadOnlySpan<Byte> rowSpan)
         {
             byte[] rawScanlineArray = this.rawScanline.Array;
@@ -285,6 +306,18 @@ namespace Geb.Image.Formats.Png
             }
         }
 
+        private void CollectTPixelBytes(ReadOnlySpan<Bgr24> rowSpan)
+        {
+            if (this.bytesPerPixel == 4)
+            {
+                rowSpan.ToRgba32Bytes(rawScanline.Span, this.width);
+            }
+            else
+            {
+                rowSpan.ToRgb24Bytes(rawScanline.Span, this.width);
+            }
+        }
+
         private void CollectTPixelBytes(ReadOnlySpan<Byte> rowSpan)
         {
             byte[] rawScanlineArray = this.rawScanline.Array;
@@ -310,6 +343,25 @@ namespace Geb.Image.Formats.Png
         /// <param name="row">The row.</param>
         /// <returns>The <see cref="IManagedByteBuffer"/></returns>
         private IManagedByteBuffer EncodePixelRow(ReadOnlySpan<Bgra32> rowSpan, int row)
+        {
+            switch (this.pngColorType)
+            {
+                case PngColorType.Palette:
+                    Buffer.BlockCopy(this.palettePixelData, row * this.rawScanline.Length(), this.rawScanline.Array, 0, this.rawScanline.Length());
+                    break;
+                case PngColorType.Grayscale:
+                case PngColorType.GrayscaleWithAlpha:
+                    this.CollectGrayscaleBytes(rowSpan);
+                    break;
+                default:
+                    this.CollectTPixelBytes(rowSpan);
+                    break;
+            }
+
+            return FilterPixelRow();
+        }
+
+        private IManagedByteBuffer EncodePixelRow(ReadOnlySpan<Bgr24> rowSpan, int row)
         {
             switch (this.pngColorType)
             {
@@ -563,6 +615,8 @@ namespace Geb.Image.Formats.Png
         {
             if(image.BytesPerPixel == 4)
                 return this.EncodePixelRow(((ImageBgra32)image).GetPixelRowReadOnlySpan(y), y);
+            else if (image.BytesPerPixel == 3)
+                return this.EncodePixelRow(((ImageBgr24)image).GetPixelRowReadOnlySpan(y), y);
             else
                 return this.EncodePixelRow(((ImageU8)image).GetPixelRowReadOnlySpan(y), y);
         }

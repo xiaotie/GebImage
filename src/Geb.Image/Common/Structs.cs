@@ -114,12 +114,9 @@ namespace Geb.Image
     /// <summary>
     /// 点。横纵坐标都是Int32格式。
     /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
     public partial struct Point
     {
-        [FieldOffset(0)]
         public Int32 X;
-        [FieldOffset(2)]
         public Int32 Y;
 
         public Point ToPointF()
@@ -514,9 +511,9 @@ namespace Geb.Image
         public Boolean IsContains(PointF point)
         {
             return this.Top <= point.Y
-                && this.Bottom > point.Y
+                && this.Bottom >= (point.Y + 1)
                 && this.Left <= point.X
-                && this.Right > point.X;
+                && this.Right >= (point.X + 1);
         }
 
         public static Boolean operator ==(Rect lhs, Rect rhs)

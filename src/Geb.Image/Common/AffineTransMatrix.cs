@@ -112,5 +112,10 @@ namespace Geb.Image
             double cos = Math.Cos(radians);
             return new AffineTransMatrix(cos, -sin, sin, cos);
         }
+
+        public static AffineTransMatrix CreateResizeMatrix(double scaleX, double scaleY)
+        {
+            return new AffineTransMatrix(scaleX, 0, 0, scaleY);
+        }
     }
 }

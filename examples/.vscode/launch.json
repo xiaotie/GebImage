@@ -8,11 +8,11 @@
             "program": "dotnet",
             "args": [
                 "exec",
-                "C:/Users/hufei/.dotnet/tools/.store/dotnet-script/0.53.0/dotnet-script/0.53.0/tools/netcoreapp3.1/any/dotnet-script.dll",
+                "D:/Projects/21_Private_NScript/nscript/src/Dotnet.Script/bin/Release/net6.0/nscript.dll",
                 "${file}"
             ],
             "cwd": "${workspaceRoot}",
-            "stopAtEntry": true
+            "stopAtEntry": false
         }
     ]
 }
