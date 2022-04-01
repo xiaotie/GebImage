@@ -15,7 +15,7 @@ namespace Geb.Image
         public SizeF Size;
 
         /// <summary>
-        /// 角度值。
+        /// 角度值，单位是度数。
         /// </summary>
         public float Angle;
 

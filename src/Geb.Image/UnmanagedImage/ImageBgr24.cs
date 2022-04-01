@@ -342,6 +342,7 @@ namespace Geb.Image
                 pDst->Red = pSrc->Red;
                 pDst->Green = pSrc->Green;
                 pDst->Blue = pSrc->Blue;
+                pDst->Alpha = 255;
                 pSrc++; pDst++;
             }
             return image;

@@ -21,7 +21,7 @@ imgCanvas.Fill(Bgr24.WHITE);
 
 // Save(imgCanvas,"./tmp/demo_draw_rotate1.png");
 
-RotatedRectF rr = new RotatedRectF(new PointF(img.Width/2,img.Height/2), new SizeF(200,200), (float)(30*Math.PI/180));
+RotatedRectF rr = new RotatedRectF(new PointF(img.Width/2,img.Height/2), new SizeF(200,200), 10);
 var clip = img[rr];
 Save(clip,"./tmp/demo_clip.png");
 

@@ -83,7 +83,7 @@ namespace Geb.Image
         /// 计算旋转矩阵
         /// </summary>
         /// <param name="root">旋转点</param>
-        /// <param name="radians">旋转弧度。按照逆时针计算。</param>
+        /// <param name="radians">旋转弧度。对于 X 轴向右，Y轴向上的坐标系，按照逆时针计算。对于 X 轴向右，Y轴向下的坐标系，按照顺时针计算。</param>
         /// <returns></returns>
         public static AffineTransMatrix CreateRotationMatrix(PointD root, double radians)
         {
@@ -107,9 +107,9 @@ namespace Geb.Image
         }
 
         /// <summary>
-        /// 生成旋转矩阵
+        /// 生成旋转矩阵。
         /// </summary>
-        /// <param name="radians">旋转弧度。按照逆时针计算</param>
+        /// <param name="radians">旋转弧度。对于 X 轴向右，Y轴向上的坐标系，按照逆时针计算。对于 X 轴向右，Y轴向下的坐标系，按照顺时针计算。</param>
         /// <returns></returns>
         public static AffineTransMatrix CreateRotationMatrix(double radians)
         {

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Geb.Image.Analysis</id>
-        <version>6.0.3</version>
+        <version>6.0.5</version>
         <title>Geb Image Analysis Library</title>
         <authors>hufei(geblab)</authors>
         <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
@@ -13,7 +13,7 @@
         <language>en-US</language>
 		<dependencies>
             <dependency id="System.Drawing.Common" version="6.0.0" />
-            <dependency id="Geb.Image" version="6.0.3" />
+            <dependency id="Geb.Image" version="6.0.5" />
 		</dependencies>
     </metadata>
     <files>

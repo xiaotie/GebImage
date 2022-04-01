@@ -351,7 +351,7 @@ namespace Geb.Image
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                TImage image = new TImage(Width, Height);
+                TImage image = new TImage(rect.Width, rect.Height);
                 image.CopyFrom(this, rect, new PointS(0, 0));
                 return image;
             }
@@ -361,7 +361,7 @@ namespace Geb.Image
         {
             get
             {
-                AffineTransMatrix m = AffineTransMatrix.CreateRotationMatrix(rect.Center, rect.Angle);
+                AffineTransMatrix m = AffineTransMatrix.CreateRotationMatrix(rect.Center, -rect.Angle * Math.PI/180.0);
                 List<PointF> points = new List<PointF>();
                 foreach (var p in rect.Points())
                     points.Add(m * p);
