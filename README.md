@@ -9,6 +9,16 @@ Geb.Image 是一款为图像分析目的而构建的易用、高性能的 C# 图
 
 - 自包含：是纯的 .net 库，不包含第三方 native dll
 
-- 自2.0起，支持.Net 2.0 标准
+- 6.* 支持 .net 6 版本，不考虑对之前版本的支持
 
 - 兼容 dotnet/CoreRT，方便编译为独立 exe 程序发布 
+
+TODO LIST:
+
+- [ ] 添加单元测试
+- [ ] 添加示例代码
+- [ ] 在 Geb.Image 中移除对 System.Drawing.Common 的依赖
+- [ ] 添加 Geb.Image.Analysis 项目，这是一个不依赖于第三方库的图像分析库，推荐使用 Geb.Image.Analysis 库，当不够用时，再使用 OpenCV
+- [ ] 添加 Geb.Image.Skia 项目，可通过 Skia 图形库，增强 Geb.Image 的图像处理能力
+- [ ] 添加 Geb.Image.OpenCV 项目，可通过 OpenCV 图形库，增强图像分析能力
+- [ ] 目前图像在内存中均是以 continuous 方式存储，后续将增加对非 continuous 方式的支持
