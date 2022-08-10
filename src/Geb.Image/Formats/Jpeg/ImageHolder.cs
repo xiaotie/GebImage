@@ -59,19 +59,22 @@ namespace Geb.Image.Formats.Jpeg
 
         public void Release()
         {
-            if (this._imageU8 != null)
+            // 对于不是 raw image 的
+            var rawImg = this.GetRawImage();
+
+            if (this._imageU8 != null && this._imageU8 != rawImg)
             {
                 _imageU8.Dispose();
                 _imageU8 = null;
             }
 
-            if (this._imageBgr24 != null)
+            if (this._imageBgr24 != null && this._imageBgr24 != rawImg)
             {
                 _imageBgr24.Dispose();
                 _imageBgr24 = null;
             }
 
-            if (this._imageBgra32 != null)
+            if (this._imageBgra32 != null && this._imageBgra32 != rawImg)
             {
                 _imageBgra32.Dispose();
                 _imageBgra32 = null;
