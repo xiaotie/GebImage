@@ -3,7 +3,10 @@
     using SkiaSharp;
     using BitMiracle.LibTiff.Classic;
 
-    public class ImageFactory
+    /// <summary>
+    /// 图像 IO 库
+    /// </summary>
+    public static class ImageIO
     {
         public static unsafe ImageBgra32 ReadBgra8888(String imageFilePath)
         {
