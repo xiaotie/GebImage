@@ -1882,6 +1882,32 @@ namespace Geb.Image
         }
 
         /// <summary>
+        /// 从外部复制数据。数据的 width 和 height 应该和图像的 width 和 height 一致。
+        /// </summary>
+        /// <param name="pData"></param>
+        /// <param name="dataStride">外部数据的 stride </param>
+        public unsafe void CopyFrom(void* pData, int dataStride)
+        {
+            Byte* pDst0 =  (Byte*)this.Start;
+            Byte* pSrc0 = (Byte*)pData;
+            int rowBytes = this.Width * this.SizeOfType;
+            for(int i = 0; i < this.Height; i++)
+            {
+                Span<Byte> spanSrc = new Span<Byte>(pSrc0, rowBytes);
+                Span<Byte> spanDst = new Span<Byte>(pDst0, rowBytes);
+                spanSrc.CopyTo(spanDst);
+                pSrc0 += dataStride;
+                pDst0 += this.Stride;
+            }
+        }
+
+        public unsafe TImage ApplyCopyFrom(void* pData, int dataStride)
+        {
+            CopyFrom(pData, dataStride);
+            return this;
+        }
+
+        /// <summary>
         /// 创建钳边(clamp)图像。
         /// </summary>
         /// <param name="paddingSize">边缘填充的尺寸</param>
