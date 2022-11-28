@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.Edit", "src\Geb.I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.SkiaSharp", "src\Geb.Image.SkiaSharp\Geb.Image.SkiaSharp.csproj", "{0CC6C628-7742-4770-8983-8A7435260B8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geb.Image.SkiaSharp.Test", "Geb.Image.SkiaSharp.Test\Geb.Image.SkiaSharp.Test.csproj", "{07B9170D-52CC-4AA6-A190-CF4CF9B74BC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geb.Image.SkiaSharp.Test", "test\Geb.Image.SkiaSharp.Test\Geb.Image.SkiaSharp.Test.csproj", "{340FD0E5-88C1-44FD-BD84-3C97D21831D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +53,10 @@ Global
 		{0CC6C628-7742-4770-8983-8A7435260B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CC6C628-7742-4770-8983-8A7435260B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CC6C628-7742-4770-8983-8A7435260B8F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{07B9170D-52CC-4AA6-A190-CF4CF9B74BC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{07B9170D-52CC-4AA6-A190-CF4CF9B74BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{07B9170D-52CC-4AA6-A190-CF4CF9B74BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{07B9170D-52CC-4AA6-A190-CF4CF9B74BC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{340FD0E5-88C1-44FD-BD84-3C97D21831D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{340FD0E5-88C1-44FD-BD84-3C97D21831D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{340FD0E5-88C1-44FD-BD84-3C97D21831D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{340FD0E5-88C1-44FD-BD84-3C97D21831D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

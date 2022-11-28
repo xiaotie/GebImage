@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
     <PackageId>Geb.Image.Skia</PackageId>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <BaseIntermediateOutputPath>..\..\bin\obj\Geb.Image.SkiaSharp\</BaseIntermediateOutputPath>
+    <BaseOutputPath>..\..\bin\</BaseOutputPath>
+    <AssemblyName>Geb.Image.Skia</AssemblyName>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,23 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>Geb.Image</id>
+        <id>Geb.Image.Skia</id>
         <version>6.0.7</version>
-        <title>Geb Image Library</title>
+        <title>Geb Image Library Skia Extend Library</title>
         <authors>hufei(geblab)</authors>
         <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
         <projectUrl>https://github.com/xiaotie/GebImage</projectUrl>
         <iconUrl>http://www.geblab.com/Content/images/logo.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Geb Image Library</description>
+        <description>Geb Image Library  Skia Extend Library</description>
         <language>en-US</language>
 		<dependencies>
             <dependency id="System.Drawing.Common" version="6.0.0" />
+            <dependency id="Geb.Image" version="6.0.7" />
+            <dependency id="SkiaSharp" version="2.88.3" />
+            <dependency id="BitMiracle.LibTiff.NET" version="2.4.649" />
 		</dependencies>
     </metadata>
     <files>
-        <file src="..\bin\Release\net6.0\Geb.Image.dll" target="lib\net6.0" />
-        <file src="..\bin\Release\net6.0\Geb.Image.xml" target="lib\net6.0" />
-        <file src="..\bin\Release\net6.0\Geb.Image.pdb" target="lib\net6.0" />
+        <file src="..\bin\Release\net6.0\Geb.Image.Skia.dll" target="lib\net6.0" />
+        <file src="..\bin\Release\net6.0\Geb.Image.Skia.xml" target="lib\net6.0" />
     </files>
 </package>
