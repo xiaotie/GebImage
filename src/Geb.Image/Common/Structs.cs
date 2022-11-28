@@ -516,6 +516,27 @@ namespace Geb.Image
                 && this.Right >= (point.X + 1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Rect Intersect(Rect r)
+        {
+            int x1 = Math.Max(this.Left, r.Left);
+            int x2 = Math.Min(this.Right, r.Right);
+            int y1 = Math.Max(this.Top, r.Top);
+            int y2 = Math.Min(this.Bottom, r.Bottom);
+            if (x1 <= x2 || y1 <= y2) return new Rect();
+            else return new Rect(x1, y1, x2 - x1, y2 - y1);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Rect Union(Rect r)
+        {
+            int x1 = Math.Min(this.Left, r.Left);
+            int x2 = Math.Max(this.Right, r.Right);
+            int y1 = Math.Min(this.Top, r.Top);
+            int y2 = Math.Max(this.Bottom, r.Bottom);
+            return new Rect(x1, y1, x2 - x1, y2 - y1);
+        }
+
         public static Boolean operator ==(Rect lhs, Rect rhs)
         {
             return lhs.Equals(rhs);
@@ -554,6 +575,7 @@ namespace Geb.Image
             Height = h;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Boolean IsContains(Rect other)
         {
             return this.Top <= other.Top
@@ -562,11 +584,13 @@ namespace Geb.Image
                 && this.Right >= other.Right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Boolean IsIntersects(Rect r)
         {
             return !(r.Left > Right || r.Right < Left || r.Top > Bottom || r.Bottom < Top);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Boolean IsContains(RectS other)
         {
             return this.Top <= other.Top
@@ -621,11 +645,13 @@ namespace Geb.Image
             Height = h;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public RectF ToRectF()
         {
             return new RectF((float)X, (float)Y, (float)Width, (float)Height);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Rect ToRect()
         {
             return new Rect((int)Math.Round(X), (int)Math.Round(Y), (int)Math.Round(Width), (int)Math.Round(Height));
@@ -668,11 +694,67 @@ namespace Geb.Image
             Height = h;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Boolean IsContains(RectF other)
+        {
+            return this.Top <= other.Top
+                && this.Bottom >= other.Bottom
+                && this.Left <= other.Left
+                && this.Right >= other.Right;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Boolean IsIntersects(RectF r)
+        {
+            return !(r.Left > Right || r.Right < Left || r.Top > Bottom || r.Bottom < Top);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Boolean IsContains(Point point)
+        {
+            return this.Top <= point.Y
+                && this.Bottom > point.Y
+                && this.Left <= point.X
+                && this.Right > point.X;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Boolean IsContains(PointF point)
+        {
+            return this.Top <= point.Y
+                && this.Bottom >= (point.Y + 1)
+                && this.Left <= point.X
+                && this.Right >= (point.X + 1);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public RectF Intersect(RectF r)
+        {
+            float x1 = Math.Max(this.Left, r.Left);
+            float x2 = Math.Min(this.Right, r.Right);
+            float y1 = Math.Max(this.Top, r.Top);
+            float y2 = Math.Min(this.Bottom, r.Bottom);
+            if (x1 <= x2 || y1 <= y2) return new RectF();
+            else return new RectF(x1, y1, x2 - x1,y2 - y1);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public RectF Union(RectF r)
+        {
+            float x1 = Math.Min(this.Left, r.Left);
+            float x2 = Math.Max(this.Right, r.Right);
+            float y1 = Math.Min(this.Top, r.Top);
+            float y2 = Math.Max(this.Bottom, r.Bottom);
+            return new RectF(x1, y1, x2 - x1, y2 - y1);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public RectD ToRectD()
         {
             return new RectD(X, Y, Width, Height);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Rect ToRect()
         {
             return new Rect((int)Math.Round(X), (int)Math.Round(Y), (int)Math.Round(Width), (int)Math.Round(Height));
@@ -687,11 +769,13 @@ namespace Geb.Image
             return new System.Drawing.RectangleF(X, Y, Width, Height);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Boolean operator ==(RectF lhs, RectF rhs)
         {
             return lhs.Equals(rhs);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Boolean operator !=(RectF lhs, RectF rhs)
         {
             return !lhs.Equals(rhs);
